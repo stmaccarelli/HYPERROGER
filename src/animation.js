@@ -17,7 +17,6 @@ var HLAnim = function(){
 
 
   function move(){
-//    HL.camera.position.x = HL.noise.noise(HL.clock.getElapsedTime()*30,100,100)*2;
     HL.sea.position.z += HLG.movespeed;
 
 

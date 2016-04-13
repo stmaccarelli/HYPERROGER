@@ -5,6 +5,8 @@
     var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
     var isDebug = window.location.href.indexOf('?debug')>-1;
 
+    var frameCount = 0;
+
 
     var gui = new dat.GUI();
     gui.add(HLG, 'movespeed',0.1,10.0);
@@ -20,9 +22,12 @@
     HLEnvironment.init();
     HLAnim.init();
 
+    var i = 0;
+
 
     function live() {
       window.requestAnimationFrame(live);
+      frameCount++;
       if(isMobile)
         HL.controls.update();
       //  HL.controls.update(HL.clock.getDelta()); //FPS controls mode

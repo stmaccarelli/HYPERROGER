@@ -5,7 +5,7 @@ var HLH = function(){
     for (var y = 0; y < geometry.parameters.heightSegments; y++)
       for (var x = 0; x < geometry.parameters.widthSegments + 1; x++) {
         geometry.vertices[y * (geometry.parameters.widthSegments + 1) + x].y =
-          Math.sin( HL.clock.getElapsedTime() * seaSpeed + Math.pow(x,2) * ((y*2 - stepsCount*2)) ) * (heights[y] + .2); //add 1 to height because we don't want a completely flat sea
+          Math.sin( frameCount * 0.01 * seaSpeed + Math.pow(x,2) * ((y*2 - stepsCount*2)) ) * (heights[y] + .2); //add 1 to height because we don't want a completely flat sea
       }
     geometry.verticesNeedUpdate = true;
   }
