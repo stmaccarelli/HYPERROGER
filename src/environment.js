@@ -11,12 +11,13 @@ var HLG = {
   worldtiles:39, //gotta change according to device capabilities
   movespeed:0.9,
   seaSpeed:6.8,
-  stepsCount:0,
+  seaStepsCount:0,
+  landStepsCount:0,
   noiseFrequency:1,
   noiseFrequency2:1,
   noiseSeed:0,
 
-  fog:true,
+  fog:false,
 
   devLandBase:-5,
   devLandHeight:10,
@@ -73,7 +74,7 @@ var HL = {
   fauna:null,
   // init particle size for Particle Systems
   cloudsAmount : 50,
-  floraAmount : 50,
+  floraAmount : 500,
   faunaAmount : 100 // this will represent users, and will change live, so here we set a MAX_USERS_CANSHOW
 }
 
@@ -147,12 +148,11 @@ var HLEnvironment = function(){
       HL.geometries.seaHeights[i]=1;
 
     HLH.initParticleSystem(HL.geometries.clouds, HLG.worldwidth, HL.cloudsAmount, true, true);
-    HLH.initShotParticles(HL.geometries.clouds, HLG.worldwidth);
+    HLH.initShootableParticles(HL.geometries.clouds, HLG.worldwidth);
 
     HLH.initParticleSystem(HL.geometries.flora , HLG.worldwidth, HL.floraAmount, false, true);
-    HLH.initParticleSystem(HL.geometries.fauna , HLG.worldwidth, HL.faunaAmount, false, true);
 
-    console.log(HL.geometries.land);
+    HLH.initParticleSystem(HL.geometries.fauna , HLG.worldwidth, HL.faunaAmount, false, true);
   }
 
 
@@ -170,7 +170,7 @@ var HLEnvironment = function(){
     HL.materials.land = new THREE.MeshBasicMaterial({
       color: HLC.land,
       fog: true,
-    //  side: THREE.DoubleSide,
+      side: THREE.DoubleSide,
       wireframe: false,
       wireframeLinewidth: 2,
       map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
@@ -212,8 +212,8 @@ var HLEnvironment = function(){
       color: HLC.white,
       opacity: 1,
       transparent: false,
-      size: 10,
-      fog: true,
+      size: 50,
+      fog: false,
       sizeAttenuation: true
     });
 
@@ -239,10 +239,10 @@ var HLEnvironment = function(){
     HL.scene.add(HL.sea);
 
     HL.clouds = new THREE.Points(HL.geometries.clouds, HL.materials.clouds);
-    HL.scene.add(HL.clouds);
+    //HL.scene.add(HL.clouds);
 
     HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
-  //  HL.scene.add(HL.flora);
+    HL.scene.add(HL.flora);
 
     HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
 //    HL.scene.add(HL.fauna);
