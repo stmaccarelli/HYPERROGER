@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1,
+width=device-width, height=device-height, target-densitydpi=device-dpi" />
+
+	<title>LOSS 09</title>
+	<style>
+		body {
+			margin: 0;
+			background-color: #000;
+			color: #fff;
+			font-family: monospace;
+			cursor:none;
+		}
+
+		canvas {
+			width: 100%;
+			height: 100%
+		}
+
+		#controlli {
+			z-index: 998;
+			position: absolute;
+			font-size: 2em;
+			display:none;
+		}
+
+		#loading {
+			z-index: 999;
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background-color: rgba(0, 0, 0, 0.8);
+			color: white;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="controlli">
+		<h1 id="start">START</h1>
+		<h1 id="3d">VR</h1>
+	</div>
+	<div id="loading">LOADING</div>
+
+	<script src="bower_components/nosleep/NoSleep.min.js"></script>
+	<script src="js/miniFramework.js"></script>
+	<script src="js/audioAnalOff.js"></script>
+	<script src="bower_components/three.js/three.min.js"></script>
+	<script src="lib/js/ImprovedNoise.js"></script>
+	<script src="lib/js/effects/StereoEffect.js"></script>
+	<script src="lib/js/controls/DeviceOrientationControls.js"></script>
+	<!-- <script src="js/DeviceOrientationMotion.js"></script> -->
+
+	<script src="lib/js/controls/FirstPersonControls.js"></script>
+
+	<script>
+		var worldWidth = 240;
+		var worldDepth = 240;
+		var resolutionTiles = 39;
+
+		var renderer, effect;
+		var isVR = false;
+		var move = 0.15;
+		var stepsCount = 0;
+		var landHeight;
+
+		var noiseScale = worldDepth / resolutionTiles;
+		var noiseSeed = Math.random() * 100;
+		var snoise = new ImprovedNoise();
+		var frameCount = 0;
+		var seaHeight = 1;
+
+
+		var noiseScale = worldWidth / resolutionTiles;
+		var lerpFreq = [0, 0, 0, 0, 0];
+
+		var bgCol = new THREE.Color(0, 0, 0);
+
+
+		var tempY = 0;
+
+		var accelerazione = 0.1 ;
+		// Listen for the event.
+		window.addEventListener('customaudioloaded', function() {
+			document.getElementById("loading").style.display = "none";
+		}, false);
+
+		window.addEventListener('load', function() {
+			console.log("document load");
+
+			var noSleep = new NoSleep();
+
+
+			//1 scene
+			var scene = new THREE.Scene();
+
+
+			//2 camera
+			var
+			// camera = new THREE.PerspectiveCamera(
+			// 	//FOV
+			// 	35,
+			// 	//aspect ratio
+			// 	window.innerWidth / window.innerHeight,
+			// 	//NEAR
+			// 	0.1,
+			// 	//FAR
+			// 	1000
+			// );
+				camera = new THREE.PerspectiveCamera(60, window.devicePixelRatio, 1, 100000);
+
+
+			//camera position
+			camera.position.y = 5;
+			controls = new THREE.DeviceOrientationControls(camera);
+
+
+			// var vFOV = camera.fov * Math.PI / 180;        // convert vertical fov to radians
+			// var height = 2 * Math.tan( vFOV / 2 ) * camera.position.z; // visible height
+			// var width = height * camera.aspect;
+
+
+			//3 renderer
+			renderer = new THREE.WebGLRenderer();//{antialias: true});
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setClearColor(0x000000, 0);
+			document.body.appendChild(renderer.domElement);
+
+			effect = new THREE.StereoEffect(renderer);
+			effect.eyeSeparation = 4;
+			effect.focalLength = worldDepth / 4;
+			effect.setSize(window.innerWidth, window.innerHeight);
+
+			scene.fog = new THREE.Fog(0x000000, 0, worldDepth / 2 - 40);
+			renderer.setClearColor(bgCol);
+
+			// var centerGeo = new THREE.BoxGeometry(1, 1, 1);
+			// var centerMaterial = new THREE.MeshBasicMaterial({
+			// 	color: 0xff00000,
+			// 	wireframe: true
+			// });
+			// var center = new THREE.Mesh(centerGeo, centerMaterial);
+			// scene.add(center);
+
+			//4 add elements to scene
+			//4a geometria
+
+			// var redCube = new THREE.Mesh(
+			// 	new THREE.BoxGeometry(0.5,0.5,0.5),
+			// 	new THREE.MeshBasicMaterial({color:0xff0000})
+			// );
+			// scene.add(redCube);
+
+			var seaGeometryComp = new THREE.PlaneGeometry(worldWidth, worldDepth, resolutionTiles, resolutionTiles);
+			seaGeometryComp.dynamic = true;
+			seaGeometryComp.rotateX(-Math.PI / 2);
+			//seaGeometryComp.applyMatrix( new THREE.Matrix4().makeTranslation(0,0,-worldDepth/2) );
+			seaGeometryComp.verticesNeedUpdate = true;
+
+
+			var seaGeometry = new THREE.PlaneGeometry(worldWidth, worldDepth, resolutionTiles, resolutionTiles);
+			seaGeometry.dynamic = true;
+			seaGeometry.rotateX(-Math.PI / 2);
+			//seaGeometry.applyMatrix( new THREE.Matrix4().makeTranslation(0,0,-worldDepth/2) );
+			seaGeometry.verticesNeedUpdate = true;
+
+			var seaGeometryBase = new THREE.PlaneGeometry(worldWidth, worldDepth, resolutionTiles, resolutionTiles);
+			seaGeometryBase.dynamic = true;
+			seaGeometryBase.rotateX(-Math.PI / 2);
+			//seaGeometryBase.applyMatrix( new THREE.Matrix4().makeTranslation(0,0,-worldDepth/2) );
+			seaGeometryBase.verticesNeedUpdate = true;
+
+
+
+
+
+						var worldGeometry = new THREE.BoxGeometry(worldWidth * 4, worldDepth * 4, worldDepth * 4);
+						var worldMaterial = new THREE.MeshBasicMaterial({
+							side: THREE.BackSide
+						});
+						worldMaterial.color = bgCol;
+						var world = new THREE.Mesh(worldGeometry, worldMaterial);
+						scene.add(world);
+
+
+			// //4b materiale
+			// var material = new THREE.MeshLambertMaterial({
+			// 	color: 0x00ff00,
+			// 	fog:true
+			// 		});
+
+			var wireMat = new THREE.MeshBasicMaterial({
+				color: 0xFFFFFF,
+				fog: true,
+				wireframe: true,
+				wireframeLinewidth: 4
+			});
+			var baseMat = new THREE.MeshBasicMaterial({
+				color: 0x000000,
+				fog: true,
+				side: THREE.BothSides
+			});
+			var seaPointsMat = new THREE.PointsMaterial({
+				color: 0xFFFFFF,
+				opacity: 1,
+				transparent: false,
+				size: 0.3,
+				fog: true,
+				sizeAttenuation: true
+			});
+			//baseMat.color = bgCol;
+			var seaBase = new THREE.Mesh(seaGeometryComp, baseMat);
+		//	var sea2 = new THREE.SceneUtils.createMultiMaterialObject(seaGeometryComp, [baseMat, wireMat]);
+
+		//	var seaPoints = new THREE.Points(seaGeometryComp, seaPointsMat);
+			var seaWire = new THREE.Mesh(seaGeometryComp, wireMat);
+
+
+			// var	vnormals = new THREE.VertexNormalsHelper( sea, 2, 0x00ff00, 1 );
+			// scene.add( vnormals );
+			//
+			// var fnormals = new THREE.FaceNormalsHelper( sea, 2, 0xff0000, 1 );
+			// scene.add( fnormals );
+			seaWire.translateY(.05);
+			//5 add elements to scene;
+			 var sea = new THREE.Object3D();
+			 sea.add(seaBase);
+			 sea.add(seaWire);
+			scene.add(sea);
+
+
+
+			var partGeom = new THREE.Geometry();
+
+			// now create the individual particles
+			for (var p = 0; p < 20; p++) {
+
+				// create a particle with random
+				// position values, -250 -> 250
+				var pX = Math.random() * worldWidth - worldWidth / 2,
+					pY = Math.random() * 10,
+					pZ = Math.random() * worldDepth - worldDepth / 2,
+					particle = new THREE.Vector3(pX, pY, pZ);
+				// add it to the geometry
+				partGeom.vertices.push(particle);
+			}
+			partGeom.dynamic = true;
+
+
+			var partMat = new THREE.PointsMaterial({
+				color: 0xFFFFFF,
+				size: 1,
+				fog: false,
+				transparent: true,
+			});
+
+			var partSys = new THREE.Points(partGeom, partMat);
+			scene.add(partSys);
+			// var seaPoints = new THREE.Points(seaGeometryComp,partMat);
+			// seaPoints.position.y = 50;
+			// scene.add(seaPoints);
+
+
+			var starsGeom = new THREE.Geometry();
+
+			// now create the individual particles
+			for (var p = 0; p < 500; p++) {
+
+				// create a particle with random
+				// position values, -250 -> 250
+				var pX = Math.random() * worldWidth * 4 - worldWidth * 2,
+					pY = Math.random() * (worldWidth * 2 - 30) + 30,
+					pZ = Math.random() * worldDepth * 4 - worldDepth * 2,
+					particle = new THREE.Vector3(pX, pY, pZ);
+				// add it to the geometry
+				starsGeom.vertices.push(particle);
+			}
+			starsGeom.dynamic = true;
+
+			var starsMat = new THREE.PointsMaterial({
+				color: 0xFFFFFF,
+				opacity: 0.5,
+				transparent: true,
+				size: 2,
+				fog: false,
+				sizeAttenuation: true
+			});
+
+			var starsSys = new THREE.Points(starsGeom, starsMat);
+
+			scene.add(starsSys);
+
+
+			var clock = new THREE.Clock();
+
+
+			// var directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
+			// directionalLight.position.set( 1, 0.5, -0.5 );
+			// scene.add( directionalLight );
+
+
+			function live() {
+				window.requestAnimationFrame(live);
+				//	if(document.ontouchstart)
+				if (window.location.href.indexOf('?desktop') == -1)
+					controls.update();
+				//camera.rotation.y += Math.PI/2;
+				animation();
+				if (isVR)
+					effect.render(scene, camera);
+				else
+					renderer.render(scene, camera);
+			}
+
+			live();
+
+
+
+			function animation() {
+				var delta = 0.02;
+				frameCount += 1;
+				//accelerazione = 0.2;// + frameCount*0.00005;
+				renderer.depth = false;
+				accelerazione = 0.1+Math.max(lerpFreq[1]*0.5,0);//0.0001;//frameCount*0.01;//move;
+
+
+				if (AudioMonitor.getFreqArray(0) !== undefined) {
+					lerpFreq[0] = lerp(lerpFreq[0], AudioMonitor.getFreqArray(0), 0.01);
+					lerpFreq[1] = lerp(lerpFreq[1], AudioMonitor.getFreqArray(1), 0.001);
+				}
+
+				// redCube.position.z += lerpFreq[0]/256*accelerazione*4 + snoise.noise(frameCount*0.02,10,noiseSeed)*accelerazione/2;
+				// redCube.position.y = 7 + Math.sin(snoise.noise(frameCount*0.03,0,noiseSeed))*5;
+				// redCube.position.x = Math.sin(snoise.noise(frameCount*0.01,0,noiseSeed))*worldWidth/2;
+				// redCube.rotation.x += 0.04;
+				// redCube.rotation.y += 0.03;
+				//
+				// if(redCube.position.z>worldDepth)
+				// 	redCube.position.z = -worldDepth;
+
+				// move = lerp(0.1, Math.max(0.1,freqArray[1] * 0.005), 0.5);
+				sea.position.z += accelerazione; //
+				// seaPoints.position.z += delta*10;//move;
+
+
+				//dynamic sound height on scale row
+				if (sea.position.z > worldDepth / (resolutionTiles)) {
+					stepsCount++;
+					sea.position.z -= worldDepth / resolutionTiles;
+
+
+					//calcola nuove heights prima fila
+					for (var i = 0; i < (resolutionTiles + 1); i++) {
+						seaGeometry.vertices[i].y = lerpFreq[0] * 2 ;// + (AudioMonitor.getFreqArray(0) / 256) * 1.1;
+						// snoise.noise(
+						// 	i * 1.5 * (noiseScale / (1 + AudioMonitor.getFreqArray(1) / 256)),
+						// 	(stepsCount) * (noiseScale / (1 + AudioMonitor.getFreqArray(2) / 256)),
+						// 	noiseSeed
+						// ) * (1.5 + AudioMonitor.getFreqArray(0) * 0.05)
+					}
+					// seaPoints.position.z = 0;
+					// scala le heights alla fila successiva
+					for (var y = resolutionTiles; y > 0; y--)
+						for (var x = 0; x < resolutionTiles + 1; x++) {
+							seaGeometry.vertices[y * (resolutionTiles + 1) + x].y = seaGeometry.vertices[(y - 1) * (resolutionTiles + 1) + x].y;
+						}
+
+
+
+					seaGeometry.verticesNeedUpdate = true;
+				}
+
+
+
+
+				// basic sea motion on base geom
+
+				for (var y = resolutionTiles; y > 0; y--)
+					for (var x = 0; x < resolutionTiles + 1; x++) {
+						seaGeometryBase.vertices[y * (resolutionTiles + 1) + x].y =
+							Math.sin(
+								// (frameCount+(x*(y-stepsCount)*x))*0.03)
+								frameCount * 0.03 + x * x * (y - stepsCount) )
+								* 2
+							//* (1 + 1 * 0.03);
+					}
+				seaGeometryBase.verticesNeedUpdate = true;
+
+
+				seaHeight = 0;
+				//mix heights
+				for (var i = 0; i < seaGeometryComp.vertices.length; i++) {
+					tempY =  seaGeometryBase.vertices[i].y * (seaGeometry.vertices[i].y < 0.5 ? 0.5 : seaGeometry.vertices[i].y) ;
+					if (!isNaN(tempY)) {
+						seaGeometryComp.vertices[i].y = tempY;
+						seaHeight = lerp(seaHeight, Math.max(seaHeight, tempY), 0.1);
+					}
+				}
+				seaGeometryComp.verticesNeedUpdate = true;
+				// seaGeometryComp.normalsNeedUpdate = true;
+				// seaGeometryComp.computeFaceNormals();
+				// seaGeometryComp.computeVertexNormals();    // requires correct face normals
+				// // vnormals.update();
+				// // fnormals.update();
+
+				//camera.position.y = 8 + Math.sin(frameCount * 0.02) * 3;
+
+				if (window.location.href.indexOf('?nodrunk') == -1) {
+					if (window.location.href.indexOf('?desktop') == -1) {
+						// if it's not desktop - mobile (camera controlled by DeviceOrientation, so we gonna ADD noise)
+						camera.rotation.y += snoise.noise(frameCount * 0.0002 + lerpFreq[0] * 0.005, frameCount * 0.0004, noiseSeed) * 4;
+						camera.rotation.x += snoise.noise(frameCount * 0.0005, frameCount * 0.0008, noiseSeed * 2) * 2;
+						camera.rotation.z += Math.sin(frameCount * 0.01)*0.001;
+					} else {
+						//if it's desktop, so we don't use DeviceOrientatiom. We gonna SET noise
+						camera.rotation.y = snoise.noise(frameCount * 0.0002, frameCount * 0.0004, noiseSeed) * 4;
+						camera.rotation.x = snoise.noise(frameCount * 0.0005, frameCount * 0.0008, noiseSeed * 2) * 2;
+						camera.rotation.z += Math.sin(frameCount * 0.01)*0.001;
+					}
+				}
+
+				// 	// camera.position.y = 5 + Math.sin(frameCount*0.01) * seaHeight*0.25;
+				// 	// camera.rotation.y = snoise.noise(frameCount*0.0002 + lerpFreq[0]*0.005, frameCount*0.0004, noiseSeed) * 4;
+				// 	// camera.rotation.x = snoise.noise(frameCount*0.0005, frameCount*0.0008, noiseSeed*2)*2;
+				// }
+				//
+				// // camera.rotation.x *= -0.5+Math.sin(frameCount*0.002);
+				// // camera.rotation.z *= Math.sin(frameCount*0.003);
+				// camera.zoom = 1+Math.sin(frameCount*0.002)*0.5;
+				// for (var i = 0; i < partGeom.vertices.length; i++) {
+				// 	partGeom.vertices[i].z += Math.random() * 0.5;
+				// 	partGeom.vertices[i].z = partGeom.vertices[i].z % worldDepth;
+				// }
+
+				partGeom.verticesNeedUpdate = true;
+				partMat.opacity = (AudioMonitor.getFreqArray(64) / 256);
+				// 				if(frameCount > 60*60){
+				// //					wireMat.color.setHSL(0,0,AudioMonitor.getFreqArray(5)/256);
+				// 					baseMat.color.setHSL(0,0,AudioMonitor.getFreqArray(1)/256*0.1);
+				// 				}
+
+//				baseMat.color.setHSL(Math.sin(frameCount * 0.004) * 0.05 + 0.65, 0.0, Math.pow(AudioMonitor.getFreqArray(40) / 256, 5) * 15);
+				bgCol.setHSL(0,0, Math.pow(AudioMonitor.getFreqArray(40), 3) );
+			//	baseMat.color.setHSL(0,0, Math.pow(AudioMonitor.getFreqArray(40), 3) * 0.2 );
+
+				//if(clock.getElapsedTime()>1){
+				for (var i = 0; i < Math.min(frameCount / 6 * lerpFreq[0], starsGeom.vertices.length); i++) {
+					// if(i%3==0)starsGeom.vertices[i].y += 1;
+					// else
+						starsGeom.vertices[i].y += 10;
+				//	starsGeom.vertices[i].z += accelerazione/4;
+
+					starsGeom.vertices[i].y = (starsGeom.vertices[i].y)%(worldDepth * 2);
+					//starsGeom.vertices[i].z = (starsGeom.vertices[i].y)%(worldDepth * 2);
+				}
+				starsGeom.verticesNeedUpdate = true;
+				//}
+
+			}
+			scene.fog.color = bgCol;
+			var hue = 0;
+
+			function onResized() {
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				effect.setSize(window.innerWidth, window.innerHeight);
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+			}
+
+			window.addEventListener("resize", onResized);
+			// document.getElementById("start").addEventListener('mouseup', function(e) {
+			document.body.addEventListener('mouseup', function(e) {
+				//e.target.style.display = 'none';
+				AudioMonitor.start();
+				noSleep.enable();
+			}, false);
+
+
+
+			document.getElementById("3d").addEventListener('mouseup', function() {
+				isVR = !isVR;
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+			}, false);
+
+		});
+	</script>
+</body>
+
+</html>
