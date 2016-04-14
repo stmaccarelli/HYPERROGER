@@ -64,9 +64,9 @@ var HL = {
     landHeights:null, // actually not a geometry, just a float to be added to compute height
     sea:null,
     seaHeights:null, // actually not a geometry, just an array of heights per row to be added to a sine motion
-    clouds: new THREE.Geometry(),
-    flora: new THREE.Geometry(),
-    fauna: new THREE.Geometry(),
+    clouds: new THREE.BufferGeometry(),
+    flora: new THREE.BufferGeometry(),
+    fauna: new THREE.BufferGeometry(),
   },
   materials: {
     sky:null,
@@ -155,11 +155,13 @@ var HLEnvironment = function(){
     for(var i=0; i<HLG.worldtiles;i++)
       HL.geometries.seaHeights[i]=1;
 
-    HLH.initParticleSystem(HL.geometries.clouds, HLG.worldwidth, HLG.cloudsAmount, true, true);
+  //  HLH.initParticleSystem(HL.geometries.clouds, HLG.worldwidth, HLG.cloudsAmount, true, true);
+    HLH.initBufParticleSystem(HL.geometries.clouds, HLG.worldwidth, HLG.cloudsAmount, true, true);
 
-    HLH.initParticleSystem(HL.geometries.flora , HLG.worldwidth, HLG.floraAmount, false, true);
 
-    HLH.initParticleSystem(HL.geometries.fauna , HLG.worldwidth, HLG.faunaAmount, false, true);
+    HLH.initBufParticleSystem(HL.geometries.flora , HLG.worldwidth, HLG.floraAmount, false, true);
+
+    HLH.initBufParticleSystem(HL.geometries.fauna , HLG.worldwidth, HLG.faunaAmount, false, true);
   }
 
 
@@ -221,7 +223,7 @@ var HLEnvironment = function(){
       depthWrite: true,
       transparent:true,
       map: isWire?null:new THREE.TextureLoader().load( "img/tex_tree_82_128x128.png" ),
-      blending: THREE.AdditiveBlending,
+      //blending: THREE.AdditiveBlending,
     });
 
     HL.materials.fauna = new THREE.PointsMaterial({
@@ -234,7 +236,7 @@ var HLEnvironment = function(){
       sizeAttenuation: true,
       map: new THREE.TextureLoader().load( "img/tex_tree_8_128x128.png" ),
       //alphaTest: 0.5,
-      blending: THREE.AdditiveBlending,
+    //  blending: THREE.AdditiveBlending,
     });
 
   }

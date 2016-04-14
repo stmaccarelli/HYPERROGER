@@ -31,23 +31,19 @@ var HLH = function(){
 
   function initBufParticleSystem(geometry, worldWidth, amount, randomize, dynamic){
     var vertexPositions = [];
-    for ( i = 0; i < amount; i++){
-      if(randomize){
-        vertexPositions.push(
-          [ Math.random() * worldWidth - worldWidth / 2 ,
-            Math.random() * worldWidth / HLG.worldtiles + HLG.worldheight/4, // TBD find a standard solution
-            Math.random() * worldWidth - worldWidth / 2]
-        );
-      }
-      else {
-        vertexPositions.push([0,0,-worldWidth]);
-      }
+    for ( i = 0; i < amount; i++) {
+      vertexPositions.push(
+        [ Math.random() * worldWidth - worldWidth / 2 ,
+          Math.random() * worldWidth / HLG.worldtiles + HLG.worldheight/4, // TBD find a standard solution
+          Math.random() * worldWidth - worldWidth / 2
+        ]);
     }
     var vertices = new Float32Array( vertexPositions.length * 3 ); // three components per vertex
 
     // components of the position vector for each vertex are stored
     // contiguously in the buffer.
-    for ( var i = 0; i < vertexPositions.length; i++ ){
+    for ( var i = 0; i < vertexPositions.length; i++ )
+    {
     	vertices[ i*3 + 0 ] = vertexPositions[i][0];
     	vertices[ i*3 + 1 ] = vertexPositions[i][1];
     	vertices[ i*3 + 2 ] = vertexPositions[i][2];
@@ -76,14 +72,13 @@ var HLH = function(){
       );
   }
   if(dynamic) geometry.dynamic = true;
-
 }
 
   // positions shootable particles out of the active moving area
     function initShootableParticles(geometry, border){
-      for(i=0;i<geometry.attributes.position.array.length;i++)
-        geometry.attributes.position.array[i+2]=-border;
-      geometry.attributes.position.needsUpdate = true;
+      for(i=0;i<geometry.vertices.length;i++)
+        geometry.vertices[i].z=-border;
+      geometry.verticesNeedUpdate = true;
     }
 
 
@@ -94,15 +89,15 @@ var HLH = function(){
     // and when particle reaches the end of the worldwidth, it resets the position far again.
 
     function startParticles(geometry, limit){
-      for(i=0;i<geometry.attributes.position.array.length;i++){
-        if(geometry.attributes.position.array[i+2]==-limit){
-          geometry.attributes.position.array[i+2]=-limit/2;
+      for(i=0;i<geometry.vertices.length;i++){
+        if(geometry.vertices[i].z==-limit){
+          geometry.vertices[i].z=-limit/2;
           break;
         }
         // else if(i==geometry.vertices.length-1)
         //   console.log('cant init particle, all particles out');
       }
-       geometry.attributes.position.needsUpdate = true;
+       geometry.verticesNeedUpdate = true;
     }
 
     // function moveParticles(geometry, WORLDSIZE, moveSpeed){
@@ -141,22 +136,23 @@ var HLH = function(){
 
 
     var skipped,nX=0,nY=0,sC,z;
-    function shotFloraCluster(geometry, stepsCount, amountToBurst){
+    function shotFloraCluster(partGeom, stepsCount, amountToBurst){
       skipped=0;
       sC = stepsCount / HLG.worldtiles;
-      for(i=0;i<Math.min(geometry.attributes.position.array.length,amountToBurst+skipped);i++){
+      for(i=0;i<Math.min(partGeom.vertices.length,amountToBurst+skipped);i++){
         // if particle is inactive at "standby" distance
-        if(geometry.attributes.position.array[i+2]==-HLG.worldwidth ){
-          geometry.attributes.position.array[i]= Math.random() * HLG.worldwidth - HLG.worldwidth / 2;
-          geometry.attributes.position.array[i+2]= getRandomIntInclusive(-HLG.worldwidth+.1,-HLG.worldwidth/2);
+        if(partGeom.vertices[i].z==-HLG.worldwidth ){
+          partGeom.vertices[i].x= Math.random() * HLG.worldwidth - HLG.worldwidth / 2;
+          partGeom.vertices[i].z= getRandomIntInclusive(-HLG.worldwidth+.1,-HLG.worldwidth/2);
 
-          nX = (geometry.attributes.position.array[i]/(HLG.worldwidth/2)+1) / 2;// in range 0 , 1.0
-          nY = (geometry.attributes.position.array[i+2]/HLG.worldwidth + 0.5)*-1; // in range 0 , 0.5
-          geometry.attributes.position.array[i+1] = landHeightNoise(nX,sC+nY) + 5;
+          nX = (partGeom.vertices[i].x/(HLG.worldwidth/2)+1) / 2;// in range 0 , 1.0
+          nY = (partGeom.vertices[i].z/HLG.worldwidth + 0.5)*-1; // in range 0 , 0.5
+          partGeom.vertices[i].y = landHeightNoise(nX,sC+nY);
+          partGeom.vertices[i].y += 5;//solleva un po'
         }
         else skipped++;
       }
-      geometry.attributes.position.needsUpdate = true;
+      partGeom.verticesNeedUpdate = true;
     }
 
 

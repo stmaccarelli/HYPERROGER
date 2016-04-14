@@ -6,8 +6,11 @@ var HLAnim = function(){
 
   //this calculate all the rows geometries, so the world won't start with zero heights
   function init(){
-    for(i=0;i<HL.geometries.clouds.vertices.length;i++)
-      HL.geometries.clouds.vertices[0].z+=HLG.worldwidth/2;
+    // for(i=0;i<HL.geometries.clouds.vertices.length;i++)
+    //   HL.geometries.clouds.vertices[0].z+=HLG.worldwidth/2;
+
+    // for(i=0;i<HL.geometries.clouds.attributes.position.array.length;i+=3)
+    //   HL.geometries.clouds.attributes.position.array[i+2]+=HLG.worldwidth/2;
   }
 
   function sea(){
@@ -18,15 +21,15 @@ var HLAnim = function(){
     if (HL.sea.position.z > HLG.worldwidth / HL.geometries.sea.parameters.heightSegments) {
       HLG.seaStepsCount++;
       HL.sea.position.z  -= HLG.worldwidth / HL.geometries.sea.parameters.heightSegments;
-      // shift sea heights for rows
-      for(var i=HL.geometries.sea.parameters.heightSegments; i > 0; i--){
-        HL.geometries.seaHeights[i] = HL.geometries.seaHeights[i-1];
-      }
-     // calculate SEA first row heights
-      HL.geometries.seaHeights[0] = 2;
+    //   // shift sea heights for rows
+    //   for(var i=HL.geometries.sea.parameters.heightSegments; i > 0; i--){
+    //     HL.geometries.seaHeights[i] = HL.geometries.seaHeights[i-1];
+    //   }
+    //  // calculate SEA first row heights
+    //   HL.geometries.seaHeights[0] = 2;
     }
     // basic sea waves
-    HLH.sinMotion(HL.geometries.sea, HLG.seaStepsCount, HL.geometries.seaHeights, HLG.seaSpeed);
+    //HLH.sinMotion(HL.geometries.sea, HLG.seaStepsCount, HL.geometries.seaHeights, HLG.seaSpeed);
   }
 
   function land(){
@@ -53,6 +56,7 @@ var HLAnim = function(){
   function elements(){
     // moveParticles moves all
     HLH.loopParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+2);
+
     HLH.moveParticles(HL.geometries.flora, HLG.worldwidth, HLG.movespeed);
 
     HLH.shotFloraCluster(HL.geometries.flora, HLG.landStepsCount, 1);
