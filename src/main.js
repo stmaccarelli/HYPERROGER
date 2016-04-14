@@ -4,6 +4,7 @@
     var isVR = window.location.href.indexOf('?vr')>-1;
     var isDebug = window.location.href.indexOf('?debug')>-1;
     var isFPC = window.location.href.indexOf('?fpc')>-1;
+    var isWire = window.location.href.indexOf('?wire')>-1;
     var computeShadows = false;
 
     // init and enable NoSleep so screen won't dim

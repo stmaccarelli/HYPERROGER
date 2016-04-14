@@ -32,9 +32,9 @@ var HLC = {
   land: new THREE.Color(0, 0, 0),
   sea: new THREE.Color(0, .55, .9),
 
-  underHorizon: new THREE.Color(.01, .1, .5),
-  underLand: new THREE.Color(.2, .2, .4),
-  underSea: new THREE.Color(1,1,1),
+  underHorizon: new THREE.Color(.0, .05, .2),
+  underLand: new THREE.Color(.1, .9, .9),
+  underSea: new THREE.Color(.1, .9, .9),
 
   white: new THREE.Color(1, 1, 1)
 }
@@ -166,7 +166,7 @@ var HLEnvironment = function(){
     HL.materials.sky = new THREE.MeshBasicMaterial({
       color: HLC.horizon,
       fog: false,
-      wireframe: false,
+      wireframe: isWire,
       wireframeLinewidth: 2
     });
     HL.materials.sky.side = THREE.BothSides;
@@ -175,7 +175,7 @@ var HLEnvironment = function(){
       color: HLC.land,
       side: THREE.DoubleSide,
       fog: true,
-      wireframe: true,
+      wireframe: isWire,
       wireframeLinewidth: 2,
       // map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
     });
@@ -185,8 +185,9 @@ var HLEnvironment = function(){
 
     HL.materials.sea = new THREE.MeshBasicMaterial({
       color: HLC.sea,
+      side: THREE.DoubleSide,
       fog: true,
-      wireframe: true,
+      wireframe: isWire,
       wireframeLinewidth: 2,
       // opacity: 0.8,
       // transparent:true,
@@ -207,7 +208,7 @@ var HLEnvironment = function(){
       sizeAttenuation: true,
       //alphaTest: 0.5,
       depthWrite: false,
-      map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
+      map: isWire?null:new THREE.TextureLoader().load( "img/blur-400x400.png" ),
     });
 
     HL.materials.flora = new THREE.PointsMaterial({
@@ -219,7 +220,7 @@ var HLEnvironment = function(){
       fog: true,
       sizeAttenuation: true,
 //      depthWrite: false,
-      map: new THREE.TextureLoader().load( "img/tex_tree_8_128x128.png" ),
+      map: isWire?null:new THREE.TextureLoader().load( "img/tex_tree_8_128x128.png" ),
       alphaTest: 0.5,
     });
 
@@ -243,6 +244,7 @@ var HLEnvironment = function(){
     HL.scene.add(HL.land);
 
     HL.sea = new THREE.Mesh(HL.geometries.sea, HL.materials.sea);
+    HL.sea.frustumCulled = false;
     HL.scene.add(HL.sea);
 
     HL.clouds = new THREE.Points(HL.geometries.clouds, HL.materials.clouds);
