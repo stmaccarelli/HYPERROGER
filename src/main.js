@@ -61,7 +61,7 @@
     var gui = new dat.GUI();
     gui.add(HLG, 'movespeed',0.1,10.0);
     gui.add(HLG, 'seaSpeed',0.1,14.0);
-    gui.add(HLG, 'noiseFrequency',0,10);
+    gui.add(HLG, 'noiseFrequency',0,20);
     gui.add(HLG, 'noiseFrequency2',0,20);
     gui.add(HLG, 'devLandBase',-150,150);
     gui.add(HLG, 'devLandHeight',0,150);
@@ -91,6 +91,7 @@
       HLAnim.sea();
       HLAnim.land();
       HLAnim.elements();
+      HLAnim.colors();
 
       HLG.cameraHeight = HLG.cameraHeight + (HLG.devLandHeight*1.25+HLG.devLandBase-HLG.cameraHeight)*0.01;
       HL.camera.position.y = HLG.cameraHeight;

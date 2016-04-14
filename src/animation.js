@@ -57,11 +57,32 @@ var HLAnim = function(){
     HLH.shotPartCluster(HL.geometries.flora, HLG.landStepsCount, HL.floraAmount);
   }
 
+  var colorsDebounce = true;
+  function colors(){
+    if(HL.camera.position.y > 0 && colorsDebounce){
+      HL.renderer.setClearColor(HLC.horizon);
+      HL.materials.sky.color = HLC.horizon;
+      HL.scene.fog.color = HLC.horizon;
+      HL.materials.land.color = HLC.land;
+      HL.materials.sea.color = HLC.sea;
+      colorsDebounce=false;
+    }
+    else if(HL.camera.position.y < 0 && !colorsDebounce){
+      HL.renderer.setClearColor(HLC.underHorizon);
+      HL.materials.sky.color = HLC.underHorizon;
+      HL.scene.fog.color = HLC.underHorizon;
+      HL.materials.land.color = HLC.underLand;
+      HL.materials.sea.color = HLC.underSea;
+      colorsDebounce=true;
+    }
+  }
 
   return{
     sea:function(){return sea()},
     land:function(){return land()},
     elements:function(){return elements()},
+    colors: function(){return colors()},
     init:function(){return init()},
+
   }
 }();

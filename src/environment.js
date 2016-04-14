@@ -29,8 +29,12 @@ var HLG = {
 //HL Colors
 var HLC = {
   horizon: new THREE.Color(.1, .9, .9),
-  land: new THREE.Color(.9, 0, 0),
+  land: new THREE.Color(0, 0, 0),
   sea: new THREE.Color(0, .55, .9),
+
+  underHorizon: new THREE.Color(.01, .1, .5),
+  underLand: new THREE.Color(.2, .2, .4),
+  underSea: new THREE.Color(1,1,1),
 
   white: new THREE.Color(1, 1, 1)
 }
@@ -104,7 +108,7 @@ var HLEnvironment = function(){
     HL.scene = new THREE.Scene();
     if(HLG.fog)  HL.scene.fog = new THREE.Fog(HLC.horizon, HLG.worldwidth/6, HLG.worldwidth / 2);// - HLG.worldwidth / HLG.worldtiles *2 );
 
-    HL.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 10, 1000);
+    HL.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 10, 1000);
     HL.camera.position.y = HLG.cameraHeight;
     HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
 
@@ -242,7 +246,7 @@ var HLEnvironment = function(){
     HL.scene.add(HL.sea);
 
     HL.clouds = new THREE.Points(HL.geometries.clouds, HL.materials.clouds);
-    HL.clouds.frustumCulled = false;
+    // HL.clouds.frustumCulled = false;
     //HL.scene.add(HL.clouds);
 
     HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
@@ -250,7 +254,7 @@ var HLEnvironment = function(){
     HL.scene.add(HL.flora);
 
     HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
-    HL.flora.frustumCulled = false;
+//    HL.flora.frustumCulled = false;
 //    HL.scene.add(HL.fauna);
 
   }
