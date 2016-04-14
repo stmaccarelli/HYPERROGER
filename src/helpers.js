@@ -83,8 +83,8 @@ var HLH = function(){
        geometry.verticesNeedUpdate = true;
     }
 
-    var skipped,x=0,sC,z;
-    function shotFloraCluster(partGeom, landGeom, minLimit, maxLimit, stepsCount, amountToBurst){
+    var skipped,x=0,y=0,sC,z;
+    function shotPartCluster(partGeom, stepsCount, amountToBurst){
       skipped=0;
       sC = stepsCount / HLG.worldtiles;
       for(i=0;i<Math.min(partGeom.vertices.length,amountToBurst+skipped);i++){
@@ -94,21 +94,25 @@ var HLH = function(){
           partGeom.vertices[i].z= getRandomIntInclusive(-HLG.worldwidth+1,-HLG.worldwidth/2);
 
           y = (partGeom.vertices[i].z/HLG.worldwidth + 0.5)*-1;
-          //calcolare y con noise, come e uguale a land
           x = ((partGeom.vertices[i].x / (HLG.worldwidth/2))+1) / 2;
-          partGeom.vertices[i].y =
-          HL.noise.nNoise( x * HLG.noiseFrequency /*TBD frequency gotta change according to audio*/,
-            (sC+y) * HLG.noiseFrequency, HLG.noiseSeed /*TBD this gotta be HLG.noiseSeed*/)
-          * HLG.devLandHeight + HLG.devLandBase
-          + (HL.noise.nNoise(x * HLG.noiseFrequency2,
-            (sC+y) * HLG.noiseFrequency2, HLG.noiseSeed*2) + 1 ) / 2
-          * HLG.devLandHeight * .5;
-
-          // partGeom.vertices[i].y += 10;//solleva un po'
+          partGeom.vertices[i].y = landHeightNoise(x,sC+y);
+          partGeom.vertices[i].y += 5;//solleva un po'
         }
         else skipped++;
       }
       partGeom.verticesNeedUpdate = true;
+    }
+
+
+
+
+    function landHeightNoise(x,y){
+    return HL.noise.nNoise( x * HLG.noiseFrequency /*TBD frequency gotta change according to audio*/,
+      y * HLG.noiseFrequency, HLG.noiseSeed /*TBD this gotta be HLG.noiseSeed*/)
+    * HLG.devLandHeight + HLG.devLandBase
+    + (HL.noise.nNoise(x * HLG.noiseFrequency2,
+      y * HLG.noiseFrequency2, HLG.noiseSeed*2) + 1 ) / 2
+    * HLG.devLandHeight * .5;
     }
 
 
@@ -122,6 +126,7 @@ var HLH = function(){
       // offsetUV:             function(a,b){        return offsetUV(a,b)                },
       shiftHeights:         function(a){          return shiftHeights(a)                         },
       sinMotion:            function(a,b,c,d){    return sinMotion(a,b,c,d)                      },
-      shotFloraCluster:     function(a, b, c, d, e, f){return shotFloraCluster(a, b, c, d, e, f) },
+      shotPartCluster:      function(a, b, c){    return shotPartCluster(a, b, c)                },
+      landHeightNoise:      function(a,b){        return landHeightNoise(a,b)                    },
     }
 }();

@@ -3,6 +3,8 @@
     var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
     var isVR = window.location.href.indexOf('?vr')>-1;
     var isDebug = window.location.href.indexOf('?debug')>-1;
+    var isFPC = window.location.href.indexOf('?fpc')>-1;
+    var computeShadows = false;
 
     // init and enable NoSleep so screen won't dim
     var noSleep = new NoSleep();
@@ -79,16 +81,19 @@
       millis = frameCount/60;
 
       if(isMobile)
-        HL.controls.update();
-      //  HL.controls.update(HL.clock.getDelta()); //FPS controls mode
-    //  else HL.controls.update(); //device orientation controls mode
-      // if (isVR)
-      //   effect.render(scene, camera);
-      // else
-      HLAnim.move();
+        HL.controls.update(); //Accelerometers camera controls mode
+      else if(isFPC)
+        HL.controls.update(HL.clock.getDelta()); //FPC camera controls mode
+      else
+        HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2)); // camera looks at center point on horizon
+
+
+      HLAnim.sea();
+      HLAnim.land();
+      HLAnim.elements();
+
       HLG.cameraHeight = HLG.cameraHeight + (HLG.devLandHeight*1.25+HLG.devLandBase-HLG.cameraHeight)*0.01;
       HL.camera.position.y = HLG.cameraHeight;
-      if(!isMobile) HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
 
       if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
       else HL.renderer.render(HL.scene,HL.camera);

@@ -17,7 +17,7 @@ var HLG = {
   noiseFrequency2:1,
   noiseSeed:0,
 
-  fog:false,
+  fog:true,
 
   devLandBase:-5,
   devLandHeight:10,
@@ -74,7 +74,7 @@ var HL = {
   fauna:null,
   // init particle size for Particle Systems
   cloudsAmount : 50,
-  floraAmount : 500,
+  floraAmount : 200,
   faunaAmount : 100 // this will represent users, and will change live, so here we set a MAX_USERS_CANSHOW
 }
 
@@ -104,9 +104,9 @@ var HLEnvironment = function(){
     HL.scene = new THREE.Scene();
     if(HLG.fog)  HL.scene.fog = new THREE.Fog(HLC.horizon, HLG.worldwidth/6, HLG.worldwidth / 2);// - HLG.worldwidth / HLG.worldtiles *2 );
 
-    HL.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 100000000);
+    HL.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 10, 1000);
     HL.camera.position.y = HLG.cameraHeight;
-    if(!isMobile) HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
+    HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
 
     HL.renderer = new THREE.WebGLRenderer({antialias: true});
     HL.renderer.setPixelRatio(window.devicePixelRatio);
@@ -122,10 +122,11 @@ var HLEnvironment = function(){
     if (isMobile){
       HL.controls = new THREE.DeviceOrientationControls(HL.camera);
     }
-    else{
-      // HL.controls = new THREE.FirstPersonControls(HL.camera);
-		  // HL.controls.movementSpeed = 10;
-		  // HL.controls.lookSpeed = 0.1;
+    else if(isFPC){
+      HL.controls = new THREE.FirstPersonControls(HL.camera);
+		  HL.controls.movementSpeed = 10;
+		  HL.controls.lookSpeed = 0.1;
+      HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
     }
 
   }
@@ -161,7 +162,6 @@ var HLEnvironment = function(){
     HL.materials.sky = new THREE.MeshBasicMaterial({
       color: HLC.horizon,
       fog: false,
-      side: THREE.DoubleSide,
       wireframe: false,
       wireframeLinewidth: 2
     });
@@ -169,56 +169,59 @@ var HLEnvironment = function(){
 
     HL.materials.land = new THREE.MeshBasicMaterial({
       color: HLC.land,
-      fog: true,
       side: THREE.DoubleSide,
-      wireframe: false,
+      fog: true,
+      wireframe: true,
       wireframeLinewidth: 2,
-      map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
+      // map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
     });
-    HL.materials.land.map.wrapS = THREE.RepeatWrapping;
-    HL.materials.land.map.wrapT = THREE.RepeatWrapping;
-
-    HL.materials.land.map.repeat.set( HLG.worldtiles, 1 );
+    // HL.materials.land.map.wrapS = THREE.RepeatWrapping;
+    // HL.materials.land.map.wrapT = THREE.RepeatWrapping;
+    // HL.materials.land.map.repeat.set( HLG.worldtiles, 1 );
 
     HL.materials.sea = new THREE.MeshBasicMaterial({
       color: HLC.sea,
       fog: true,
-      wireframe: false,
+      wireframe: true,
       wireframeLinewidth: 2,
       // opacity: 0.8,
       // transparent:true,
       // blending: THREE.AdditiveBlending,
-      map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
+      // map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
     });
-    HL.materials.sea.map.wrapS = THREE.RepeatWrapping;
-    HL.materials.sea.map.wrapT = THREE.RepeatWrapping;
-    HL.materials.sea.map.repeat.set( 1, HLG.worldtiles*2 );
+    // HL.materials.sea.map.wrapS = THREE.RepeatWrapping;
+    // HL.materials.sea.map.wrapT = THREE.RepeatWrapping;
+    // HL.materials.sea.map.repeat.set( 1, HLG.worldtiles*2 );
 
     HL.materials.clouds = new THREE.PointsMaterial({
       color: HLC.white,
-      opacity: 0.2,
+      side: THREE.DoubleSide,
+      opacity: 1,
       transparent: true,
       size: 50,
       fog: false,
       sizeAttenuation: true,
       //alphaTest: 0.5,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
       map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
-
     });
 
     HL.materials.flora = new THREE.PointsMaterial({
       color: HLC.white,
-      opacity: 1,
-      transparent: false,
+      //side: THREE.DoubleSide,
+  //    opacity: 1,
+  //    transparent: true,
       size: 50,
-      fog: false,
-      sizeAttenuation: true
+      fog: true,
+      sizeAttenuation: true,
+//      depthWrite: false,
+      map: new THREE.TextureLoader().load( "img/tex_tree_8_128x128.png" ),
+      alphaTest: 0.5,
     });
 
     HL.materials.fauna = new THREE.PointsMaterial({
       color: HLC.white,
+      side: THREE.DoubleSide,
       opacity: 1,
       transparent: false,
       size: 20,
@@ -239,13 +242,17 @@ var HLEnvironment = function(){
     HL.scene.add(HL.sea);
 
     HL.clouds = new THREE.Points(HL.geometries.clouds, HL.materials.clouds);
+    HL.clouds.frustumCulled = false;
     //HL.scene.add(HL.clouds);
 
     HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
+    HL.flora.frustumCulled = false;
     HL.scene.add(HL.flora);
 
     HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
+    HL.flora.frustumCulled = false;
 //    HL.scene.add(HL.fauna);
+
   }
 
 
