@@ -36,7 +36,7 @@ var HLH = function(){
       geometry.vertices.push(
         new THREE.Vector3(
           Math.random() * worldWidth - worldWidth / 2 ,
-          Math.random() * worldWidth / 4 + 10, // TBD find a standard solution
+          Math.random() * worldWidth / HLG.worldtiles + HLG.worldheight/2, // TBD find a standard solution
           Math.random() * worldWidth - worldWidth / 2 )
       );
     else
@@ -83,7 +83,7 @@ var HLH = function(){
        geometry.verticesNeedUpdate = true;
     }
 
-    var skipped,x=0,y=0,sC,z;
+    var skipped,nX=0,nY=0,sC,z;
     function shotPartCluster(partGeom, stepsCount, amountToBurst){
       skipped=0;
       sC = stepsCount / HLG.worldtiles;
@@ -91,11 +91,11 @@ var HLH = function(){
         // if particle is inactive at "standby" distance
         if(partGeom.vertices[i].z==-HLG.worldwidth ){
           partGeom.vertices[i].x= Math.random() * HLG.worldwidth - HLG.worldwidth / 2;
-          partGeom.vertices[i].z= getRandomIntInclusive(-HLG.worldwidth+1,-HLG.worldwidth/2);
+          partGeom.vertices[i].z= getRandomIntInclusive(-HLG.worldwidth+.1,-HLG.worldwidth/2);
 
-          y = (partGeom.vertices[i].z/HLG.worldwidth + 0.5)*-1;
-          x = ((partGeom.vertices[i].x / (HLG.worldwidth/2))+1) / 2;
-          partGeom.vertices[i].y = landHeightNoise(x,sC+y);
+          nX = (partGeom.vertices[i].x/(HLG.worldwidth/2)+1) / 2;// in range 0 , 1.0
+          nY = (partGeom.vertices[i].z/HLG.worldwidth + 0.5)*-1; // in range 0 , 0.5
+          partGeom.vertices[i].y = landHeightNoise(nX,sC+nY);
           partGeom.vertices[i].y += 5;//solleva un po'
         }
         else skipped++;

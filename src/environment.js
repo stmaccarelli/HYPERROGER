@@ -5,6 +5,7 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 */
 
 // HL Global parameters
+// WILL BE HLE / Environment parameters, I'm gonna move the globals in MAIN, containing settings like isMobile, framecount, millis.
 var HLG = {
   worldwidth:800,
   worldheight:600,
@@ -13,6 +14,12 @@ var HLG = {
   seaSpeed:6.8,
   seaStepsCount:0,
   landStepsCount:0,
+
+  // init particle size for Particle Systems
+  cloudsAmount : 50,
+  floraAmount : 200,
+  faunaAmount : 100, // this will represent users, and will change live, so here we set a MAX_USERS_CANSHOW
+
   noiseFrequency:1,
   noiseFrequency2:1,
   noiseSeed:0,
@@ -76,10 +83,6 @@ var HL = {
   clouds:null,
   flora:null,
   fauna:null,
-  // init particle size for Particle Systems
-  cloudsAmount : 50,
-  floraAmount : 200,
-  faunaAmount : 100 // this will represent users, and will change live, so here we set a MAX_USERS_CANSHOW
 }
 
 var HLEnvironment = function(){
@@ -106,7 +109,7 @@ var HLEnvironment = function(){
 
     // set scene, camera, renderer, stereoEffect
     HL.scene = new THREE.Scene();
-    if(HLG.fog)  HL.scene.fog = new THREE.Fog(HLC.horizon, HLG.worldwidth/6, HLG.worldwidth / 2);// - HLG.worldwidth / HLG.worldtiles *2 );
+    if(HLG.fog && !isWire)  HL.scene.fog = new THREE.Fog(HLC.horizon, HLG.worldwidth/6, HLG.worldwidth / 2);// - HLG.worldwidth / HLG.worldtiles *2 );
 
     HL.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 10, 1000);
     HL.camera.position.y = HLG.cameraHeight;
@@ -152,12 +155,12 @@ var HLEnvironment = function(){
     for(var i=0; i<HLG.worldtiles;i++)
       HL.geometries.seaHeights[i]=1;
 
-    HLH.initParticleSystem(HL.geometries.clouds, HLG.worldwidth, HL.cloudsAmount, true, true);
+    HLH.initParticleSystem(HL.geometries.clouds, HLG.worldwidth, HLG.cloudsAmount, true, true);
     HLH.initShootableParticles(HL.geometries.clouds, HLG.worldwidth);
 
-    HLH.initParticleSystem(HL.geometries.flora , HLG.worldwidth, HL.floraAmount, false, true);
+    HLH.initParticleSystem(HL.geometries.flora , HLG.worldwidth, HLG.floraAmount, false, true);
 
-    HLH.initParticleSystem(HL.geometries.fauna , HLG.worldwidth, HL.faunaAmount, false, true);
+    HLH.initParticleSystem(HL.geometries.fauna , HLG.worldwidth, HLG.faunaAmount, false, true);
   }
 
 
@@ -200,11 +203,11 @@ var HLEnvironment = function(){
 
     HL.materials.clouds = new THREE.PointsMaterial({
       color: HLC.white,
-      side: THREE.DoubleSide,
+      // side: THREE.DoubleSide,
       opacity: 1,
       transparent: true,
       size: 50,
-      fog: false,
+      fog: true,
       sizeAttenuation: true,
       //alphaTest: 0.5,
       depthWrite: false,
@@ -212,7 +215,7 @@ var HLEnvironment = function(){
     });
 
     HL.materials.flora = new THREE.PointsMaterial({
-      color: HLC.white,
+      color: new THREE.Color(1,1,0),//HLC.white,
       //side: THREE.DoubleSide,
   //    opacity: 1,
   //    transparent: true,
@@ -226,12 +229,14 @@ var HLEnvironment = function(){
 
     HL.materials.fauna = new THREE.PointsMaterial({
       color: HLC.white,
-      side: THREE.DoubleSide,
-      opacity: 1,
-      transparent: false,
+      // side: THREE.DoubleSide,
+      // opacity: 1,
+      // transparent: false,
       size: 20,
       fog: true,
-      sizeAttenuation: true
+      sizeAttenuation: true,
+      map: new THREE.TextureLoader().load( "img/tex_tree_8_128x128.png" ),
+      alphaTest: 0.5,
     });
 
   }
@@ -248,16 +253,16 @@ var HLEnvironment = function(){
     HL.scene.add(HL.sea);
 
     HL.clouds = new THREE.Points(HL.geometries.clouds, HL.materials.clouds);
-    // HL.clouds.frustumCulled = false;
-    //HL.scene.add(HL.clouds);
+    HL.clouds.frustumCulled = false;
+    HL.scene.add(HL.clouds);
 
     HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
     HL.flora.frustumCulled = false;
     HL.scene.add(HL.flora);
 
     HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
-//    HL.flora.frustumCulled = false;
-//    HL.scene.add(HL.fauna);
+    HL.fauna.frustumCulled = false;
+    HL.scene.add(HL.fauna);
 
   }
 

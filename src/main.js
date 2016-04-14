@@ -7,6 +7,10 @@
     var isWire = window.location.href.indexOf('?wire')>-1;
     var computeShadows = false;
 
+    var frameCount = 0;
+    var millis = 0;
+
+    function mainInit(){
     // init and enable NoSleep so screen won't dim
     var noSleep = new NoSleep();
     function noSleepEnable(){
@@ -15,69 +19,50 @@
       console.log('noSleep enabled');
     }
     window.addEventListener('click', noSleepEnable, false);
+    noSleepEnable();
 
-    // prevent scroll
-    // left: 37, up: 38, right: 39, down: 40,
-    // spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
-    var keys = {37: 1, 38: 1, 39: 1, 40: 1};
+    var noScroll = new NoScroll();
+    noScroll.enable();
 
-    function preventDefault(e) {
-      e = e || window.event;
-      if (e.preventDefault)
-          e.preventDefault();
-      e.returnValue = false;
+
+    function onResized() {
+      HL.renderer.setSize(window.innerWidth, window.innerHeight);
+      HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
+
+      HL.camera.aspect = window.innerWidth / window.innerHeight;
+      HL.camera.updateProjectionMatrix();
     }
 
-    function preventDefaultForScrollKeys(e) {
-        if (keys[e.keyCode]) {
-            preventDefault(e);
-            return false;
-        }
-    }
+    window.addEventListener("resize", onResized);
+    window.addEventListener("resize", disableNavBar );
 
-    function disableTouchMove() {
-      if (window.addEventListener) // older FF
-          window.addEventListener('DOMMouseScroll', preventDefault, false);
-      window.onwheel = preventDefault; // modern standard
-      window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
-      window.ontouchmove  = preventDefault; // mobile
-      document.onkeydown  = preventDefaultForScrollKeys;
-    }
-    disableTouchMove();
 
-    function enableScroll() {
-        if (window.removeEventListener)
-            window.removeEventListener('DOMMouseScroll', preventDefault, false);
-        window.onmousewheel = document.onmousewheel = null;
-        window.onwheel = null;
-        window.ontouchmove = null;
-        document.onkeydown = null;
     }
 
 
-    var frameCount = 0;
-    var millis = 0;
 
-
+function guiInit(){
     var gui = new dat.GUI();
-    gui.add(HLG, 'movespeed',0.1,10.0);
-    gui.add(HLG, 'seaSpeed',0.1,14.0);
-    gui.add(HLG, 'noiseFrequency',0,20);
-    gui.add(HLG, 'noiseFrequency2',0,20);
-    gui.add(HLG, 'devLandBase',-150,150);
-    gui.add(HLG, 'devLandHeight',0,150);
+    var guiTweak = gui.addFolder('manuali');
+    guiTweak.add(HLG, 'movespeed',0.1,10.0);
+    guiTweak.add(HLG, 'seaSpeed',0.1,14.0);
+    guiTweak.add(HLG, 'noiseFrequency',0,20);
+    guiTweak.add(HLG, 'noiseFrequency2',0,20);
+    guiTweak.add(HLG, 'devLandBase',-150,150);
+    guiTweak.add(HLG, 'devLandHeight',0,150);
+    var guiBase = gui.addFolder('guiBase');
+    guiBase.add(HLR, 'connectedUsers', 0,500);
+    guiBase.add(HLR, 'fft1', 0.1, 1.1);
+    guiBase.add(HLR, 'fft2', 0.1, 1.1);
+    guiBase.add(HLR, 'fft3', 0.1, 1.1);
+    guiBase.add(HLR, 'fft4', 0.1, 1.1);
+    guiBase.add(HLR, 'fft5', 0.1, 1.1);
+
+  }
 
 
-
-    // init HL Environment
-    HLEnvironment.init();
-    HLAnim.init();
-
-    var i = 0, x=0,y=0;
-
-
-    function live() {
-      window.requestAnimationFrame(live);
+   function run() {
+      window.requestAnimationFrame(run);
       frameCount++;
       millis = frameCount/60;
 
@@ -102,11 +87,21 @@
 
     }
 
+
+
+
+    // TBD: fullscreen
+
+    // Safari iOS: if you tap on top or bottom of screen when in fullscreen, safari shows navbars
+    // trying to prevent, seems out of window scope. gotta explore "Navigator".
+    // or simply use this function to detect if - while in landscape - window height changed
+    // so we can show something, icon, message, etc.
     var debLand = false;
     function disableNavBar(){
       if(window.innerWidth>window.innerHeight){
         if(debLand){
           console.log('enter disableNavBar');
+          //qui mostrare messaggio con icola per rimettere il tel a posto
           window.setTimeout( function(){window.scroll(0,-100)},1000);
         }
         else debLand = true;
@@ -114,18 +109,14 @@
       else debLand = false;
     }
 
-    function onResized() {
-      HL.renderer.setSize(window.innerWidth, window.innerHeight);
-      HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
 
-      HL.camera.aspect = window.innerWidth / window.innerHeight;
-      HL.camera.updateProjectionMatrix();
-    }
+    window.addEventListener('load',function(){
+      mainInit();
+      guiInit();
+      // init HL Environment
+      HLEnvironment.init();
+      HLAnim.init();
 
-    window.addEventListener("resize", onResized);
-    window.addEventListener("resize", disableNavBar );
-    // on resize, se lo schermo è in landscale (w>h) scrollo il body a 0,0. magari elimina le barre
+      run();
 
-
-
-    live();
+    });

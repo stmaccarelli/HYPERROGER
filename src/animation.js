@@ -1,13 +1,11 @@
 /*
-This module is for live new THREE.AnimationAction(.
+This module is for animations: moving objects, changing colors, etc
 */
 
 var HLAnim = function(){
 
   //this calculate all the rows geometries, so the world won't start with zero heights
   function init(){
-
-//    window.addEventListener("mousedown", function(e){HLH.shotPartCluster(HL.geometries.flora, HLG.landStepsCount, HL.floraAmount)},false);
   }
 
 
@@ -52,25 +50,27 @@ var HLAnim = function(){
 
   // FOR CLOUDS, FLORA AND FAUNA
   function elements(){
+    // moveParticles moves all
     HLH.moveParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+2);
     HLH.moveParticles(HL.geometries.flora, HLG.worldwidth, HLG.movespeed);
-    HLH.shotPartCluster(HL.geometries.flora, HLG.landStepsCount, HL.floraAmount);
+
+    HLH.shotPartCluster(HL.geometries.flora, HLG.landStepsCount, HLG.floraAmount/60);
   }
 
   var colorsDebounce = true;
   function colors(){
     if(HL.camera.position.y > 0 && colorsDebounce){
       HL.renderer.setClearColor(HLC.horizon);
+      if(HLG.fog && !isWire) HL.scene.fog.color = HLC.horizon;
       HL.materials.sky.color = HLC.horizon;
-      HL.scene.fog.color = HLC.horizon;
       HL.materials.land.color = HLC.land;
       HL.materials.sea.color = HLC.sea;
       colorsDebounce=false;
     }
     else if(HL.camera.position.y < 0 && !colorsDebounce){
       HL.renderer.setClearColor(HLC.underHorizon);
+      if(HLG.fog && !isWire) HL.scene.fog.color = HLC.underHorizon;
       HL.materials.sky.color = HLC.underHorizon;
-      HL.scene.fog.color = HLC.underHorizon;
       HL.materials.land.color = HLC.underLand;
       HL.materials.sea.color = HLC.underSea;
       colorsDebounce=true;
