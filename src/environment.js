@@ -156,7 +156,6 @@ var HLEnvironment = function(){
       HL.geometries.seaHeights[i]=1;
 
     HLH.initParticleSystem(HL.geometries.clouds, HLG.worldwidth, HLG.cloudsAmount, true, true);
-    HLH.initShootableParticles(HL.geometries.clouds, HLG.worldwidth);
 
     HLH.initParticleSystem(HL.geometries.flora , HLG.worldwidth, HLG.floraAmount, false, true);
 
@@ -216,27 +215,26 @@ var HLEnvironment = function(){
 
     HL.materials.flora = new THREE.PointsMaterial({
       color: new THREE.Color(1,1,0),//HLC.white,
-      //side: THREE.DoubleSide,
-  //    opacity: 1,
-  //    transparent: true,
       size: 50,
       fog: true,
       sizeAttenuation: true,
-//      depthWrite: false,
-      map: isWire?null:new THREE.TextureLoader().load( "img/tex_tree_8_128x128.png" ),
-      alphaTest: 0.5,
+      depthWrite: true,
+      transparent:true,
+      map: isWire?null:new THREE.TextureLoader().load( "img/tex_tree_82_128x128.png" ),
+      blending: THREE.AdditiveBlending,
     });
 
     HL.materials.fauna = new THREE.PointsMaterial({
       color: HLC.white,
       // side: THREE.DoubleSide,
-      // opacity: 1,
-      // transparent: false,
+      opacity: .1,
+      transparent: true,
       size: 20,
       fog: true,
       sizeAttenuation: true,
       map: new THREE.TextureLoader().load( "img/tex_tree_8_128x128.png" ),
-      alphaTest: 0.5,
+      //alphaTest: 0.5,
+      blending: THREE.AdditiveBlending,
     });
 
   }

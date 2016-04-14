@@ -36,7 +36,7 @@ var HLH = function(){
       geometry.vertices.push(
         new THREE.Vector3(
           Math.random() * worldWidth - worldWidth / 2 ,
-          Math.random() * worldWidth / HLG.worldtiles + HLG.worldheight/2, // TBD find a standard solution
+          Math.random() * worldWidth / HLG.worldtiles + HLG.worldheight/4, // TBD find a standard solution
           Math.random() * worldWidth - worldWidth / 2 )
       );
     else
@@ -61,7 +61,7 @@ var HLH = function(){
     // the motion function moves every particle in the "worldwidth" scope,
     // and when particle reaches the end of the worldwidth, it resets the position far again.
 
-    function startParticle(geometry, limit){
+    function startParticles(geometry, limit){
       for(i=0;i<geometry.vertices.length;i++){
         if(geometry.vertices[i].z==-limit){
           geometry.vertices[i].z=-limit/2;
@@ -83,8 +83,19 @@ var HLH = function(){
        geometry.verticesNeedUpdate = true;
     }
 
+    function loopParticles(geometry, WORLDSIZE, moveSpeed){
+      for(i=0;i<geometry.vertices.length;i++){
+        if(geometry.vertices[i].z>-WORLDSIZE)
+          geometry.vertices[i].z+=moveSpeed;
+        if(geometry.vertices[i].z>=WORLDSIZE/2)
+          geometry.vertices[i].z=-WORLDSIZE/2;
+      }
+       geometry.verticesNeedUpdate = true;
+    }
+
+
     var skipped,nX=0,nY=0,sC,z;
-    function shotPartCluster(partGeom, stepsCount, amountToBurst){
+    function shotFloraCluster(partGeom, stepsCount, amountToBurst){
       skipped=0;
       sC = stepsCount / HLG.worldtiles;
       for(i=0;i<Math.min(partGeom.vertices.length,amountToBurst+skipped);i++){
@@ -119,14 +130,15 @@ var HLH = function(){
     return{
       initParticleSystem:   function(a,b,c,d,e){  return initParticleSystem(a,b,c,d,e)           },
       initShootableParticles:function(a,b){       return initShootableParticles(a,b)             },
-      startParticle:        function(a,b){        return startParticle(a,b)                      },
+      startParticles:        function(a,b){        return startParticles(a,b)                      },
       moveParticles:        function(a,b,c){      return moveParticles(a,b,c)                    },
+      loopParticles:        function(a,b,c){      return loopParticles(a,b,c)                    },
       // shuffleUVs:           function(a){          return shuffleUVs(a)                },
       // scaleUVs:             function(a,b){        return scaleUVs(a,b)                },
       // offsetUV:             function(a,b){        return offsetUV(a,b)                },
       shiftHeights:         function(a){          return shiftHeights(a)                         },
       sinMotion:            function(a,b,c,d){    return sinMotion(a,b,c,d)                      },
-      shotPartCluster:      function(a, b, c){    return shotPartCluster(a, b, c)                },
+      shotFloraCluster:     function(a, b, c){    return shotFloraCluster(a, b, c)                },
       landHeightNoise:      function(a,b){        return landHeightNoise(a,b)                    },
     }
 }();

@@ -6,8 +6,9 @@ var HLAnim = function(){
 
   //this calculate all the rows geometries, so the world won't start with zero heights
   function init(){
+    for(i=0;i<HL.geometries.clouds.vertices.length;i++)
+      HL.geometries.clouds.vertices[0].z+=HLG.worldwidth/2;
   }
-
 
   function sea(){
 
@@ -51,10 +52,10 @@ var HLAnim = function(){
   // FOR CLOUDS, FLORA AND FAUNA
   function elements(){
     // moveParticles moves all
-    HLH.moveParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+2);
+    HLH.loopParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+2);
     HLH.moveParticles(HL.geometries.flora, HLG.worldwidth, HLG.movespeed);
 
-    HLH.shotPartCluster(HL.geometries.flora, HLG.landStepsCount, HLG.floraAmount/60);
+    HLH.shotFloraCluster(HL.geometries.flora, HLG.landStepsCount, 1);
   }
 
   var colorsDebounce = true;
