@@ -29,7 +29,7 @@ var HLAnim = function(){
     //   HL.geometries.seaHeights[0] = 2;
     }
     // basic sea waves
-    //HLH.sinMotion(HL.geometries.sea, HLG.seaStepsCount, HL.geometries.seaHeights, HLG.seaSpeed);
+    HLH.sinMotion(HL.geometries.sea, HLG.seaStepsCount, HL.geometries.seaHeights, HLG.seaSpeed);
   }
 
   function land(){
@@ -55,7 +55,7 @@ var HLAnim = function(){
   // FOR CLOUDS, FLORA AND FAUNA
   function elements(){
     // moveParticles moves all
-    HLH.loopParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+2);
+    HLH.loopParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+20);
 
     HLH.moveParticles(HL.geometries.flora, HLG.worldwidth, HLG.movespeed);
 

@@ -40,7 +40,7 @@ var HLH = function(){
         );
       }
       else {
-        vertexPositions.push([0,0,-worldWidth]);
+        vertexPositions.push([Math.random() * worldWidth, worldWidth*10, Math.random() * worldWidth]);
       }
     }
     var vertices = new Float32Array( vertexPositions.length * 3 ); // three components per vertex
@@ -56,7 +56,6 @@ var HLH = function(){
     // itemSize = 3 because there are 3 values (components) per vertex
     geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
     if(dynamic) geometry.attributes.position.dynamic = true;
-    console.log(geometry);
   }
 
 
@@ -72,7 +71,7 @@ var HLH = function(){
       );
     else
       geometry.vertices.push(
-        new THREE.Vector3(0,0,-worldWidth)
+        new THREE.Vector3(1,1,-worldWidth)
       );
   }
   if(dynamic) geometry.dynamic = true;
