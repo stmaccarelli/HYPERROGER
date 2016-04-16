@@ -21,15 +21,15 @@ var HLAnim = function(){
     if (HL.sea.position.z > HLG.worldwidth / HL.geometries.sea.parameters.heightSegments) {
       HLG.seaStepsCount++;
       HL.sea.position.z  -= HLG.worldwidth / HL.geometries.sea.parameters.heightSegments;
-    //   // shift sea heights for rows
-    //   for(var i=HL.geometries.sea.parameters.heightSegments; i > 0; i--){
-    //     HL.geometries.seaHeights[i] = HL.geometries.seaHeights[i-1];
-    //   }
-    //  // calculate SEA first row heights
-    //   HL.geometries.seaHeights[0] = 2;
+      // shift sea heights for rows
+      for(var i=HL.geometries.sea.parameters.heightSegments; i > 0; i--){
+        HL.geometries.seaHeights[i] = HL.geometries.seaHeights[i-1];
+      }
+     // calculate SEA first row heights
+      HL.geometries.seaHeights[0] = 5;
     }
-    // basic sea waves
-    HLH.sinMotion(HL.geometries.sea, HLG.seaStepsCount, HL.geometries.seaHeights, HLG.seaSpeed);
+    //basic sea waves
+     HLH.sinMotion(HL.geometries.sea, HLG.seaStepsCount, HL.geometries.seaHeights, HLG.seaSpeed);
   }
 
   function land(){
@@ -55,7 +55,7 @@ var HLAnim = function(){
   // FOR CLOUDS, FLORA AND FAUNA
   function elements(){
     // moveParticles moves all
-    HLH.loopParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+20);
+    HLH.loopParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+1);
 
     HLH.moveParticles(HL.geometries.flora, HLG.worldwidth, HLG.movespeed);
 
@@ -67,18 +67,23 @@ var HLAnim = function(){
     if(HL.camera.position.y > 0 && colorsDebounce){
       HL.renderer.setClearColor(HLC.horizon);
       if(HLG.fog && !isWire) HL.scene.fog.color = HLC.horizon;
-      HL.materials.sky.color = HLC.horizon;
+      HL.materials.skybox.color = HLC.horizon;
+      HL.materials.seabox.color = HLC.underHorizon;
       HL.materials.land.color = HLC.land;
       HL.materials.sea.color = HLC.sea;
       colorsDebounce=false;
+      console.log('colors above');
     }
     else if(HL.camera.position.y < 0 && !colorsDebounce){
       HL.renderer.setClearColor(HLC.underHorizon);
       if(HLG.fog && !isWire) HL.scene.fog.color = HLC.underHorizon;
-      HL.materials.sky.color = HLC.underHorizon;
+      HL.materials.skybox.color = HLC.underHorizon;
+      HL.materials.seabox.color = HLC.horizon;
       HL.materials.land.color = HLC.underLand;
       HL.materials.sea.color = HLC.underSea;
       colorsDebounce=true;
+      console.log('colors below');
+
     }
   }
 

@@ -9,4 +9,11 @@ var HLR = {
 
   connectedUsers:0, // affects fauna
 
+  key1: false,
+  key2: false,
+  key3: false,
+  key4: false,
+  key5: false,
+  
+
 }

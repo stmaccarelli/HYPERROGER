@@ -28,6 +28,7 @@
     function onResized() {
       HL.renderer.setSize(window.innerWidth, window.innerHeight);
       HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
+      groundMirror.renderer.setSize(window.innerWidth, window.innerHeight);
 
       HL.camera.aspect = window.innerWidth / window.innerHeight;
       HL.camera.updateProjectionMatrix();
@@ -45,20 +46,47 @@ function guiInit(){
     var gui = new dat.GUI();
     var guiTweak = gui.addFolder('manuali');
     guiTweak.add(HLG, 'movespeed',0.1,10.0);
-    guiTweak.add(HLG, 'seaSpeed',0.1,14.0);
+    guiTweak.add(HLG, 'seaSpeed',0.001,2.0).step(0.01);
     guiTweak.add(HLG, 'noiseFrequency',0,20);
     guiTweak.add(HLG, 'noiseFrequency2',0,20);
     guiTweak.add(HLG, 'devLandBase',-150,150);
     guiTweak.add(HLG, 'devLandHeight',0,150);
     var guiBase = gui.addFolder('guiBase');
-    guiBase.add(HLR, 'connectedUsers', 0,500);
+    guiBase.add(HLR, 'connectedUsers', -500,500);
     guiBase.add(HLR, 'fft1', 0.1, 1.1);
     guiBase.add(HLR, 'fft2', 0.1, 1.1);
     guiBase.add(HLR, 'fft3', 0.1, 1.1);
     guiBase.add(HLR, 'fft4', 0.1, 1.1);
     guiBase.add(HLR, 'fft5', 0.1, 1.1);
 
+
+    // var effectController  = {
+    //
+    //   focus: 		1.0,
+    //   aperture:	0.025,
+    //   maxblur:	1.0
+    //
+    // };
+    //
+    // var matChanger = function( ) {
+    //
+    //   HL.postprocessing.bokeh.uniforms[ "focus" ].value = effectController.focus;
+    //   HL.postprocessing.bokeh.uniforms[ "aperture" ].value = effectController.aperture;
+    //   HL.postprocessing.bokeh.uniforms[ "maxblur" ].value = effectController.maxblur;
+    //
+    // };
+    //
+    // gui.add( effectController, "focus", 0.1, 2.1, 0.01 ).onChange( matChanger );
+    // gui.add( effectController, "aperture", 0.001, 0.2, 0.001 ).onChange( matChanger );
+    // gui.add( effectController, "maxblur", 0.0, 3.0, 0.025 ).onChange( matChanger );
+    // //gui.close();
+
+
+
+
   }
+
+
 
 
    function run() {
@@ -73,17 +101,23 @@ function guiInit(){
       else
         HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2)); // camera looks at center point on horizon
 
+      if(frameCount==0)  HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
 
       HLAnim.sea();
       HLAnim.land();
       HLAnim.elements();
       HLAnim.colors();
 
+
+
       HLG.cameraHeight = HLG.cameraHeight + (HLG.devLandHeight*1.25+HLG.devLandBase-HLG.cameraHeight)*0.01;
       HL.camera.position.y = HLG.cameraHeight;
 
+      groundMirror.render();
+
       if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
       else HL.renderer.render(HL.scene,HL.camera);
+
 
     }
 

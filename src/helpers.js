@@ -8,6 +8,16 @@ var HLH = function(){
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  // // simple sine motion for a plane buffer geometry, for seawaves NEEDS TO BE FIXED - VERTICES ADDRESSING IS INCORRECT
+  // function sinMotion(geometry, stepsCount, heights, seaSpeed){
+  //   for ( y = 0; y < (geometry.parameters.heightSegments); y++)
+  //     for ( x = 0; x < (geometry.parameters.widthSegments)*3; x+=3) {
+  //       geometry.attributes.position.array[y * (geometry.parameters.widthSegments)*3 + x +2] =
+  //         Math.sin( ( millis + x * ((y*2- stepsCount*2)) ) * seaSpeed ) * (heights[y] + 2.1); //add 1 to height because we don't want a completely flat sea
+  //     }
+  //   geometry.attributes.position.needsUpdate = true;
+  // }
+
   // simple sine motion for a plane geometry, for seawaves
   function sinMotion(geometry, stepsCount, heights, seaSpeed){
     for ( y = 0; y < geometry.parameters.heightSegments; y++)
@@ -18,7 +28,7 @@ var HLH = function(){
     geometry.verticesNeedUpdate = true;
   }
 
-  // shift vertex heights on the previous vertex row.
+  // shift vertex heights of all the geometry rows from the previous vertex row.
   // it's the core of the landscape motion logic
   function shiftHeights(geometry){
     for ( y = geometry.parameters.heightSegments; y > 0; y--)
@@ -151,7 +161,7 @@ var HLH = function(){
 
           nX = (geometry.attributes.position.array[i]/(HLG.worldwidth/2)+1) / 2;// in range 0 , 1.0
           nY = (geometry.attributes.position.array[i+2]/HLG.worldwidth + 0.5)*-1; // in range 0 , 0.5
-          geometry.attributes.position.array[i+1] = landHeightNoise(nX,sC+nY) + 5;
+          geometry.attributes.position.array[i+1] = landHeightNoise(nX,sC+nY) + 1;
         }
         else skipped++;
       }
