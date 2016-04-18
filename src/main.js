@@ -5,7 +5,7 @@
     var isDebug = window.location.href.indexOf('?debug')>-1;
     var isFPC = window.location.href.indexOf('?fpc')>-1;
     var isWire = window.location.href.indexOf('?wire')>-1;
-    var computeShadows = false;
+    var hasShadows = true;
 
     var frameCount = 0;
     var millis = 0;
@@ -52,7 +52,7 @@ function guiInit(){
     guiTweak.add(HLG, 'devLandBase',-150,150);
     guiTweak.add(HLG, 'devLandHeight',0,150);
     var guiBase = gui.addFolder('guiBase');
-    guiBase.add(HLR, 'connectedUsers', -500,500);
+    guiBase.add(HLR, 'connectedUsers', 0,500);
     guiBase.add(HLR, 'fft1', 0.1, 1.1);
     guiBase.add(HLR, 'fft2', 0.1, 1.1);
     guiBase.add(HLR, 'fft3', 0.1, 1.1);
@@ -94,6 +94,11 @@ function guiInit(){
       frameCount++;
       millis = frameCount/60;
 
+      // Audio
+      // HLR.updateFFT(AA.getFreq(0), AA.getFreq(1), AA.getFreq(64), AA.getFreq(128), AA.getFreq(200));
+      // HLR.updateHLParams();
+
+      // Controls
       if(isMobile)
         HL.controls.update(); //Accelerometers camera controls mode
       else if(isFPC)
@@ -101,26 +106,25 @@ function guiInit(){
       else
         HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2)); // camera looks at center point on horizon
 
-      if(frameCount==0)  HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
-
+      // Environment and animation
+      HLAnim.colors();
+      HLAnim.elements();
       HLAnim.sea();
       HLAnim.land();
-      HLAnim.elements();
-      HLAnim.colors();
-
-
 
       HLG.cameraHeight = HLG.cameraHeight + (HLG.devLandHeight*1.25+HLG.devLandBase-HLG.cameraHeight)*0.01;
       HL.camera.position.y = HLG.cameraHeight;
 
-      groundMirror.render();
+      // Rendering
+
+      // groundMirror.render();
+      // HL.renderer.setRenderTarget( null ); // add this line
 
       if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
       else HL.renderer.render(HL.scene,HL.camera);
 
 
     }
-
 
 
 

@@ -16,8 +16,8 @@ var HLG = {
   landStepsCount:0,
 
   // init particle size for Particle Systems
-  cloudsAmount : 500,
-  floraAmount : 500,
+  cloudsAmount : 20,
+  floraAmount : 20,
   faunaAmount : 30, // this will represent users, and will change live, so here we set a MAX_USERS_CANSHOW
 
   noiseFrequency:1,
@@ -26,7 +26,7 @@ var HLG = {
 
   fog:true,
 
-  devLandBase:-20,
+  devLandBase:-5,
   devLandHeight:10,
 
   cameraHeight:100,
@@ -104,8 +104,6 @@ var HLEnvironment = function(){
     initGeometries();
     initMaterials();
     initMeshes();
-    //initLights();
-
     // start clock;
     HL.clock.start();
   }
@@ -128,7 +126,7 @@ var HLEnvironment = function(){
     HL.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 10000);
     HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
 
-    HL.renderer = new THREE.WebGLRenderer({antialias: true, shadowMapEnabled:true});
+    HL.renderer = new THREE.WebGLRenderer({antialias: true});
     HL.renderer.setPixelRatio(window.devicePixelRatio);
     HL.renderer.setClearColor(HLC.horizon);
     //HL.renderer.sortObjects = false;
@@ -150,7 +148,17 @@ var HLEnvironment = function(){
 		  HL.controls.lookSpeed = 0.1;
       HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2));
     }
+
+
+
+    // HL.scene.add( new THREE.AmbientLight( 0x444444 ) );
+    //
+    // var light = new THREE.DirectionalLight( 0xffffbb, 1 );
+    // light.position.set( - 1, 1, - 1 );
+    // HL.scene.add( light );
+
   }
+
 
   function initGeometries(){
     // init and set solid geometries
@@ -205,12 +213,11 @@ var HLEnvironment = function(){
       fog: true,
       wireframe: isWire,
       wireframeLinewidth: 2,
-      shading: THREE.FlatShading,
-      map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
+      map: new THREE.TextureLoader().load( "img/tex_grass_1024.png" ),
     });
     HL.materials.land.map.wrapS = THREE.RepeatWrapping;
     HL.materials.land.map.wrapT = THREE.RepeatWrapping;
-    HL.materials.land.map.repeat.set( .5, HLG.worldtiles );
+    HL.materials.land.map.repeat.set( 1, HLG.worldtiles );
 
     HL.materials.sea = new THREE.MeshBasicMaterial({
       color: HLC.sea,
@@ -230,12 +237,12 @@ var HLEnvironment = function(){
     HL.materials.clouds = new THREE.PointsMaterial({
       color: HLC.clouds,
       // side: THREE.DoubleSide,
-      opacity: 0.1,
-      transparent: true,
+      // opacity: 0.55,
+      // transparent: true,
       size: 8,
       fog: true,
       sizeAttenuation: false,
-      //alphaTest: 0.5,
+      alphaTest: 0.5,
       //depthWrite: false,
     //  map: isWire?null:new THREE.TextureLoader().load( "img/tex_cloud_128x128.png" ),
     });
@@ -245,7 +252,7 @@ var HLEnvironment = function(){
       // side: THREE.DoubleSide,
       // opacity: 0.55,
       // transparent: true,
-      size: 50,
+      size: 10,
       fog: true,
       sizeAttenuation: true,
       alphaTest: 0.5,
@@ -287,8 +294,8 @@ var HLEnvironment = function(){
     HL.sea = new THREE.Mesh(HL.geometries.sea, HL.materials.sea);
     HL.scene.add(HL.sea);
 
-    // // MIRROR
-    // groundMirror = new THREE.Mirror( HL.renderer, HL.camera, { clipBias: 0.00, textureWidth: HLG.worldwidth, textureHeight: HLG.worldwidth, color: 0x444444 } );
+    // MIRROR
+    // groundMirror = new THREE.Mirror( HL.renderer, HL.camera, { clipBias: 0.00, textureWidth: HLG.worldwidth/2, textureHeight: HLG.worldwidth/2, color: 0x444444 } );
     // groundMirror.rotateX( - Math.PI / 2 );
     // HL.sea = new THREE.Mesh( HL.geometries.sea, groundMirror.material );
     // HL.sea.add( groundMirror );
@@ -302,19 +309,13 @@ var HLEnvironment = function(){
     //HL.flora.frustumCulled = true;
     HL.scene.add(HL.flora);
 
-    // HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
-    // //HL.fauna.frustumCulled = true;
-    // HL.scene.add(HL.fauna);
+    HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
+    //HL.fauna.frustumCulled = true;
+    HL.scene.add(HL.fauna);
 
   }
 
-  function initLights(){
-    HL.scene.add( new THREE.AmbientLight( 0x444444 ) );
-    var light = new THREE.DirectionalLight( 0xffffbb, 1 );
-    light.position.set( - 1, 1, - 1 );
-    light.castShadows = true;
-    HL.scene.add( light );
-  }
+
 
 
 

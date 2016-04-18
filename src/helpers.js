@@ -18,8 +18,8 @@ var HLH = function(){
   //   geometry.attributes.position.needsUpdate = true;
   // }
 
-  // simple sine motion for a plane geometry, for seawaves
-  function sinMotion(geometry, stepsCount, heights, seaSpeed){
+  // simple sine motion on Y axis for a plane geometry, for seawaves
+  function seaMotion(geometry, stepsCount, heights, seaSpeed){
     for ( y = 0; y < geometry.parameters.heightSegments; y++)
       for ( x = 0; x < geometry.parameters.widthSegments + 1; x++) {
         geometry.vertices[y * (geometry.parameters.widthSegments + 1) + x].y =
@@ -27,6 +27,17 @@ var HLH = function(){
       }
     geometry.verticesNeedUpdate = true;
   }
+
+  //  sine motion on Y axis for a BufferGeometry
+  function bufSinMotion(geometry, height, speed){
+    height = height || 1;
+    speed = speed || 1;
+    for ( i = 0; i < geometry.attributes.position.array.length-2; i+=3)
+      geometry.attributes.position.array[i+1] +=
+          Math.sin( millis * speed + i) * height; //add 1 to height because we don't want a completely flat sea
+    geometry.attributes.position.needsUpdate = true;
+  }
+
 
   // shift vertex heights of all the geometry rows from the previous vertex row.
   // it's the core of the landscape motion logic
@@ -45,7 +56,7 @@ var HLH = function(){
       if(randomize){
         vertexPositions.push(
           [ Math.random() * worldWidth - worldWidth / 2 ,
-            Math.random() * worldWidth / HLG.worldtiles + HLG.worldheight/4, // TBD find a standard solution
+            Math.random() * worldWidth / 4, // TBD find a standard solution
             Math.random() * worldWidth - worldWidth / 2]
         );
       }
@@ -147,26 +158,45 @@ var HLH = function(){
        geometry.attributes.position.needsUpdate = true;
 
     }
+    var skipped=0,nX=0,nY=0,sC,z;
 
-
-    var skipped,nX=0,nY=0,sC,z;
     function shotFloraCluster(geometry, stepsCount, amountToBurst){
-      skipped=0;
+      skipped = 0;
       sC = stepsCount / HLG.worldtiles;
       for(i=0;i<Math.min(geometry.attributes.position.array.length,amountToBurst+skipped);i++){
         // if particle is inactive at "standby" distance
         if(geometry.attributes.position.array[i+2]==-HLG.worldwidth ){
-          geometry.attributes.position.array[i]= Math.random() * HLG.worldwidth - HLG.worldwidth / 2;
-          geometry.attributes.position.array[i+2]= getRandomIntInclusive(-HLG.worldwidth+.1,-HLG.worldwidth/2);
+          nX = Math.random();
+          geometry.attributes.position.array[i] = (nX*2 - 1) * (HLG.worldwidth/2);
+          geometry.attributes.position.array[i+2]= getRandomIntInclusive(-HLG.worldwidth*0.75,-HLG.worldwidth/2);
 
-          nX = (geometry.attributes.position.array[i]/(HLG.worldwidth/2)+1) / 2;// in range 0 , 1.0
           nY = (geometry.attributes.position.array[i+2]/HLG.worldwidth + 0.5)*-1; // in range 0 , 0.5
-          geometry.attributes.position.array[i+1] = landHeightNoise(nX,sC+nY) + 1;
+          geometry.attributes.position.array[i+1] = landHeightNoise(nX,(sC+nY));
+          //         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLG.landStepsCount / HLG.worldtiles) * 0.75 );
         }
         else skipped++;
       }
       geometry.attributes.position.needsUpdate = true;
     }
+
+
+
+    function shotFloraParticle(geometry, stepsCount){
+      var sC = stepsCount / HLG.worldtiles +1;
+      for(i=0;i<geometry.attributes.position.array.length;i++){
+        // if particle is inactive at "standby" distance
+        if(geometry.attributes.position.array[i+2]==-HLG.worldwidth ){
+          geometry.attributes.position.array[i+2]= -HLG.worldwidth/2;
+          geometry.attributes.position.array[i]= Math.random() * HLG.worldwidth;
+
+          nX = (geometry.attributes.position.array[i]/(HLG.worldwidth)+1) / 2;// in range 0 , 1.0
+          geometry.attributes.position.array[i+1] = landHeightNoise(nX,sC*0.75);
+          break;
+        }
+      }
+      geometry.attributes.position.needsUpdate = true;
+    }
+
 
 
 
@@ -177,23 +207,25 @@ var HLH = function(){
     * HLG.devLandHeight + HLG.devLandBase
     + (HL.noise.nNoise(x * HLG.noiseFrequency2,
       y * HLG.noiseFrequency2, HLG.noiseSeed*2) + 1 ) / 2
-    * HLG.devLandHeight * .5;
+    * HLG.devLandHeight * 0.5;
     }
 
 
     return{
       initParticleSystem:   function(a,b,c,d,e){  return initParticleSystem(a,b,c,d,e)           },
-      initBufParticleSystem:   function(a,b,c,d,e){  return initBufParticleSystem(a,b,c,d,e)           },
+      initBufParticleSystem:   function(a,b,c,d,e){  return initBufParticleSystem(a,b,c,d,e)     },
     //  initShootableParticles:function(a,b){       return initShootableParticles(a,b)             },
-      startParticles:        function(a,b){        return startParticles(a,b)                      },
+      startParticles:        function(a,b){        return startParticles(a,b)                    },
       moveParticles:        function(a,b,c){      return moveParticles(a,b,c)                    },
       loopParticles:        function(a,b,c){      return loopParticles(a,b,c)                    },
       // shuffleUVs:           function(a){          return shuffleUVs(a)                },
       // scaleUVs:             function(a,b){        return scaleUVs(a,b)                },
       // offsetUV:             function(a,b){        return offsetUV(a,b)                },
       shiftHeights:         function(a){          return shiftHeights(a)                         },
-      sinMotion:            function(a,b,c,d){    return sinMotion(a,b,c,d)                      },
-      shotFloraCluster:     function(a, b, c){    return shotFloraCluster(a, b, c)                },
+      seaMotion:            function(a,b,c,d){    return seaMotion(a,b,c,d)                      },
+      bufSinMotion:         function(a,b,c){      return bufSinMotion(a,b,c)                     },
+      shotFloraCluster:     function(a, b, c){    return shotFloraCluster(a, b, c)               },
+      shotFloraParticle:    function(a,b){        return shotFloraParticle(a,b)                  },
       landHeightNoise:      function(a,b){        return landHeightNoise(a,b)                    },
     }
 }();

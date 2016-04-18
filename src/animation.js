@@ -29,7 +29,7 @@ var HLAnim = function(){
       HL.geometries.seaHeights[0] = 5;
     }
     //basic sea waves
-     HLH.sinMotion(HL.geometries.sea, HLG.seaStepsCount, HL.geometries.seaHeights, HLG.seaSpeed);
+     HLH.seaMotion(HL.geometries.sea, HLG.seaStepsCount, HL.geometries.seaHeights, HLG.seaSpeed);
   }
 
   function land(){
@@ -37,29 +37,35 @@ var HLAnim = function(){
     // if plane moved more than a row
     if (HL.land.position.z > HLG.worldwidth / HL.geometries.land.parameters.heightSegments) {
       HLG.landStepsCount++;
+
       // put plane back 1 row, so it will look moving seamless
       HL.land.position.z -= HLG.worldwidth / HL.geometries.land.parameters.heightSegments;
       // then shift land heights on next rows
       HLH.shiftHeights(HL.geometries.land);
       // then calculate LAND first row new heights
       for ( i = 0; i < (HL.geometries.land.parameters.widthSegments + 1); i++){
-        HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), HLG.landStepsCount / HLG.worldtiles );
+        HL.geometries.land.vertices[i].y = HLH.landHeightNoise(
+          i / (HL.geometries.land.parameters.widthSegments),
+          (HLG.landStepsCount / HLG.worldtiles));
       }
-      if(computeShadows){
+      if(hasShadows){
         HL.geometries.land.computeFaceNormals();
         HL.geometries.land.computeVertexNormals();
       }
     }
+
   }
 
   // FOR CLOUDS, FLORA AND FAUNA
   function elements(){
-    // moveParticles moves all
-    HLH.loopParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+1);
+    HLH.loopParticles(HL.geometries.clouds, HLG.worldwidth, HLG.movespeed+2);
+    HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
 
     HLH.moveParticles(HL.geometries.flora, HLG.worldwidth, HLG.movespeed);
-
     HLH.shotFloraCluster(HL.geometries.flora, HLG.landStepsCount, 1);
+
+    // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
+
   }
 
   var colorsDebounce = true;
