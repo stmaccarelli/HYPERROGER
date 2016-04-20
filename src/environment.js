@@ -13,9 +13,12 @@ var HLE = {
   FOG:true,
 
   MAX_MOVE_SPEED: 8,
-  BASE_MOVE_SPEED: 2,
+  BASE_MOVE_SPEED: 1,
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computer move speed
+
+  landFriction:0,
+  seaFriction:0,
 
   BASE_SEA_SPEED:2.5,
   CLOUDS_SPEED:2,
@@ -40,7 +43,7 @@ var HLE = {
   FLORA_AMOUNT : 0, // change it according to device capabilities in initEnvironment()
   MAX_FAUNA: 0, // change it according to device capabilities in initEnvironment()
   faunaAmount : 1, // this will represent users, and will change live, so we set a MAX_FAUNA as top limit
-
+  shotFlora : true, //debounce 7 trigger
   // noise is stored in HL module
   // these are needed for terrain generation
   noiseSeed:0,
@@ -48,6 +51,11 @@ var HLE = {
   noiseFrequency2:1,
 
   cameraHeight:100, // will change live
+}
+
+HLE.resetTriggers = function(){
+  HLE.shotFlora = false;
+
 }
 
 //HL parts Library
@@ -218,6 +226,7 @@ var HLEnvironment = function(){
       wireframeLinewidth: 2
     });
 
+//   HL.materials.land = new THREE.LandMaterial(HL.landStepsCount);
     HL.materials.land = new THREE.MeshBasicMaterial({
       color: HLC.land,
       side: THREE.DoubleSide,

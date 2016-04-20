@@ -10,6 +10,14 @@
     var frameCount = 0;
     var millis = 0;
 
+    var HLDEV = {
+      audioReactive:true,
+      animElements:true,
+      animColors:true,
+      animLand:true,
+      animSea:true,
+    }
+
     function mainInit(){
     // init and enable NoSleep so screen won't dim
     var noSleep = new NoSleep();
@@ -60,6 +68,12 @@ function guiInit(){
     guiBase.add(HLR, 'fft3', 0.1, 1.1);
     guiBase.add(HLR, 'fft4', 0.1, 1.1);
     guiBase.add(HLR, 'fft5', 0.1, 1.1);
+    var guiDEV = gui.addFolder("dev");
+    guiDEV.add(HLDEV, 'audioReactive');
+    guiDEV.add(HLDEV, 'animColors');
+    guiDEV.add(HLDEV, 'animElements');
+    guiDEV.add(HLDEV, 'animSea');
+    guiDEV.add(HLDEV, 'animLand');
 
 
     // var effectController  = {
@@ -99,14 +113,15 @@ function guiInit(){
 
 
       // Environment and animation
-      HLE.moveSpeed = Math.max(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed)*HL.clock.getDelta()*60;
-
+      HLE.moveSpeed = Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0);
       // remote control / audioreactive
-      HLR.updateHLParams();
-    //  HLAnim.colors();
-      // HLAnim.elements();
-    //  HLAnim.sea();
-      HLAnim.land();
+      if(HLDEV.audioReactive) HLR.updateHLParams();
+
+      if(HLDEV.animColors) HLAnim.colors();
+      if(HLDEV.animElements) HLAnim.elements();
+      if(HLDEV.animSea) HLAnim.sea();
+      if(HLDEV.animLand) HLAnim.land();
+      HLE.resetTriggers();
 
       // Controls
       if(isMobile)

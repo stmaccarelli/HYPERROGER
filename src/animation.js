@@ -10,7 +10,7 @@ var HLAnim = function(){
 
   function sea(){
     // move
-    HL.sea.position.z += HLE.moveSpeed;
+    HL.sea.position.z += HLE.moveSpeed - HLE.seaFriction;
 
     // if moved farther than 1 row
     if (HL.sea.position.z > HLE.WORLD_WIDTH / HL.geometries.sea.parameters.heightSegments) {
@@ -36,16 +36,18 @@ var HLAnim = function(){
 
   function land(){
     // move
-    HL.land.position.z += HLE.moveSpeed;
+    HL.land.position.z += HLE.moveSpeed * HLE.landFriction;
     // if plane moved more than a row
     if (HL.land.position.z > HLE.WORLD_WIDTH / HL.geometries.land.parameters.heightSegments) {
       HLE.landStepsCount++;
       // put plane back 1 row, so it will look moving seamless
       HL.land.position.z -= HLE.WORLD_WIDTH / HL.geometries.land.parameters.heightSegments;
-      // then shift land heights on next rows
+
+      // HL.materials.land.uniforms.step.value = HLE.landStepsCount;
+      //then shift land heights on next rows
       HLH.shiftHeights(HL.geometries.land);
       // then calculate LAND first row new heights with noise function
-      for ( i = 0; i < (HL.geometries.land.parameters.widthSegments + 1); i++){
+      for ( var i = 0; i < (HL.geometries.land.parameters.widthSegments + 1); i++){
         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(
           i / (HL.geometries.land.parameters.widthSegments),
           (HLE.landStepsCount / HLE.WORLD_TILES) );
@@ -66,7 +68,7 @@ var HLAnim = function(){
     HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
 
     HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
-    HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 1);
+    if(HLE.shotFlora) HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 1);
 
     // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
 
