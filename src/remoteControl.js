@@ -74,7 +74,7 @@ var HLR = {
 
       if(HLR.fft2>0.85) HLE.shotFlora = true;
 
-      HLE.landFriction = Math.sin(millis*HLR.fft3)/2+.5;
+   //   HLE.landFriction = Math.pow(Math.sin(millis*0.1),3)/2 +.5;
 
 //      HLC.horizon.setHSL(millis*.1%1,.8, .2 + tempFFT3*.2 + HLR.fft3*.2);
     }

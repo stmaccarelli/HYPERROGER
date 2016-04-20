@@ -17,8 +17,8 @@ var HLE = {
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computer move speed
 
-  landFriction:0,
-  seaFriction:0,
+  landFriction:1,
+  seaFriction:1,
 
   BASE_SEA_SPEED:2.5,
   CLOUDS_SPEED:2,
