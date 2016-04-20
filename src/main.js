@@ -37,6 +37,7 @@
     window.addEventListener("resize", onResized);
     window.addEventListener("resize", disableNavBar );
 
+    HLAnim.init();
 
     }
 
@@ -45,12 +46,13 @@
 function guiInit(){
     var gui = new dat.GUI();
     var guiTweak = gui.addFolder('manuali');
-    guiTweak.add(HLG, 'movespeed',0.1,10.0);
-    guiTweak.add(HLG, 'seaSpeed',0.001,2.0).step(0.01);
-    guiTweak.add(HLG, 'noiseFrequency',0,20);
-    guiTweak.add(HLG, 'noiseFrequency2',0,20);
-    guiTweak.add(HLG, 'devLandBase',-150,150);
-    guiTweak.add(HLG, 'devLandHeight',0,150);
+    guiTweak.add(HLE, 'reactiveMoveSpeed',0,10.0);
+    guiTweak.add(HLE, 'reactiveSeaHeight',0.001,2.0);
+    guiTweak.add(HLE, 'noiseFrequency',0,20);
+    guiTweak.add(HLE, 'noiseFrequency2',0,20);
+    guiTweak.add(HLE, 'landZeroPoint',-150,150);
+    guiTweak.add(HLE, 'landHeight',0,150);
+    guiTweak.add(HLE, 'faunaAmount',0,150).step(1);
     var guiBase = gui.addFolder('guiBase');
     guiBase.add(HLR, 'connectedUsers', 0,500);
     guiBase.add(HLR, 'fft1', 0.1, 1.1);
@@ -94,9 +96,17 @@ function guiInit(){
       frameCount++;
       millis = frameCount/60;
 
-      // Audio
-      // HLR.updateFFT(AA.getFreq(0), AA.getFreq(1), AA.getFreq(64), AA.getFreq(128), AA.getFreq(200));
-      // HLR.updateHLParams();
+
+
+      // Environment and animation
+      HLE.moveSpeed = Math.max(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed)*HL.clock.getDelta()*60;
+
+      // remote control / audioreactive
+      HLR.updateHLParams();
+    //  HLAnim.colors();
+      // HLAnim.elements();
+    //  HLAnim.sea();
+      HLAnim.land();
 
       // Controls
       if(isMobile)
@@ -104,16 +114,11 @@ function guiInit(){
       else if(isFPC)
         HL.controls.update(HL.clock.getDelta()); //FPC camera controls mode
       else
-        HL.camera.lookAt(new THREE.Vector3(0,0,-HLG.worldwidth/2)); // camera looks at center point on horizon
+        HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
 
-      // Environment and animation
-      HLAnim.colors();
-      HLAnim.elements();
-      HLAnim.sea();
-      HLAnim.land();
+      HLE.cameraHeight += (HLE.landHeight*1.50+HLE.landZeroPoint-HLE.cameraHeight) * 0.05;
+      HL.camera.position.y = HLE.cameraHeight + HLE.WORLD_HEIGHT*0.05;
 
-      HLG.cameraHeight = HLG.cameraHeight + (HLG.devLandHeight*1.25+HLG.devLandBase-HLG.cameraHeight)*0.01;
-      HL.camera.position.y = HLG.cameraHeight;
 
       // Rendering
 
