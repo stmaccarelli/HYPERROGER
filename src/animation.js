@@ -10,7 +10,7 @@ var HLAnim = function(){
 
   function sea(){
     // move
-    HL.sea.position.z += HLE.moveSpeed - HLE.seaFriction;
+    HL.sea.position.z += HLE.moveSpeed;
 
     // if moved farther than 1 row
     if (HL.sea.position.z > HLE.WORLD_WIDTH / HL.geometries.sea.parameters.heightSegments) {
@@ -36,7 +36,7 @@ var HLAnim = function(){
 
   function land(){
     // move
-    HL.land.position.z += HLE.moveSpeed * HLE.landFriction;
+    HL.land.position.z += HLE.moveSpeed;
     // if plane moved more than a row
     if (HL.land.position.z > HLE.WORLD_WIDTH / HL.geometries.land.parameters.heightSegments) {
       HLE.landStepsCount++;
@@ -50,7 +50,7 @@ var HLAnim = function(){
       for ( var i = 0; i < (HL.geometries.land.parameters.widthSegments + 1); i++){
         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(
           i / (HL.geometries.land.parameters.widthSegments),
-          (HLE.landStepsCount / HLE.WORLD_TILES) );
+          (HLE.landStepsCount / HLE.WORLD_TILES) ) ;
       }
       // if we want to use shadows, we have to recalculate normals
       if(hasShadows){
@@ -65,10 +65,10 @@ var HLAnim = function(){
   // FOR CLOUDS, FLORA AND FAUNA
   function elements(){
     HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.moveSpeed+HLE.CLOUDS_SPEED);
-    HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
+  //  HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
 
     HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
-    if(HLE.shotFlora) HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 1);
+    if(HLE.shotFlora) HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 10);
 
     // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
 
@@ -78,9 +78,8 @@ var HLAnim = function(){
   function colors(){
     if(HL.camera.position.y > 0 && colorsDebounce){
       HL.renderer.setClearColor(HLC.horizon);
-      if(HLE.fog && !isWire) HL.scene.fog.color = HLC.horizon;
+      if(HLE.FOG && !isWire) HL.scene.fog.color = HLC.horizon;
       HL.materials.skybox.color = HLC.horizon;
-      HL.materials.seabox.color = HLC.underHorizon;
       HL.materials.land.color = HLC.land;
       HL.materials.sea.color = HLC.sea;
       colorsDebounce=false;
@@ -88,10 +87,9 @@ var HLAnim = function(){
     }
     else if(HL.camera.position.y < 0 && !colorsDebounce){
       HL.renderer.setClearColor(HLC.underHorizon);
-      if(HLE.fog && !isWire) HL.scene.fog.color = HLC.underHorizon;
+      if(HLE.FOG && !isWire) HL.scene.fog.color = HLC.underHorizon;
       HL.materials.skybox.color = HLC.underHorizon;
-      HL.materials.seabox.color = HLC.horizon;
-      HL.materials.land.color = HLC.underLand;
+      HL.materials.land.color = HLC.horizon;
       HL.materials.sea.color = HLC.underSea;
       colorsDebounce=true;
       console.log('colors below');
@@ -105,6 +103,5 @@ var HLAnim = function(){
     elements:function(){return elements()},
     colors: function(){return colors()},
     init:init,
-
   }
 }();

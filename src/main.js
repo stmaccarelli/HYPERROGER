@@ -5,7 +5,7 @@
     var isDebug = window.location.href.indexOf('?debug')>-1;
     var isFPC = window.location.href.indexOf('?fpc')>-1;
     var isWire = window.location.href.indexOf('?wire')>-1;
-    var hasShadows = true;
+    var hasShadows = false;
 
     var frameCount = 0;
     var millis = 0;
@@ -35,17 +35,13 @@
 
     function onResized() {
       HL.renderer.setSize(window.innerWidth, window.innerHeight);
-      HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
-      groundMirror.renderer.setSize(window.innerWidth, window.innerHeight);
-
+      if(isVR) HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
       HL.camera.aspect = window.innerWidth / window.innerHeight;
       HL.camera.updateProjectionMatrix();
     }
 
     window.addEventListener("resize", onResized);
     window.addEventListener("resize", disableNavBar );
-
-    HLAnim.init();
 
     }
 
@@ -108,9 +104,7 @@ function guiInit(){
    function run() {
       window.requestAnimationFrame(run);
       frameCount++;
-      millis = frameCount/60;
-
-
+      millis = (frameCount/60);
 
       // Environment and animation
       HLE.moveSpeed = Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0);
@@ -121,25 +115,27 @@ function guiInit(){
       if(HLDEV.animElements) HLAnim.elements();
       if(HLDEV.animSea) HLAnim.sea();
       if(HLDEV.animLand) HLAnim.land();
+
       HLE.resetTriggers();
 
       // Controls
       if(isMobile)
         HL.controls.update(); //Accelerometers camera controls mode
-      else if(isFPC)
+      else if(isFPC){
+        HL.camera.rotateY(Math.PI/2);
         HL.controls.update(HL.clock.getDelta()); //FPC camera controls mode
+      }
       else
         HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
 
-      HLE.cameraHeight += (HLE.landHeight*1.50+HLE.landZeroPoint-HLE.cameraHeight) * 0.05;
-      HL.camera.position.y = HLE.cameraHeight + HLE.WORLD_HEIGHT*0.05;
+      HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1.50-HLE.cameraHeight) * (HLE.moveSpeed * 0.001);
+      HL.camera.position.y = HLE.cameraHeight ;
 
 
       // Rendering
-
-      // groundMirror.render();
-      // HL.renderer.setRenderTarget( null ); // add this line
-
+    //  HL.renderer.render(HL.scene,HL.camera);
+  //    HL.renderer.setRenderTarget( null ); // add this line
+      // groundMirror.render(HL.scene,HL.camera);
       if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
       else HL.renderer.render(HL.scene,HL.camera);
 
@@ -173,7 +169,12 @@ function guiInit(){
       guiInit();
       // init HL Environment
       HLEnvironment.init();
-      HLAnim.init();
+      console.log("THREE scene, renderer, camera, controls:");
+
+      console.log(HL.scene);
+      console.log(HL.renderer);
+      console.log(HL.camera);
+      console.log(HL.controls);
 
       run();
 

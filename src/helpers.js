@@ -43,10 +43,12 @@ var HLH = function() {
 
   // computes terrain heights
   function landHeightNoise(x, y) {
-    return HL.noise.nNoise(x * HLE.noiseFrequency,
-      y * HLE.noiseFrequency , HLE.noiseSeed) * HLE.landHeight + HLE.landZeroPoint +
+    return ( HL.noise.nNoise(x * HLE.noiseFrequency , // fix audioreactivity issue: Y landscape freq is affected more by sound variations
+      y * HLE.noiseFrequency * 0.8 , HLE.noiseSeed) +
       ((HL.noise.nNoise(x * HLE.noiseFrequency2,
-      y * HLE.noiseFrequency2 *0.75, HLE.noiseSeed * 2) + 1) / 2) * HLE.landHeight * 0.5;
+      y * HLE.noiseFrequency2 *0.75, HLE.noiseSeed * 2) + 1) / 2) * 0.5 )
+			* HLE.landHeight + HLE.landZeroPoint
+			;
   }
 
 
@@ -59,7 +61,7 @@ var HLH = function() {
 			if (randomize) {
 				vertexPositions.push(
 					[Math.random() * worldWidth - worldWidth / 2,
-						Math.random() * worldHeight, // TBD find a standard solution
+						worldHeight*0.75 + Math.random() * worldHeight*0.25, // TBD find a standard solution
 						Math.random() * worldWidth - worldWidth / 2
 					]
 				);
@@ -154,7 +156,7 @@ var HLH = function() {
 	function shotFloraCluster(geometry, stepsCount, amountToBurst) {
 	  var skipped = 0;
 		var sC = stepsCount / HLE.WORLD_TILES;
-		for (i = 0; i < Math.min(geometry.attributes.position.array.length, amountToBurst+skipped); i+=1) {
+		for (i = 0; i < Math.min(geometry.attributes.position.array.length, amountToBurst*3+skipped*3); i+=3) {
 			// if particle is inactive at "standby" distance
 			if (geometry.attributes.position.array[i + 2] == -HLE.WORLD_WIDTH/2) {
 				var nX = Math.random();
@@ -162,13 +164,15 @@ var HLH = function() {
 				geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH/2+.1;//getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+1, -HLE.WORLD_WIDTH / 2);
 
 				var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5
-				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC + nY));
+				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC ));
 				//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
 			} else skipped++;
 		}
 		geometry.attributes.position.needsUpdate = true;
 	}
-
+  // HLH.landHeightNoise(
+  //  i / (HL.geometries.land.parameters.widthSegments),
+  //  (HLE.landStepsCount / HLE.WORLD_TILES) );
 
 
 	function shotFloraParticle(geometry, stepsCount) {
