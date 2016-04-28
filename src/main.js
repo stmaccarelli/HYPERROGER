@@ -1,24 +1,17 @@
 
+  // global vars
+  var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
+  var isVR = window.location.href.indexOf('?vr')>-1;
+  var isDebug = window.location.href.indexOf('?debug')>-1;
+  var isFPC = window.location.href.indexOf('?fpc')>-1;
+  var isWire = window.location.href.indexOf('?wire')>-1;
+  var hasShadows = false;
 
-    var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
-    var isVR = window.location.href.indexOf('?vr')>-1;
-    var isDebug = window.location.href.indexOf('?debug')>-1;
-    var isFPC = window.location.href.indexOf('?fpc')>-1;
-    var isWire = window.location.href.indexOf('?wire')>-1;
-    var hasShadows = false;
+  var frameCount = 0;
+  var millis = 0;
 
-    var frameCount = 0;
-    var millis = 0;
 
-    var HLDEV = {
-      audioReactive:true,
-      animElements:true,
-      animColors:true,
-      animLand:true,
-      animSea:true,
-    }
-
-    function mainInit(){
+  function mainInit(){
     // init and enable NoSleep so screen won't dim
     var noSleep = new NoSleep();
     function noSleepEnable(){
@@ -29,9 +22,9 @@
     window.addEventListener('click', noSleepEnable, false);
     noSleepEnable();
 
+    // init noScroll
     var noScroll = new NoScroll();
     noScroll.enable();
-
 
     function onResized() {
       HL.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -41,13 +34,18 @@
     }
 
     window.addEventListener("resize", onResized);
-    window.addEventListener("resize", disableNavBar );
+  }
 
-    }
+  var HLDEV = {
+    audioReactive:true,
+    animElements:true,
+    animColors:true,
+    animLand:true,
+    animSea:true,
+    stats:true,
+  }
 
-
-
-function guiInit(){
+  function guiInit(){
     var gui = new dat.GUI();
     var guiTweak = gui.addFolder('manuali');
     guiTweak.add(HLE, 'reactiveMoveSpeed',0,10.0);
@@ -70,112 +68,59 @@ function guiInit(){
     guiDEV.add(HLDEV, 'animElements');
     guiDEV.add(HLDEV, 'animSea');
     guiDEV.add(HLDEV, 'animLand');
-
-
-    // var effectController  = {
-    //
-    //   focus: 		1.0,
-    //   aperture:	0.025,
-    //   maxblur:	1.0
-    //
-    // };
-    //
-    // var matChanger = function( ) {
-    //
-    //   HL.postprocessing.bokeh.uniforms[ "focus" ].value = effectController.focus;
-    //   HL.postprocessing.bokeh.uniforms[ "aperture" ].value = effectController.aperture;
-    //   HL.postprocessing.bokeh.uniforms[ "maxblur" ].value = effectController.maxblur;
-    //
-    // };
-    //
-    // gui.add( effectController, "focus", 0.1, 2.1, 0.01 ).onChange( matChanger );
-    // gui.add( effectController, "aperture", 0.001, 0.2, 0.001 ).onChange( matChanger );
-    // gui.add( effectController, "maxblur", 0.0, 3.0, 0.025 ).onChange( matChanger );
-    // //gui.close();
-
-
-
-
   }
 
 
+  function run() {
+    window.requestAnimationFrame(run);
 
+    // Environment and animation
+    frameCount++;
+    millis = (frameCount/60);
+    HLE.moveSpeed = Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0);
 
-   function run() {
-      window.requestAnimationFrame(run);
-      frameCount++;
-      millis = (frameCount/60);
+    // remote control / audioreactive
+    if(HLDEV.audioReactive) HLR.updateHLParams();
+    if(HLDEV.animColors) HLAnim.colors();
+    if(HLDEV.animElements) HLAnim.elements();
+    //if(HLDEV.animSea) HLAnim.sea();
+    if(HLDEV.animLand) HLAnim.land();
 
-      // Environment and animation
-      HLE.moveSpeed = Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0);
-      // remote control / audioreactive
-      if(HLDEV.audioReactive) HLR.updateHLParams();
+    HLE.resetTriggers();
 
-      if(HLDEV.animColors) HLAnim.colors();
-      if(HLDEV.animElements) HLAnim.elements();
-      if(HLDEV.animSea) HLAnim.sea();
-      if(HLDEV.animLand) HLAnim.land();
-
-      HLE.resetTriggers();
-
-      // Controls
-      if(isMobile)
-        HL.controls.update(); //Accelerometers camera controls mode
-      else if(isFPC){
-        HL.camera.rotateY(Math.PI/2);
-        HL.controls.update(HL.clock.getDelta()); //FPC camera controls mode
-      }
-      else
-        HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
-
-      HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1.50-HLE.cameraHeight) * (HLE.moveSpeed * 0.001);
-      HL.camera.position.y = HLE.cameraHeight ;
-
-
-      // Rendering
-    //  HL.renderer.render(HL.scene,HL.camera);
-  //    HL.renderer.setRenderTarget( null ); // add this line
-      // groundMirror.render(HL.scene,HL.camera);
-      if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
-      else HL.renderer.render(HL.scene,HL.camera);
-
-
+    // Controls and camera
+    if(isMobile)
+      HL.controls.update(); //DeviceOrientationControls  mode
+    else if(isFPC){
+      HL.controls.update(HL.clock.getDelta()); //FPC mode
     }
+  //  else
+    //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
+
+    // set camera move easing according to move speed
+    HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1.50-HLE.cameraHeight) * (HLE.moveSpeed * 0.001);
+    HL.camera.position.y = HLE.cameraHeight ;
 
 
-
-    // TBD: fullscreen
-
-    // Safari iOS: if you tap on top or bottom of screen when in fullscreen, safari shows navbars
-    // trying to prevent, seems out of window scope. gotta explore "Navigator".
-    // or simply use this function to detect if - while in landscape - window height changed
-    // so we can show something, icon, message, etc.
-    var debLand = false;
-    function disableNavBar(){
-      if(window.innerWidth>window.innerHeight){
-        if(debLand){
-          console.log('enter disableNavBar');
-          //qui mostrare messaggio con icola per rimettere il tel a posto
-          window.setTimeout( function(){window.scroll(0,-100)},1000);
-        }
-        else debLand = true;
-      }
-      else debLand = false;
-    }
+    // Rendering
+    if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
+    else HL.renderer.render(HL.scene,HL.camera);
+  }
 
 
-    window.addEventListener('load',function(){
-      mainInit();
-      guiInit();
-      // init HL Environment
-      HLEnvironment.init();
-      console.log("THREE scene, renderer, camera, controls:");
+  window.addEventListener('load',function(){
+    mainInit();
+    guiInit();
+    // init HyperLand Environment
+    HLEnvironment.init();
 
-      console.log(HL.scene);
-      console.log(HL.renderer);
-      console.log(HL.camera);
-      console.log(HL.controls);
+    // log
+    console.log("THREE scene, renderer, camera, controls:");
+    console.log(HL.scene);
+    console.log(HL.renderer);
+    console.log(HL.camera);
+    console.log(HL.controls);
 
-      run();
-
-    });
+    // run
+    run();
+  });

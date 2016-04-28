@@ -4,10 +4,6 @@ This module is for animations: moving objects, changing colors, etc
 
 var HLAnim = function(){
 
-  // would calculate all the rows geometries, so the world won't start with zero heights
-  function init(){
-  }
-
   function sea(){
     // move
     HL.sea.position.z += HLE.moveSpeed;
@@ -53,10 +49,10 @@ var HLAnim = function(){
           (HLE.landStepsCount / HLE.WORLD_TILES) ) ;
       }
       // if we want to use shadows, we have to recalculate normals
-      if(hasShadows){
-        HL.geometries.land.computeFaceNormals();
-        HL.geometries.land.computeVertexNormals();
-      }
+      // if(hasShadows){
+         HL.geometries.land.computeFaceNormals();
+         HL.geometries.land.computeVertexNormals();
+      // }
 
     }
 
@@ -74,6 +70,9 @@ var HLAnim = function(){
 
   }
 
+
+
+  // COLORS ANIMATIONS
   var colorsDebounce = true;
   function colors(){
     if(HL.camera.position.y > 0 && colorsDebounce){
@@ -98,10 +97,9 @@ var HLAnim = function(){
   }
 
   return{
-    sea:function(){return sea()},
-    land:function(){return land()},
-    elements:function(){return elements()},
-    colors: function(){return colors()},
-    init:init,
+    sea:sea,
+    land:land,
+    elements:elements,
+    colors:colors,
   }
 }();

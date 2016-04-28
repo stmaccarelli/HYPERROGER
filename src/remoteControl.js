@@ -43,12 +43,12 @@ var HLR = {
       HLE.faunaAmount = Math.round(HLR.connectedUsers);
 
     if(!isNaN(HLR.fft1)){
-      HLE.reactiveSeaHeight = HLR.fft3*HLE.WORLD_HEIGHT*0.1;
+
+      HLE.reactiveSeaHeight = HLR.fft3*HLE.WORLD_HEIGHT*0.05;
 
       // compute move speed
       // lerp move speed according to audio
-      HLE.reactiveMoveSpeed = (HLR.fft1 * HLE.MAX_MOVE_SPEED);// - HLE.reactiveMoveSpeed) * 0.01;
-    //  HLE.moveSpeed = Math.max(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed*0.8);
+      HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 ) * .5 *HLE.MAX_MOVE_SPEED;
 
       // compute noise frequency for terrain generation
       tempFFT1 += (HLR.fft1 - tempFFT1)*0.009;
@@ -57,7 +57,7 @@ var HLR = {
       tempFFT4 += (HLR.fft4 - tempFFT4)*0.009;
 
       HLE.noiseFrequency = .5 + Math.max(0, tempFFT4 * 4 ) ;
-      HLE.noiseFrequency2 = .5 + Math.max(0, tempFFT3 * 30 - tempFFT2*8 );//- tempFFT2*20 + tempFFT3*50;// 20; //tempFFT3*20;// += (HLR.fft3*2000 - HLE.noiseFrequency2)*0.0005;
+      HLE.noiseFrequency2 = 1.0 + Math.max(0, tempFFT3 * 30 - tempFFT2*8 );//- tempFFT2*20 + tempFFT3*50;// 20; //tempFFT3*20;// += (HLR.fft3*2000 - HLE.noiseFrequency2)*0.0005;
 
       // compute terrain max height
      tempDevLandHeight =
@@ -69,11 +69,13 @@ var HLR = {
     //  HL.materials.clouds.opacity = tempFFT1;
       // HL.materials.fauna.opacity = HLR.fft3*0.5;
 
-      HLC.horizon.setHSL(millis*0.1%1,.8, HLR.fft3*.9);
+      HLC.horizon.setHSL(millis*0.1%1,.3, HLR.fft3*.6);
     //  HLC.sea.setHSL(0,0, -.4 + tempFFT3*.3 + HLR.fft3*.7);
 
-      if(HLR.fft2>0.85) HLE.shotFlora = true;
+    //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 
+      if(HLR.fft2>0.85) HLE.shotFlora = true;
+      HL.materials.clouds.opacity = 1-HLR.fft3;
 //      HLC.horizon.setHSL(millis*.1%1,.8, .2 + tempFFT3*.2 + HLR.fft3*.2);
     }
   }

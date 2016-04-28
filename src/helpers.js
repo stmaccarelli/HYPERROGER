@@ -1,6 +1,9 @@
-var HLH = function() {
+// HELPERS
+// GEOMETRY, ANIMATION AND GENERIC HELPER FUNCTIONS
 
-	// HELPERS
+var HLH = function() {
+	var i,x,y;
+	// GENERIC
 
 	// Returns a random integer between min (included) and max (included)
 	// Using Math.round() will give you a non-uniform distribution!
@@ -8,9 +11,9 @@ var HLH = function() {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	// GEOMETRIES MANIPULATION
+	// GEOMETRIES
 
-	// simple sine motion on Y axis for a plane geometry, for seawaves
+	// Simple sine motion on Y axis for a plane geometry, for seawaves
 	function seaMotion(geometry, stepsCount, heights, speed) {
 		for (y = 0; y < geometry.parameters.heightSegments; y++)
 			for (x = 0; x < geometry.parameters.widthSegments + 1; x++) {
@@ -20,7 +23,7 @@ var HLH = function() {
 		geometry.verticesNeedUpdate = true;
 	}
 
-	//  sine motion on Y axis for a BufferGeometry
+	//  Sine motion on Y axis for a BufferGeometry
 	function bufSinMotion(geometry, height, speed) {
 		height = height || 1;
 		speed = speed || 1;
@@ -143,7 +146,7 @@ var HLH = function() {
 	}
 
 	function startParticle(geometry, worldSize) {
-		for (i = 0; i < geometry.attributes.position.array.length; i++) {
+		for (i = 0; i < geometry.attributes.position.array.length; i+=3) {
 			if (geometry.attributes.position.array[i + 2] <= -worldSize / 2) {
 				geometry.attributes.position.array[i + 2] = -worldSize / 2 + .1;
 				break;
