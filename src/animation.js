@@ -30,6 +30,11 @@ var HLAnim = function(){
      }
   }
 
+  function seaWMMove(){
+  //  HL.sea.position.z = (HL.sea.position.z+HLE.moveSpeed)%(HLE.WORLD_WIDTH);
+  }
+
+
   function land(){
     // move
     HL.land.position.z += HLE.moveSpeed;
@@ -98,6 +103,7 @@ var HLAnim = function(){
 
   return{
     sea:sea,
+    seaWMMove:seaWMMove,
     land:land,
     elements:elements,
     colors:colors,

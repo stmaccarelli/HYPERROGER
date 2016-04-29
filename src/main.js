@@ -84,6 +84,7 @@
     if(HLDEV.animColors) HLAnim.colors();
     if(HLDEV.animElements) HLAnim.elements();
     //if(HLDEV.animSea) HLAnim.sea();
+    HLAnim.seaWMMove();
     if(HLDEV.animLand) HLAnim.land();
 
     HLE.resetTriggers();
@@ -101,13 +102,33 @@
     HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1.50-HLE.cameraHeight) * (HLE.moveSpeed * 0.001);
     HL.camera.position.y = HLE.cameraHeight ;
 
+    if(HLE.MIRROR) {
+     HL.materials.water.render();
+     HL.materials.water.material.uniforms.time.value = millis;
 
+    }
+    else if(HLE.WATER) {
+     HL.materials.water.render();
+     HL.materials.water.material.uniforms.time.value += HLE.moveSpeed * .01;
+    }
     // Rendering
-    if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
+    if(isVR){
+      if(HLE.MIRROR || HLE.WATER)
+        HL.renderer.setRenderTarget( null );
+      HL.stereoEffect.render(HL.scene,HL.camera);
+    }
     else HL.renderer.render(HL.scene,HL.camera);
-  }
 
 
+          // Rendering
+
+          // groundMirror.render();
+          // HL.renderer.setRenderTarget( null ); // add this line
+
+          if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
+          else HL.renderer.render(HL.scene,HL.camera);  }
+
+var waterAdvance;
   window.addEventListener('load',function(){
     mainInit();
     guiInit();
