@@ -109,7 +109,6 @@
      HL.materials.water.render();
      HL.materials.water.material.uniforms.time.value += HLE.moveSpeed * .01;
      HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
-
     }
     // Rendering
     if(isVR){

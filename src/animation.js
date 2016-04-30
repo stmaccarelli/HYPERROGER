@@ -62,6 +62,9 @@ var HLAnim = function(){
         //  HL.geometries.land.computeVertexNormals();
       // }
 
+      // update landZeroPoint and landHeight in shader
+      HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
+      HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
     }
 
   }

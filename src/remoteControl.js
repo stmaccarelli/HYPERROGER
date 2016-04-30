@@ -66,7 +66,7 @@ var HLR = {
      1 + (tempFFT1 * .35 + tempFFT3 * .55 ) * HLE.WORLD_HEIGHT ;
       HLE.landHeight += (tempDevLandHeight-HLE.landHeight)*0.08;
       // HLE.landHeight = Math.sin(millis*.5)*HLE.WORLD_HEIGHT*0.5;
-      HLE.landZeroPoint = -HLE.landHeight * 0.2;// Math.sin(millis*(1-tempFFT2) * 0.5) * HLE.landHeight;// + HL.noise.noise(millis,millis*0.3,10000)*tempDevLandHeight;//tempFFT2 * HLE.landHeight*0.5;
+      HLE.landZeroPoint = 0;//-HLE.landHeight * 0.2;// Math.sin(millis*(1-tempFFT2) * 0.5) * HLE.landHeight;// + HL.noise.noise(millis,millis*0.3,10000)*tempDevLandHeight;//tempFFT2 * HLE.landHeight*0.5;
     //  HL.materials.clouds.opacity = tempFFT1;
       // HL.materials.fauna.opacity = HLR.fft3*0.5;
 

@@ -13,7 +13,7 @@ var HLE = {
 
   MAX_TOTAL_PARTICLES: 100, // change it according to device capabilities in initEnvironment()
 
-  FOG:true,
+  FOG:false,
   MIRROR:true,
   WATER:false,
 
@@ -245,7 +245,10 @@ var HLEnvironment = function(){
     //   HL.materials.land.map.repeat.set( 1, HLE.WORLD_TILES);
 
 
-   HL.materials.land = new THREE.LandDepthMaterial();
+     HL.materials.land = new THREE.LandDepthMaterial({
+       color:0xff0000,
+       waterColor: 0x00ff00,
+    });
 
     HL.materials.sea = new THREE.MeshBasicMaterial({
       color: HLC.sea,
@@ -254,8 +257,9 @@ var HLEnvironment = function(){
       wireframe: isWire,
       wireframeLinewidth: 2,
        opacity: 1,
-       transparent:false,
-      // alphaTest: 0.5,
+       transparent:true,
+      // opacity:0.5,
+       alphaTest: 0.5,
        map: new THREE.TextureLoader().load( "img/tex_stripe_512.gif" ),
     });
     HL.materials.sea.color = HLC.sea; // set by reference
@@ -319,7 +323,7 @@ var HLEnvironment = function(){
           worldWidth: HLE.WORLD_WIDTH,
           debugMode:true,
           transparent:true,
-          opacity:0.6,
+          opacity:0.7,
          }
       );
       HL.materials.water.rotateX( - Math.PI / 2 );
