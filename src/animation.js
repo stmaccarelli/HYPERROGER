@@ -87,7 +87,7 @@ var HLAnim = function(){
       HL.renderer.setClearColor(HLC.horizon);
       if(HLE.FOG && !isWire) HL.scene.fog.color = HLC.horizon;
       HL.materials.skybox.color = HLC.horizon;
-      HL.materials.land.color = HLC.land;
+    //  HL.materials.land.color = HLC.land;
       HL.materials.sea.color = HLC.sea;
       colorsDebounce=false;
       console.log('colors above');
@@ -96,7 +96,7 @@ var HLAnim = function(){
       HL.renderer.setClearColor(HLC.underHorizon);
       if(HLE.FOG && !isWire) HL.scene.fog.color = HLC.underHorizon;
       HL.materials.skybox.color = HLC.underHorizon;
-      HL.materials.land.color = HLC.horizon;
+    //  HL.materials.land.color = HLC.horizon;
       HL.materials.sea.color = HLC.underSea;
       colorsDebounce=true;
       console.log('colors below');

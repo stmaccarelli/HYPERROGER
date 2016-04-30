@@ -14,8 +14,8 @@ var HLE = {
   MAX_TOTAL_PARTICLES: 100, // change it according to device capabilities in initEnvironment()
 
   FOG:true,
-  MIRROR:false,
-  WATER:true,
+  MIRROR:true,
+  WATER:false,
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: 1,
@@ -227,22 +227,25 @@ var HLEnvironment = function(){
   //  HL.materials.skybox.color = HLC.horizon; // set by reference
 
 
-    HL.materials.land = new THREE.MeshBasicMaterial({
-      color: HLC.land,
-      side: THREE.FrontSide,
-      fog: true,
-      wireframe: isWire,
-      wireframeLinewidth: 2,
-      opacity: 1,
-      transparent:false,
-      //shading: THREE.FlatShading,
-        map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
-    //  normalMap: rockNormalMap,
-    });
-    HL.materials.land.color = HLC.land; // set by reference
-      HL.materials.land.map.wrapS = THREE.RepeatWrapping;
-      HL.materials.land.map.wrapT = THREE.RepeatWrapping;
-      HL.materials.land.map.repeat.set( 1, HLE.WORLD_TILES);
+    // HL.materials.land = new THREE.MeshBasicMaterial({
+    //   color: HLC.land,
+    //   side: THREE.FrontSide,
+    //   fog: true,
+    //   wireframe: isWire,
+    //   wireframeLinewidth: 2,
+    //   opacity: 1,
+    //   transparent:false,
+    //   //shading: THREE.FlatShading,
+    //     map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
+    // //  normalMap: rockNormalMap,
+    // });
+    // HL.materials.land.color = HLC.land; // set by reference
+    //   HL.materials.land.map.wrapS = THREE.RepeatWrapping;
+    //   HL.materials.land.map.wrapT = THREE.RepeatWrapping;
+    //   HL.materials.land.map.repeat.set( 1, HLE.WORLD_TILES);
+
+
+   HL.materials.land = new THREE.LandDepthMaterial();
 
     HL.materials.sea = new THREE.MeshBasicMaterial({
       color: HLC.sea,
@@ -310,10 +313,13 @@ var HLEnvironment = function(){
         { clipBias: 0,//0.0003,
           textureWidth: 512,
           textureHeight: 512,
-          color: 0x111111,//0x666666,
+          color: 0x00ff00,//0x666666,
           fog: true,
           side: THREE.DoubleSide,
           worldWidth: HLE.WORLD_WIDTH,
+          debugMode:true,
+          transparent:true,
+          opacity:0.6,
          }
       );
       HL.materials.water.rotateX( - Math.PI / 2 );
