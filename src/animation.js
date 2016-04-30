@@ -9,10 +9,10 @@ var HLAnim = function(){
     HL.sea.position.z += HLE.moveSpeed;
 
     // if moved farther than 1 row
-    if (HL.sea.position.z > HLE.WORLD_WIDTH / HL.geometries.sea.parameters.heightSegments) {
+    if (HL.sea.position.z > HLE.TILE_SIZE) {
       HLE.seaStepsCount++;
       // put 1 row back
-      HL.sea.position.z  -= HLE.WORLD_WIDTH / HL.geometries.sea.parameters.heightSegments;
+      HL.sea.position.z  -= HLE.TILE_SIZE;
       // shift sea heights for rows
       for(var i=HL.geometries.sea.parameters.heightSegments; i > 0; i--){
         HL.geometries.seaHeights[i] = HL.geometries.seaHeights[i-1];
@@ -31,7 +31,10 @@ var HLAnim = function(){
   }
 
   function seaWMMove(){
-  //  HL.sea.position.z = (HL.sea.position.z+HLE.moveSpeed)%(HLE.WORLD_WIDTH);
+  // now in shader  HL.sea.position.z = (HL.sea.position.z+HLE.moveSpeed)%(HLE.TILE_SIZE);
+
+    HL.materials.water.material.uniforms.time.value = millis;
+    HL.materials.water.material.uniforms.step.value += HLE.moveSpeed;
   }
 
 
@@ -39,10 +42,10 @@ var HLAnim = function(){
     // move
     HL.land.position.z += HLE.moveSpeed;
     // if plane moved more than a row
-    if (HL.land.position.z > HLE.WORLD_WIDTH / HL.geometries.land.parameters.heightSegments) {
+    if (HL.land.position.z > HLE.TILE_SIZE) {
       HLE.landStepsCount++;
       // put plane back 1 row, so it will look moving seamless
-      HL.land.position.z -= HLE.WORLD_WIDTH / HL.geometries.land.parameters.heightSegments;
+      HL.land.position.z -= HLE.TILE_SIZE;
 
       // HL.materials.land.uniforms.step.value = HLE.landStepsCount;
       //then shift land heights on next rows
@@ -50,13 +53,13 @@ var HLAnim = function(){
       // then calculate LAND first row new heights with noise function
       for ( var i = 0; i < (HL.geometries.land.parameters.widthSegments + 1); i++){
         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(
-          i / (HL.geometries.land.parameters.widthSegments),
+          i / (HL.geometries.land.parameters.widthSegments) * 1.0,
           (HLE.landStepsCount / HLE.WORLD_TILES) ) ;
       }
       // if we want to use shadows, we have to recalculate normals
       // if(hasShadows){
-         HL.geometries.land.computeFaceNormals();
-         HL.geometries.land.computeVertexNormals();
+        //  HL.geometries.land.computeFaceNormals();
+        //  HL.geometries.land.computeVertexNormals();
       // }
 
     }
@@ -69,7 +72,7 @@ var HLAnim = function(){
   //  HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
 
     HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
-    if(HLE.shotFlora) HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 10);
+    if(HLE.shotFlora) HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 1);
 
     // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
 

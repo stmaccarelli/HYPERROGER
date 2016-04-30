@@ -47,9 +47,9 @@ var HLH = function() {
   // computes terrain heights
   function landHeightNoise(x, y) {
     return ( HL.noise.nNoise(x * HLE.noiseFrequency , // fix audioreactivity issue: Y landscape freq is affected more by sound variations
-      y * HLE.noiseFrequency * 0.8 , HLE.noiseSeed) +
+      y*0.5 * HLE.noiseFrequency * 0.8 , HLE.noiseSeed) +
       ((HL.noise.nNoise(x * HLE.noiseFrequency2,
-      y * HLE.noiseFrequency2 *0.75, HLE.noiseSeed * 2) + 1) / 2) * 0.5 )
+      y*0.5 * HLE.noiseFrequency2 *0.75, HLE.noiseSeed * 2) + 1) / 2) * 0.5 )
 			* HLE.landHeight + HLE.landZeroPoint
 			;
   }

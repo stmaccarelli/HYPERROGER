@@ -83,8 +83,8 @@
     if(HLDEV.audioReactive) HLR.updateHLParams();
     if(HLDEV.animColors) HLAnim.colors();
     if(HLDEV.animElements) HLAnim.elements();
-    //if(HLDEV.animSea) HLAnim.sea();
-    HLAnim.seaWMMove();
+    if(HLDEV.animSea && !HLE.MIRROR && !HLE.WATER) HLAnim.sea();
+    if(HLE.MIRROR) HLAnim.seaWMMove();
     if(HLDEV.animLand) HLAnim.land();
 
     HLE.resetTriggers();
@@ -104,12 +104,12 @@
 
     if(HLE.MIRROR) {
      HL.materials.water.render();
-     HL.materials.water.material.uniforms.time.value = millis;
-
     }
     else if(HLE.WATER) {
      HL.materials.water.render();
      HL.materials.water.material.uniforms.time.value += HLE.moveSpeed * .01;
+     HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
+
     }
     // Rendering
     if(isVR){
