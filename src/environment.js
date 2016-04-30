@@ -323,7 +323,7 @@ var HLEnvironment = function(){
           worldWidth: HLE.WORLD_WIDTH,
           debugMode:true,
           transparent:true,
-          opacity:0.7,
+          opacity:0.45,
          }
       );
       HL.materials.water.rotateX( - Math.PI / 2 );
