@@ -8,12 +8,12 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:1000,
   WORLD_HEIGHT:200,
-  WORLD_TILES:28, // change it according to device capabilities in initEnvironment()
+  WORLD_TILES:38, // change it according to device capabilities in initEnvironment()
   TILE_SIZE:null,
 
   MAX_TOTAL_PARTICLES: 100, // change it according to device capabilities in initEnvironment()
 
-  FOG:false,
+  FOG:true,
   MIRROR:true,
   WATER:false,
 
@@ -247,7 +247,7 @@ var HLEnvironment = function(){
 
      HL.materials.land = new THREE.LandDepthMaterial({
        color:0xff0000,
-       waterColor: 0x00ff00,
+       waterColor: 0x666666,
     });
 
     HL.materials.sea = new THREE.MeshBasicMaterial({
@@ -266,7 +266,7 @@ var HLEnvironment = function(){
 
     HL.materials.sea.map.wrapS = THREE.RepeatWrapping;
     HL.materials.sea.map.wrapT = THREE.RepeatWrapping;
-    HL.materials.sea.map.repeat.set( HLE.WORLD_TILES*8, 1);
+    HL.materials.sea.map.repeat.set( HLE.WORLD_TILES*4, 1);
 
 
     HL.materials.clouds = new THREE.PointsMaterial({
@@ -317,13 +317,12 @@ var HLEnvironment = function(){
         { clipBias: 0,//0.0003,
           textureWidth: 512,
           textureHeight: 512,
-          color: 0x00ff00,//0x666666,
+          color: 0x666666,//0x666666,
           fog: true,
           side: THREE.DoubleSide,
           worldWidth: HLE.WORLD_WIDTH,
-          debugMode:true,
           transparent:true,
-          opacity:0.45,
+          opacity:0.8,
          }
       );
       HL.materials.water.rotateX( - Math.PI / 2 );
