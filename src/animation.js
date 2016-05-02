@@ -54,7 +54,7 @@ var HLAnim = function(){
       for ( var i = 0; i < (HL.geometries.land.parameters.widthSegments + 1); i++){
         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(
           i / (HL.geometries.land.parameters.widthSegments) * 1.0,
-          (HLE.landStepsCount / HLE.WORLD_TILES) ) ;
+          (HLE.landStepsCount / HLE.WORLD_TILES) ) * (HLE.CENTER_PATH? Math.abs(HL.geometries.land.vertices[i].x/HLE.WORLD_WIDTH)*2:1) ;
       }
       // if we want to use shadows, we have to recalculate normals
       // if(hasShadows){

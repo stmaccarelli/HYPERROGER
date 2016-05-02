@@ -81,7 +81,7 @@
 
     // remote control / audioreactive
     if(HLDEV.audioReactive) HLR.updateHLParams();
-    if(HLDEV.animColors) HLAnim.colors();
+    //if(HLDEV.animColors) HLAnim.colors();
     if(HLDEV.animElements) HLAnim.elements();
     if(HLDEV.animSea && !HLE.MIRROR && !HLE.WATER) HLAnim.sea();
     if(HLE.MIRROR) HLAnim.seaWMMove();
@@ -95,12 +95,18 @@
     else if(isFPC){
       HL.controls.update(HL.clock.getDelta()); //FPC mode
     }
-  //  else
-    //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
+   else
+     HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
+
 
     // set camera move easing according to move speed
-    HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1.50-HLE.cameraHeight) * (HLE.moveSpeed * 0.001);
-    HL.camera.position.y = HLE.cameraHeight ;
+  //  HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1.1-HLE.cameraHeight) * (HLE.moveSpeed * 0.001);
+  //  HL.camera.position.y = HLE.cameraHeight ;
+
+    // HL.camera.fov = 10 + HLE.cameraHeight * .6;
+    // HL.camera.updateProjectionMatrix ();
+
+
 
     if(HLE.MIRROR) {
      HL.materials.water.render();
@@ -108,7 +114,7 @@
     else if(HLE.WATER) {
      HL.materials.water.render();
      HL.materials.water.material.uniforms.time.value += HLE.moveSpeed * .01;
-     HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
+    // HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
     }
     // Rendering
     if(isVR){

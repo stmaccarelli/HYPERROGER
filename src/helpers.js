@@ -44,15 +44,24 @@ var HLH = function() {
 		geometry.verticesNeedUpdate = true;
 	}
 
-  // computes terrain heights
-  function landHeightNoise(x, y) {
-    return ( HL.noise.nNoise(x * HLE.noiseFrequency , // fix audioreactivity issue: Y landscape freq is affected more by sound variations
-      y*0.5 * HLE.noiseFrequency * 0.8 , HLE.noiseSeed) +
-      ((HL.noise.nNoise(x * HLE.noiseFrequency2,
-      y*0.5 * HLE.noiseFrequency2 *0.75, HLE.noiseSeed * 2) + 1) / 2) * 0.5 )
-			* HLE.landHeight + HLE.landZeroPoint
-			;
-  }
+	// // computes terrain heights
+  // function landHeightNoise(x, y) {
+  //   return ( HL.noise.nNoise(x * HLE.noiseFrequency , // fix audioreactivity issue: Y landscape freq is affected more by sound variations
+  //     y*0.5 * HLE.noiseFrequency * 1 , HLE.noiseSeed)
+	// 		+ ((HL.noise.nNoise(x * HLE.noiseFrequency2,
+  //     y*0.5 * HLE.noiseFrequency2 * 1, HLE.noiseSeed * 2) + 1) / 2) * 0.2
+	// 		)
+	// 		* HLE.landHeight + HLE.landZeroPoint
+	// 		;
+  // }
+
+	// computes terrain heights
+	var noiseA,noiseB;
+	function landHeightNoise(x, y) {
+		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency, y * 0.3 * HLE.noiseFrequency , HLE.noiseSeed);
+		noiseB = HL.noise.nNoise(x * HLE.noiseFrequency2,y * 0.3 * HLE.noiseFrequency2, HLE.noiseSeed*2);
+		return (noiseA + (noiseA*0.5+1) * noiseB) * 0.5 * HLE.landHeight;
+	}
 
 
 	// PARTICLE SYSTEMS
