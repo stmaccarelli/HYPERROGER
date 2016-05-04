@@ -14,9 +14,9 @@ var HLE = {
   MAX_TOTAL_PARTICLES: 100, // change it according to device capabilities in initEnvironment()
 
   FOG:false,
-  MIRROR:true,
-  WATER:false,
-  PIXEL_RATIO_SCALE:0.25,
+  MIRROR:false,
+  WATER:true,
+  PIXEL_RATIO_SCALE:0.5,
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: 1,
@@ -183,10 +183,12 @@ var HLEnvironment = function(){
       HL.controls = new THREE.DeviceOrientationControls(HL.camera);
     }
     else if(isFPC){
-      HL.camera.rotateX(Math.PI/2);
       HL.controls = new THREE.FirstPersonControls(HL.camera);
 		  HL.controls.movementSpeed = 10;
 		  HL.controls.lookSpeed = 0.1;
+    }
+    else if(isOrbit){
+      HL.controls = new THREE.OrbitControls(HL.camera);
     }
 
   }

@@ -4,6 +4,7 @@
   var isVR = window.location.href.indexOf('?vr')>-1;
   var isDebug = window.location.href.indexOf('?debug')>-1;
   var isFPC = window.location.href.indexOf('?fpc')>-1;
+  var isOrbit = window.location.href.indexOf('?orbit')>-1;
   var isWire = window.location.href.indexOf('?wire')>-1;
   var hasShadows = false;
 
@@ -77,7 +78,7 @@
     // Environment and animation
     frameCount++;
     millis = (frameCount/60);
-    HLE.moveSpeed = Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0);
+    HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.15;
 
     // remote control / audioreactive
     if(HLDEV.audioReactive) HLR.updateHLParams();
@@ -92,7 +93,7 @@
     // Controls and camera
     if(isMobile)
       HL.controls.update(); //DeviceOrientationControls  mode
-    else if(isFPC){
+    else if(isFPC || isOrbit){
       HL.controls.update(HL.clock.getDelta()); //FPC mode
     }
    else
