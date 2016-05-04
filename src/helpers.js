@@ -58,9 +58,9 @@ var HLH = function() {
 	// computes terrain heights
 	var noiseA,noiseB;
 	function landHeightNoise(x, y) {
-		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency, y * 0.3 * HLE.noiseFrequency , HLE.noiseSeed);
-		noiseB = HL.noise.nNoise(x * HLE.noiseFrequency2,y * 0.3 * HLE.noiseFrequency2, HLE.noiseSeed*2);
-		return (noiseA + (noiseA*0.5+1) * noiseB) * 0.5 * HLE.landHeight;
+		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency, y * 0.5 * HLE.noiseFrequency , HLE.noiseSeed);
+		noiseB = HL.noise.nNoise(x * HLE.noiseFrequency2,y * 0.5 * HLE.noiseFrequency2, HLE.noiseSeed*2);
+		return (noiseA + (noiseA*0.5+1) * noiseB) * HLE.landHeight;
 	}
 
 
@@ -176,7 +176,7 @@ var HLH = function() {
 				geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH/2+.1;//getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+1, -HLE.WORLD_WIDTH / 2);
 
 				var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5
-				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC ));
+				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC ))+5;
 				//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
 			} else skipped++;
 		}

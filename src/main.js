@@ -78,7 +78,7 @@
     // Environment and animation
     frameCount++;
     millis = (frameCount/60);
-    HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.15;
+    HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.05;
 
     // remote control / audioreactive
     if(HLDEV.audioReactive) HLR.updateHLParams();
@@ -96,13 +96,13 @@
     else if(isFPC || isOrbit){
       HL.controls.update(HL.clock.getDelta()); //FPC mode
     }
-   else
+   else{
      HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
-
-
+  //   HL.camera.rotateY(millis*0.00025);
+   }
     // set camera move easing according to move speed
-  //  HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1.1-HLE.cameraHeight) * (HLE.moveSpeed * 0.001);
-  //  HL.camera.position.y = HLE.cameraHeight ;
+   HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1-HLE.cameraHeight) * (HLE.moveSpeed * 0.002);
+   HL.camera.position.y = 1 + HLE.cameraHeight * 1.5;
 
     // HL.camera.fov = 10 + HLE.cameraHeight * .6;
     // HL.camera.updateProjectionMatrix ();
@@ -132,9 +132,12 @@
           // HL.renderer.setRenderTarget( null ); // add this line
 
           if(isVR) HL.stereoEffect.render(HL.scene,HL.camera);
-          else HL.renderer.render(HL.scene,HL.camera);  }
+          else HL.renderer.render(HL.scene,HL.camera);
 
-var waterAdvance;
+  }
+
+
+
   window.addEventListener('load',function(){
     mainInit();
     guiInit();

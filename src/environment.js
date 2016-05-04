@@ -7,22 +7,23 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 // HL Environment constants and parameters
 var HLE = {
   WORLD_WIDTH:1000,
-  WORLD_HEIGHT:200,
+  WORLD_HEIGHT:150,
   WORLD_TILES:38, // change it according to device capabilities in initEnvironment()
   TILE_SIZE:null,
 
-  MAX_TOTAL_PARTICLES: 100, // change it according to device capabilities in initEnvironment()
+  MAX_TOTAL_PARTICLES: 10, // change it according to device capabilities in initEnvironment()
 
-  FOG:false,
-  MIRROR:false,
-  WATER:true,
-  PIXEL_RATIO_SCALE:0.5,
+  FOG:true,
+  MIRROR:true,
+  WATER:false,
+  PIXEL_RATIO_SCALE:0.25,
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: 1,
+  CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
+
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computed move speed
-  CENTER_PATH:true, // true if you don't want terrain in the middle of the scene
 
   BASE_SEA_SPEED:2.5,
   CLOUDS_SPEED:1,
@@ -55,9 +56,9 @@ HLE.resetTriggers = function(){
 
 //HL Colors Library
 var HLC = {
-  horizon: new THREE.Color(0.0, .3, .5),
-  land: new THREE.Color(0xff4422),
-  sea: new THREE.Color(.7, .7, .7),
+  horizon: new THREE.Color(0x000000),
+  land: new THREE.Color(0xff0000),
+  sea: new THREE.Color(0x000000),
 
   underHorizon: new THREE.Color(.0, .02, .02),
   underLand: new THREE.Color(.1, .9, .9),
@@ -141,9 +142,9 @@ var HLEnvironment = function(){
     HLE.TILE_SIZE = HLE.WORLD_WIDTH / HLE.WORLD_TILES;
     HLE.MAX_MOVE_SPEED = HLE.TILE_SIZE / 10 * 2;
     // MAX_TOTAL_PARTICLES: 1000, // TODO hange it according to device capabilities in initEnvironment()
-    HLE.CLOUDS_AMOUNT = Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
-    HLE.FLORA_AMOUNT = Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
-    HLE.MAX_FAUNA = Math.round(HLE.MAX_TOTAL_PARTICLES * 0.10);
+    HLE.CLOUDS_AMOUNT = 10;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
+    HLE.FLORA_AMOUNT = 20;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
+    HLE.MAX_FAUNA = 0;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.10);
 
     // set scene, camera, renderer, stereoEffect
     HL.scene = new THREE.Scene();
@@ -153,21 +154,27 @@ var HLEnvironment = function(){
       HL.scene.fog.color = HLC.horizon;
     }
 
-    HL.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 2, HLE.WORLD_WIDTH);
+    HL.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 2, HLE.WORLD_WIDTH);
     HL.camera.position.y = HLE.WORLD_HEIGHT * 0.1;
 
-    HL.renderer = new THREE.WebGLRenderer({antialias: false});
-    HL.renderer.setSize(window.innerWidth, window.innerHeight, true);
+
     // TODO: The easyest method to spedup FPS on slow mobile, is to reduce resolution
     // we can do this by settind pixel ratio to fraction of devicePixelRatio
     // for now we lock this to 1; NOTE: this will not render to retina resolutions
     // use     HL.renderer.setPixelRatio(window.devicePixelRatio); for retina rendering
 
-    if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1){
+    if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
+      HL.renderer = new THREE.WebGLRenderer({antialias: false});
+      HL.renderer.setSize(window.innerWidth, window.innerHeight, true);
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
       HL.renderer.domElement.style.imageRendering = 'pixelated';
       HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
       HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
+    }
+    else {
+      HL.renderer = new THREE.WebGLRenderer({antialias: true});
+      HL.renderer.setSize(window.innerWidth, window.innerHeight);
+      HL.renderer.setPixelRatio(window.devicePixelRatio);
     }
     // HL.renderer.shadowMap.enabled = true;
     //HL.renderer.sortObjects = false;
@@ -232,7 +239,7 @@ var HLEnvironment = function(){
       color: HLC.horizon,
       fog: false,
       side: THREE.BackSide,
-      wireframe: isWire,
+      wireframe: false,//isWire,
       wireframeLinewidth: 2,
     });
     HL.materials.skybox.color = HLC.horizon; // set by reference
@@ -259,6 +266,7 @@ var HLEnvironment = function(){
      HL.materials.land = new THREE.LandDepthMaterial({
        color:HLC.land,
        waterColor: 0x444444,
+       wireframe:true
     });
 
     HL.materials.sea = new THREE.MeshBasicMaterial({
@@ -285,12 +293,12 @@ var HLEnvironment = function(){
       side: THREE.DoubleSide,
       opacity: 0.2,
       transparent: false,
-      size: HLE.TILE_SIZE,
+      size: HLE.WORLD_WIDTH*.008,
       fog: true,
       sizeAttenuation: true,
       //alphaTest: 0.5,
-      depthWrite: false,
-      map: isWire?null:new THREE.TextureLoader().load( "img/cloud2.png" ),
+      depthWrite: true,
+      //map: isWire?null:new THREE.TextureLoader().load( "img/cloud2.png" ),
     });
     HL.materials.clouds.color = HLC.clouds; // set by reference
 
@@ -300,11 +308,11 @@ var HLEnvironment = function(){
       // side: THREE.DoubleSide,
       // opacity: 0.55,
       // transparent: true,
-      size: HLE.TILE_SIZE*0.1,
-      fog: true,
+      size: HLE.WORLD_WIDTH*.016,
+      fog: false,
       sizeAttenuation: true,
-    //  alphaTest: 0.5,
-    //  map: isWire?null:new THREE.TextureLoader().load( "img/tex_tree_82_128x128.png" ),
+      alphaTest: 0.5,
+      map: isWire?null:new THREE.TextureLoader().load( "img/tex_tree_82_128x128.png" ),
     });
     HL.materials.flora.color = HLC.flora; // set by reference
 
@@ -314,7 +322,7 @@ var HLEnvironment = function(){
       // side: THREE.DoubleSide,
       opacity: .6,
       transparent: false,
-      size: HLE.TILE_SIZE*0.2,
+      size: HLE.WORLD_WIDTH*.008,
       fog: true,
       sizeAttenuation: true,
     //  map: new THREE.TextureLoader().load( "img/tex_tree_8_128x128.png" ),
@@ -333,7 +341,7 @@ var HLEnvironment = function(){
           side: THREE.DoubleSide,
           worldWidth: HLE.WORLD_WIDTH,
           transparent:true,
-          opacity:0.46,
+          opacity:1,//0.657,
          }
       );
       HL.materials.water.rotateX( - Math.PI / 2 );
@@ -352,7 +360,7 @@ var HLEnvironment = function(){
   			textureHeight: 512,
   			waterNormals: waterNormals,
         noiseScale: 3.14,
-        opacity: 0.65,
+        opacity: 0.87,
 //  			sunDirection: HL.lights.directional.position.normalize(),
         sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.5).normalize(),
   			sunColor: 0xffffff,
@@ -399,14 +407,14 @@ var HLEnvironment = function(){
     HL.clouds = new THREE.Points(HL.geometries.clouds, HL.materials.clouds);
     HL.clouds.name = "clouds";
     HL.clouds.frustumCulled = false;
-    //HL.scene.add(HL.clouds);
+    HL.scene.add(HL.clouds);
 
 
     HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
     //HL.flora.frustumCulled = true;
     HL.flora.name = "flora";
     HL.flora.position.y = -5; //hardset like land at lower height, so we easily see se
-  //  HL.scene.add(HL.flora);
+    HL.scene.add(HL.flora);
 
     HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
     HL.fauna.name = "fauna";

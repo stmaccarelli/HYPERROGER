@@ -50,7 +50,7 @@ var HLR = {
 
       // compute move speed
       // lerp move speed according to audio
-      HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 ) * .5 *HLE.MAX_MOVE_SPEED;
+      HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 + HLR.fft4) * .3 *HLE.MAX_MOVE_SPEED;
 
       // compute noise frequency for terrain generation
       tempFFT1 += (HLR.fft1 - tempFFT1)*0.005;
@@ -59,18 +59,18 @@ var HLR = {
       tempFFT4 += (HLR.fft4 - tempFFT4)*0.005;
 
       tempNoiseFreq = 10 - (tempFFT2 * 10 - tempFFT3 * 9);
-      tempNoiseFreq2 = 1 + tempFFT4 * 30 * (tempFFT3+1)*0.7 ;//- tempFFT2*20 + tempFFT3*50;// 20; //tempFFT3*20;// += (HLR.fft3*2000 - HLE.noiseFrequency2)*0.0005;
+      tempNoiseFreq2 = 1 + tempFFT4 * 30 * (tempFFT3+1)*1.3 ;//- tempFFT2*20 + tempFFT3*50;// 20; //tempFFT3*20;// += (HLR.fft3*2000 - HLE.noiseFrequency2)*0.0005;
       // TODO noiseFreq deve essere proporzionale al WORLD_WIDTH
 
-      HLE.noiseFrequency += (tempNoiseFreq - HLE.noiseFrequency) * 1;
+      HLE.noiseFrequency += (tempNoiseFreq*0.55 - HLE.noiseFrequency) * 1;
       HLE.noiseFrequency2 += (tempNoiseFreq2 - HLE.noiseFrequency2) * 1;
 
 
 
       // compute terrain max height
-     tempDevLandHeight = 
+     tempDevLandHeight =
       // Math.sin(millis*.5)*
-     (tempFFT1 * .55 + tempFFT3 * .45 ) * HLE.WORLD_HEIGHT ;
+     (tempFFT1 * 0.55 + tempFFT3 * .45 ) * HLE.WORLD_HEIGHT * 0.75;
       HLE.landHeight += (tempDevLandHeight-HLE.landHeight)*0.08;
       // HLE.landHeight = Math.sin(millis*.5)*HLE.WORLD_HEIGHT*0.5;
       HLE.landZeroPoint = -HLE.landHeight * 0.1;// Math.sin(millis*(1-tempFFT2) * 0.5) * HLE.landHeight;// + HL.noise.noise(millis,millis*0.3,10000)*tempDevLandHeight;//tempFFT2 * HLE.landHeight*0.5;
@@ -78,13 +78,13 @@ var HLR = {
       // HL.materials.fauna.opacity = HLR.fft3*0.5;
 
       // HLC.horizon.setHSL(millis*0.1%1,.4, HLR.fft3*.3);
-    //  HLC.horizon.setHSL(.65,1.4, HLR.fft3*.3);
+     HLC.horizon.setHSL(millis*0.1%1,.6, .1 + HLR.fft3*HLR.fft3*0.7);
     //  HLC.sea.setHSL(0,0, -.4 + tempFFT3*.3 + HLR.fft3*.7);
 
     //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 
-      if(HLR.fft2>0.85) HLE.shotFlora = true;
+      if(HLR.fft4>0.15) HLE.shotFlora = true;
       // HL.materials.clouds.opacity = 1-HLR.fft3;
-//      HLC.horizon.setHSL(millis*.1%1,.8, .2 + tempFFT3*.2 + HLR.fft3*.2);
+    //  HLC.horizon.setHSL(millis*.1%1,.8, .2 + tempFFT3*.2 + HLR.fft3*.2);
     }
   }

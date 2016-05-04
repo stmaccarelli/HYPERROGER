@@ -33,8 +33,8 @@ var HLAnim = function(){
   function seaWMMove(){
   // now in shader  HL.sea.position.z = (HL.sea.position.z+HLE.moveSpeed)%(HLE.TILE_SIZE);
 
-    HL.materials.water.material.uniforms.time.value = millis;
-    HL.materials.water.material.uniforms.step.value += HLE.moveSpeed;
+  HL.materials.water.material.uniforms.time.value = millis;
+  HL.materials.water.material.uniforms.step.value = HLE.landStepsCount;
   }
 
 
@@ -75,9 +75,11 @@ var HLAnim = function(){
   //  HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
 
     HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
-    if(HLE.shotFlora) HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 1);
-
-    // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
+    if(HLE.shotFlora){
+      HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 1);
+      HLE.shotFlora=false;
+    }
+      // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
 
   }
 
