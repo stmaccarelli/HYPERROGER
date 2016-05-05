@@ -85,9 +85,8 @@ var HL = {
     land:null,
     sea:null,
     seaHeights:null, // actually not a geometry, just an array of heights per row to be added to a sine motion
-    clouds: new THREE.BufferGeometry(),
-    flora: new THREE.BufferGeometry(),
-    fauna: new THREE.BufferGeometry(),
+    clouds: null,
+    fauna: null,
   },
   materials: {
     skybox:null,
@@ -104,7 +103,7 @@ var HL = {
   skybox:null,
   land:null,
   sea:null,
-  clouds:null,
+  clouds:false,
   flora:null,
   fauna:null,
 
@@ -118,6 +117,8 @@ var HL = {
 var HLEnvironment = function(){
 
   function init(){
+    //TODO: PRELOAD IMAGES / TEXTURES
+
     initEnvironment();
   //  initLights();
 
@@ -229,10 +230,18 @@ var HLEnvironment = function(){
       HL.geometries.seaHeights[i]=1;
 
     // init and set oarticle systems geometries
-    HLH.initBufParticleSystem(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT, HLE.CLOUDS_AMOUNT, true, true);
-    HLH.initBufParticleSystem(HL.geometries.flora , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT, HLE.FLORA_AMOUNT, false, true);
-    HLH.initBufParticleSystem(HL.geometries.fauna , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT*0.5, HLE.MAX_FAUNA,     true, true);
-
+    if(HL.clouds!==false){
+      HL.geometries.clouds = new THREE.BufferGeometry();
+      HLH.initBufParticleSystem(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT, HLE.CLOUDS_AMOUNT, true, true);
+    }
+    if(HL.flora!==false){
+      HL.geometries.flora = new THREE.BufferGeometry();
+      HLH.initBufParticleSystem(HL.geometries.flora , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT, HLE.FLORA_AMOUNT, false, true);
+    }
+    if(HL.fauna!==false){
+      HL.geometries.fauna = new THREE.BufferGeometry();
+      HLH.initBufParticleSystem(HL.geometries.fauna , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT*0.5, HLE.MAX_FAUNA,     true, true);
+    }
   }
 
 
@@ -343,7 +352,7 @@ var HLEnvironment = function(){
           side: THREE.DoubleSide,
           worldWidth: HLE.WORLD_WIDTH,
           transparent:true,
-          opacity:1,//0.657,
+          opacity:0.85,//0.657,
          }
       );
       HL.materials.water.rotateX( - Math.PI / 2 );
