@@ -133,10 +133,10 @@ var HLH = function() {
 	function moveParticles(geometry, worldSize, moveSpeed) {
 
 		for (i = 0; i < geometry.attributes.position.array.length; i += 3) {
-			if (geometry.attributes.position.array[i + 2] > -worldSize/2)
+			if (geometry.attributes.position.array[i + 2] > -worldSize)
 				geometry.attributes.position.array[i + 2] += moveSpeed;
-			if (geometry.attributes.position.array[i + 2] >= worldSize / 2)
-				geometry.attributes.position.array[i + 2] = -worldSize/2;
+			if (geometry.attributes.position.array[i + 2] >= worldSize)
+				geometry.attributes.position.array[i + 2] = -worldSize;
 		}
 		geometry.attributes.position.needsUpdate = true;
 	}
@@ -144,11 +144,11 @@ var HLH = function() {
   function loopParticles(geometry, worldSize, moveSpeed) {
 
 		for (i = 0; i < geometry.attributes.position.array.length; i += 3) {
-			if (geometry.attributes.position.array[i + 2] > -worldSize / 2)
+			if (geometry.attributes.position.array[i + 2] > -worldSize)
 				geometry.attributes.position.array[i + 2] += moveSpeed;
-			if (geometry.attributes.position.array[i + 2] >= worldSize / 2){
-        geometry.attributes.position.array[i] = (Math.random()*2-1) * worldSize;
-				geometry.attributes.position.array[i + 2] = -worldSize / 2 + .1;
+			if (geometry.attributes.position.array[i + 2] >= worldSize){
+        geometry.attributes.position.array[i] = (Math.random()*2-1) * worldSize/2;
+				geometry.attributes.position.array[i + 2] = -worldSize + .1;
       }
 		}
 		geometry.attributes.position.needsUpdate = true;
@@ -156,8 +156,8 @@ var HLH = function() {
 
 	function startParticle(geometry, worldSize) {
 		for (i = 0; i < geometry.attributes.position.array.length; i+=3) {
-			if (geometry.attributes.position.array[i + 2] <= -worldSize / 2) {
-				geometry.attributes.position.array[i + 2] = -worldSize / 2 + .1;
+			if (geometry.attributes.position.array[i + 2] <= -worldSize) {
+				geometry.attributes.position.array[i + 2] = -worldSize + .1;
 				break;
 			}
 		}
@@ -170,13 +170,13 @@ var HLH = function() {
 		var sC = stepsCount / HLE.WORLD_TILES;
 		for (i = 0; i < Math.min(geometry.attributes.position.array.length, amountToBurst*3+skipped*3); i+=3) {
 			// if particle is inactive at "standby" distance
-			if (geometry.attributes.position.array[i + 2] == -HLE.WORLD_WIDTH/2) {
+			if (geometry.attributes.position.array[i + 2] <= -HLE.WORLD_WIDTH) {
 				var nX = Math.random();
 				geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 2);
-				geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH/2+.1;//getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+1, -HLE.WORLD_WIDTH / 2);
+				geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH+.1;//getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+1, -HLE.WORLD_WIDTH / 2);
 
 				var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5
-				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC ))+5;
+				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC + nY ))+5;
 				//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
 			} else skipped++;
 		}

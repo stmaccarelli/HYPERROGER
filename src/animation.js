@@ -53,7 +53,7 @@ var HLAnim = function(){
       // then calculate LAND first row new heights with noise function
       for ( var i = 0; i < (HL.geometries.land.parameters.widthSegments + 1); i++){
         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(
-          i / (HL.geometries.land.parameters.widthSegments) * 1.0,
+          i / (HL.geometries.land.parameters.widthSegments),
           (HLE.landStepsCount / HLE.WORLD_TILES) ) * (HLE.CENTER_PATH? Math.abs(HL.geometries.land.vertices[i].x/HLE.WORLD_WIDTH)*2:1) ;
       }
       // if we want to use shadows, we have to recalculate normals
@@ -70,7 +70,7 @@ var HLAnim = function(){
   }
 
   // FOR CLOUDS, FLORA AND FAUNA
-  function elements(){
+  function particles(){
     HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.moveSpeed+HLE.CLOUDS_SPEED);
   //  HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
 
@@ -113,7 +113,7 @@ var HLAnim = function(){
     sea:sea,
     seaWMMove:seaWMMove,
     land:land,
-    elements:elements,
+    particles:particles,
     colors:colors,
   }
 }();

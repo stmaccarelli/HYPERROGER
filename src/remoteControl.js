@@ -70,7 +70,7 @@ var HLR = {
       // compute terrain max height
      tempDevLandHeight =
       // Math.sin(millis*.5)*
-     (tempFFT1 * 0.55 + tempFFT3 * .45 ) * HLE.WORLD_HEIGHT * 0.75;
+     (tempFFT1 * 0.55 + tempFFT3 * .45 ) * HLE.WORLD_HEIGHT * 0.5;
       HLE.landHeight += (tempDevLandHeight-HLE.landHeight)*0.08;
       // HLE.landHeight = Math.sin(millis*.5)*HLE.WORLD_HEIGHT*0.5;
       HLE.landZeroPoint = -HLE.landHeight * 0.1;// Math.sin(millis*(1-tempFFT2) * 0.5) * HLE.landHeight;// + HL.noise.noise(millis,millis*0.3,10000)*tempDevLandHeight;//tempFFT2 * HLE.landHeight*0.5;
@@ -78,8 +78,10 @@ var HLR = {
       // HL.materials.fauna.opacity = HLR.fft3*0.5;
 
       // HLC.horizon.setHSL(millis*0.1%1,.4, HLR.fft3*.3);
-     HLC.horizon.setHSL(millis*0.1%1,.6, .1 + HLR.fft3*HLR.fft3*0.7);
-    //  HLC.sea.setHSL(0,0, -.4 + tempFFT3*.3 + HLR.fft3*.7);
+    // HLC.horizon.setHSL(millis*0.1%1,.6, .1 + HLR.fft3*HLR.fft3*0.7);
+    HLC.horizon.setHSL(0,0, .1 + HLR.fft3*.2);
+    HL.materials.land.uniforms.color.value = HLC.land.setHSL(millis*0.1%1,1, .2 + HLR.fft3*.2);
+    HL.materials.water.material.uniforms.mirrorColor.value = HLC.sea.setHSL(0,0, .1+ millis*HLR.fft4*0.1%.5 );
 
     //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 

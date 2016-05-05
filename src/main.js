@@ -83,12 +83,12 @@
     // remote control / audioreactive
     if(HLDEV.audioReactive) HLR.updateHLParams();
     //if(HLDEV.animColors) HLAnim.colors();
-    if(HLDEV.animElements) HLAnim.elements();
+    if(HLDEV.animElements) HLAnim.particles();
     if(HLDEV.animSea && !HLE.MIRROR && !HLE.WATER) HLAnim.sea();
     if(HLE.MIRROR) HLAnim.seaWMMove();
     if(HLDEV.animLand) HLAnim.land();
 
-    HLE.resetTriggers();
+  //  HLE.resetTriggers();
 
     // Controls and camera
     if(isMobile)
@@ -98,11 +98,12 @@
     }
    else{
      HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
-  //   HL.camera.rotateY(millis*0.00025);
+     HL.camera.rotateY(millis*0.001);
+     HL.camera.rotateX(Math.sin(millis*0.1)*0.001);
    }
     // set camera move easing according to move speed
-   HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)*1-HLE.cameraHeight) * (HLE.moveSpeed * 0.002);
-   HL.camera.position.y = 1 + HLE.cameraHeight * 1.5;
+   HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)-HLE.cameraHeight) * (HLE.moveSpeed * 0.02);
+   HL.camera.position.y = 5 + HLE.cameraHeight * 1.5;
 
     // HL.camera.fov = 10 + HLE.cameraHeight * .6;
     // HL.camera.updateProjectionMatrix ();

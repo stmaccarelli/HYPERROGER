@@ -6,8 +6,8 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 
 // HL Environment constants and parameters
 var HLE = {
-  WORLD_WIDTH:1000,
-  WORLD_HEIGHT:150,
+  WORLD_WIDTH:3000,
+  WORLD_HEIGHT:250,
   WORLD_TILES:38, // change it according to device capabilities in initEnvironment()
   TILE_SIZE:null,
 
@@ -19,7 +19,7 @@ var HLE = {
   PIXEL_RATIO_SCALE:0.25,
 
   MAX_MOVE_SPEED: null,
-  BASE_MOVE_SPEED: 1,
+  BASE_MOVE_SPEED: .1,
   CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
@@ -155,8 +155,10 @@ var HLEnvironment = function(){
     }
 
     HL.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 2, HLE.WORLD_WIDTH);
-    HL.camera.position.y = HLE.WORLD_HEIGHT * 0.1;
-
+    HL.camera.focus = HLE.WORLD_WIDTH * 0.25; // USED ONLY IN StereoCamera, if any
+    // TODO check filmGauge and filmOffset effects
+    // HL.camera.filmGauge = 1;
+    // HL.camera.filmOffset = 100;
 
     // TODO: The easyest method to spedup FPS on slow mobile, is to reduce resolution
     // we can do this by settind pixel ratio to fraction of devicePixelRatio
@@ -293,7 +295,7 @@ var HLEnvironment = function(){
       side: THREE.DoubleSide,
       opacity: 0.2,
       transparent: false,
-      size: HLE.WORLD_WIDTH*.008,
+      size: 10,
       fog: true,
       sizeAttenuation: true,
       //alphaTest: 0.5,
@@ -305,13 +307,13 @@ var HLEnvironment = function(){
 
     HL.materials.flora = new THREE.PointsMaterial({
       color: HLC.flora,
-      // side: THREE.DoubleSide,
+      side: THREE.DoubleSide,
       // opacity: 0.55,
       // transparent: true,
-      size: HLE.WORLD_WIDTH*.016,
+      size: 10,
       fog: false,
       sizeAttenuation: true,
-      alphaTest: 0.5,
+      // alphaTest: 0.5,
       map: isWire?null:new THREE.TextureLoader().load( "img/tex_tree_82_128x128.png" ),
     });
     HL.materials.flora.color = HLC.flora; // set by reference
@@ -411,9 +413,8 @@ var HLEnvironment = function(){
 
 
     HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
-    //HL.flora.frustumCulled = true;
     HL.flora.name = "flora";
-    HL.flora.position.y = -5; //hardset like land at lower height, so we easily see se
+    HL.flora.frustumCulled = false;
     HL.scene.add(HL.flora);
 
     HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
