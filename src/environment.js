@@ -85,9 +85,8 @@ var HL = {
     land:null,
     sea:null,
     seaHeights:null, // actually not a geometry, just an array of heights per row to be added to a sine motion
-    clouds: new THREE.BufferGeometry(),
-    flora: new THREE.BufferGeometry(),
-    fauna: new THREE.BufferGeometry(),
+    clouds: null,
+    fauna: null,
   },
   materials: {
     skybox:null,
@@ -113,7 +112,7 @@ var HL = {
   skybox:null,
   land:null,
   sea:null,
-  clouds:null,
+  clouds:false,
   flora:null,
   fauna:null,
 
@@ -277,6 +276,7 @@ var HLEnvironment = function(){
     HLH.initBufParticleSystem(HL.geometries.fauna , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT*0.5, HLE.MAX_FAUNA, true, true);
 
     console.log("geometries init");
+
   }
 
 
@@ -425,7 +425,6 @@ var HLEnvironment = function(){
       //blending: THREE.AdditiveBlending,
     });
     HL.materials.fauna.color = HLC.fauna; // set by reference
-
 
     console.log("materials init");
     initMeshes();
