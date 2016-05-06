@@ -30,9 +30,9 @@ var HLAnim = function(){
      }
   }
 
+  // when SEA is a MIRROR or WATER material
   function seaWMMove(){
   // now in shader  HL.sea.position.z = (HL.sea.position.z+HLE.moveSpeed)%(HLE.TILE_SIZE);
-
   HL.materials.water.material.uniforms.time.value = millis;
   HL.materials.water.material.uniforms.step.value = HLE.landStepsCount;
   }
@@ -62,6 +62,7 @@ var HLAnim = function(){
         //  HL.geometries.land.computeVertexNormals();
       // }
 
+      // if LAND is land-depth-material
       // update landZeroPoint and landHeight in shader
       HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
       HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;

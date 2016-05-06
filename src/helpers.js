@@ -172,7 +172,7 @@ var HLH = function() {
 			// if particle is inactive at "standby" distance
 			if (geometry.attributes.position.array[i + 2] <= -HLE.WORLD_WIDTH) {
 				var nX = Math.random();
-				geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 2);
+				geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 4);
 				geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH+.1;//getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+1, -HLE.WORLD_WIDTH / 2);
 
 				var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5

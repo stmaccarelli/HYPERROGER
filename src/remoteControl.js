@@ -51,7 +51,8 @@ var HLR = {
       // compute move speed
       // lerp move speed according to audio
       HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 + HLR.fft4) * .3 *HLE.MAX_MOVE_SPEED;
-
+      HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.05;
+      
       // compute noise frequency for terrain generation
       tempFFT1 += (HLR.fft1 - tempFFT1)*0.005;
       tempFFT2 += (HLR.fft2 - tempFFT2)*0.005;
@@ -65,7 +66,7 @@ var HLR = {
       HLE.noiseFrequency += (tempNoiseFreq*0.55 - HLE.noiseFrequency) * 1;
       HLE.noiseFrequency2 += (tempNoiseFreq2 - HLE.noiseFrequency2) * 1;
 
-
+      // if(HLR.fft3>0.7) HL.camera.rotateY((Math.random()-.5)*.5);
 
       // compute terrain max height
      tempDevLandHeight =
@@ -79,9 +80,10 @@ var HLR = {
 
       // HLC.horizon.setHSL(millis*0.1%1,.4, HLR.fft3*.3);
     // HLC.horizon.setHSL(millis*0.1%1,.6, .1 + HLR.fft3*HLR.fft3*0.7);
-    HLC.horizon.setHSL(0,0, .1 + HLR.fft3*.2);
-    HL.materials.land.uniforms.color.value = HLC.land.setHSL(millis*0.1%1,1, .2 + HLR.fft3*.2);
-    HL.materials.water.material.uniforms.mirrorColor.value = HLC.sea.setHSL(0,0, .1+ millis*HLR.fft4*0.1%.5 );
+    HLC.horizon.setHSL(.4, 1, 1.0 - HLR.fft3);
+    HL.materials.land.uniforms.color.value = HLC.land.setHSL(0,1, .5 + HLR.fft3*.5);
+    if(HLE.MIRROR || HLE.WATER)
+  //  HL.materials.water.material.uniforms.color.value = HLC.sea.setHSL(0,0, .1+ millis*HLR.fft4*0.1%.5 );
 
     //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 
