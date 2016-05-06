@@ -73,7 +73,7 @@ var HLH = function() {
 			if (randomize) {
 				vertexPositions.push(
 					[Math.random() * worldWidth - worldWidth / 2,
-						worldHeight*0.75 + Math.random() * worldHeight*0.25, // TBD find a standard solution
+						worldHeight*0.75 + Math.random() * worldHeight*0.5, // TBD find a standard solution
 						Math.random() * worldWidth - worldWidth / 2
 					]
 				);
