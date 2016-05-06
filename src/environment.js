@@ -112,7 +112,7 @@ var HL = {
   skybox:null,
   land:null,
   sea:null,
-  clouds:false,
+  clouds:true,
   flora:null,
   fauna:null,
 
@@ -271,8 +271,11 @@ var HLEnvironment = function(){
       HL.geometries.seaHeights[i]=1;
 
     // init and set oarticle systems geometries
+    HL.geometries.clouds = new THREE.BufferGeometry();
     HLH.initBufParticleSystem(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT, HLE.CLOUDS_AMOUNT, true, true);
+    HL.geometries.flora = new THREE.BufferGeometry();
     HLH.initBufParticleSystem(HL.geometries.flora , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT, HLE.FLORA_AMOUNT, false, true);
+    HL.geometries.fauna = new THREE.BufferGeometry();
     HLH.initBufParticleSystem(HL.geometries.fauna , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT*0.5, HLE.MAX_FAUNA, true, true);
 
     console.log("geometries init");
