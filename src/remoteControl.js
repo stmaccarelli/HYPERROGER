@@ -81,10 +81,10 @@ var HLR = {
       // HLC.horizon.setHSL(millis*0.1%1,.4, HLR.fft3*.3);
     // HLC.horizon.setHSL(millis*0.1%1,.6, .1 + HLR.fft3*HLR.fft3*0.7);
 
-    HLC.horizon.setHSL(.4,.8, .5 - HLR.fft4);
+    HLC.horizon.setHSL(Math.sin(frameCount/360)*.4,.8, .5 - HLR.fft4);
     HL.materials.land.uniforms.color.value = HLC.land.setHSL(0,1, tempFFT1-HLR.fft3);
     if(HL.WATER)HL.materials.water.material.uniforms.mirrorColor.value = HLC.sea.setHSL(0,0, .1+ millis*HLR.fft4*0.2%.5 );
-
+    HLC.sea.setHSL(0,0,(HLR.fft1+HLR.fft2)*0.13);
     //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 
       if(HLR.fft4>0.15) HLE.shotFlora = true;

@@ -394,7 +394,7 @@ var HLEnvironment = function(){
       fog: true,
       sizeAttenuation: true,
       //alphaTest: 0.5,
-      depthWrite: false,
+      depthWrite: true,
     //  map:isWire?null:HL.textures.clouds,
     });
     HL.materials.clouds.color = HLC.clouds; // set by reference
