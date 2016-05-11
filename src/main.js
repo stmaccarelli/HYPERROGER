@@ -4,7 +4,7 @@
   var isVR = window.location.href.indexOf('?vr')>-1;
   var isDebug = window.location.href.indexOf('?debug')>-1;
   var isFPC = window.location.href.indexOf('?fpc')>-1;
-  var isOrbit = window.location.href.indexOf('?orbit')>-1;
+  var isNoiseCam = window.location.href.indexOf('?noisecam')>-1;
   var isWire = window.location.href.indexOf('?wire')>-1;
   var hasShadows = false;
 
@@ -68,8 +68,8 @@
     // Controls and camera
     if(isMobile)
       HL.controls.update(); //DeviceOrientationControls  mode
-    else if(isFPC || isOrbit){
-      HL.controls.update(delta); //FPC mode
+    else if(isFPC || isNoiseCam){
+      HL.controls.update(delta,millis); //FPC mode
     }
     else{
     // HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
