@@ -73,12 +73,19 @@
     }
     else{
     // HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
-    //  HL.camera.rotateY((Math.random()-.5)*.02);
+      if(frameCount%600>300)
+        HL.camera.rotateY(0);
+      else
+      // HL.camera.rotateY( HLR.fft4 * .0002 + HLR.fft1 * Math.random()*.0002);
+      HL.camera.rotateY( (HL.noise.nNoise(frameCount*.006,frameCount*.008,100)-0.5)*0.001);
+
     // HL.camera.rotateX(Math.sin(millis*0.1)*0.001);
     }
     // set camera move easing according to move speed
-    HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)-HLE.cameraHeight) * (HLE.moveSpeed * 0.02);
-    HL.camera.position.y = 5 + HLE.cameraHeight * 1.5;
+    if(!HLE.CENTER_PATH){
+      HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)-HLE.cameraHeight) * (HLE.moveSpeed * 0.05);
+      HL.camera.position.y = 10 + HLE.cameraHeight * 1.5;
+    }
 
     // HL.camera.fov = 10 + HLE.cameraHeight * .6;
     // HL.camera.updateProjectionMatrix ();
