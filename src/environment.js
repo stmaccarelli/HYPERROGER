@@ -15,7 +15,7 @@ var HLE = {
 
   FOG:true,
   MIRROR:false,
-  WATER:false,
+  WATER:true,
   PIXEL_RATIO_SCALE:0.5,
 
   MAX_MOVE_SPEED: null,
@@ -237,8 +237,8 @@ var HLEnvironment = function(){
 		  HL.controls.movementSpeed = 10;
 		  HL.controls.lookSpeed = 0.1;
     }
-    else if(isOrbit){
-      HL.controls = new THREE.OrbitControls(HL.camera);
+    else if(isNoiseCam){
+      HL.controls = new THREE.NoiseCameraMove(HL.camera);
     }
 
     console.log("environment init");
