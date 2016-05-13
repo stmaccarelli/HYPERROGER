@@ -72,14 +72,7 @@
       HL.controls.update(delta,millis); //FPC mode
     }
     else{
-    // HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
-      if(frameCount%600>300)
-        HL.camera.rotateY(0);
-      else
-      // HL.camera.rotateY( HLR.fft4 * .0002 + HLR.fft1 * Math.random()*.0002);
-      HL.camera.rotateY( (HL.noise.nNoise(frameCount*.006,frameCount*.008,100)-0.5)*0.001);
-
-    // HL.camera.rotateX(Math.sin(millis*0.1)*0.001);
+     HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
     }
     // set camera move easing according to move speed
     if(!HLE.CENTER_PATH){
@@ -94,7 +87,7 @@
     }
     else if(HLE.WATER) {
      HL.materials.water.render();
-     HL.materials.water.material.uniforms.time.value += HLE.moveSpeed * .01;
+     HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .01;
     // HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
     }
     // Rendering

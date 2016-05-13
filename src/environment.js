@@ -6,8 +6,8 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 
 // HL Environment constants and parameters
 var HLE = {
-  WORLD_WIDTH:3000,
-  WORLD_HEIGHT:250,
+  WORLD_WIDTH:5000,
+  WORLD_HEIGHT:1000,
   WORLD_TILES:38, // change it according to device capabilities in initEnvironment()
   TILE_SIZE:null,
 
@@ -373,7 +373,7 @@ var HLEnvironment = function(){
         noiseScale: 2.14,
         opacity: 0.63,
 //  			sunDirection: HL.lights.directional.position.normalize(),
-        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.5).normalize(),
+        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
   			sunColor: 0x7f7f66,
   			color: 0x00ff00,
         waterReflectivity:0.25,
@@ -405,7 +405,7 @@ var HLEnvironment = function(){
       side: THREE.DoubleSide,
       opacity: 0.75,
       transparent: true,
-      size: 50,
+      size: 100,
       fog: false,
       blending:THREE.AdditiveBlending,
       sizeAttenuation: true,
