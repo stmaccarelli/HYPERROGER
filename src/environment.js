@@ -413,7 +413,7 @@ var HLEnvironment = function(){
       transparent: true,
       size: 3000,
       fog: true,
-      //blending:THREE.AdditiveBlending,
+//      blending:THREE.AdditiveBlending,
       sizeAttenuation: true,
       //alphaTest: 0.1,
       map:isWire?null:HL.textures.flora,

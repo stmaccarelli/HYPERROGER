@@ -122,10 +122,10 @@ var HLR = {
       if(HLR.fft4>0.55) HL.materials.sea.wireframe = true;
       else HL.materials.sea.wireframe = false;
     }
-    // else if(HLE.WATER){
-    //   if(HLR.fft4>0.55) HL.materials.water.material.uniforms.color.value = HLC.sea.set(0xffffff);
-    //   else HL.materials.water.material.uniforms.color.value = HLC.sea.set(0x000000);
-    // }
+    else if(HLE.WATER){
+      if(HLR.fft4>0.65) HL.materials.water.material.uniforms.color.value = HLC.sea.set(0xffffff);
+      else HL.materials.water.material.uniforms.color.value = HLC.sea.set(0x000000);
+    }
 
     if(HLR.fft2<0.85) HL.materials.land.wireframe = true;
     else HL.materials.land.wireframe = false;
@@ -133,7 +133,6 @@ var HLR = {
       if(HLR.fft4>0.4) HLE.shotFlora = true;
       // HL.materials.clouds.opacity = 1-HLR.fft3;
     //  HLC.horizon.setHSL(millis*.1%1,.8, .2 + tempFFT3*.2 + HLR.fft3*.2);
-
 
     }
   }
