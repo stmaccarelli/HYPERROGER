@@ -106,8 +106,11 @@ var HLR = {
       // HLC.horizon.setHSL(millis*0.1%1,.4, HLR.fft3*.3);
     // HLC.horizon.setHSL(millis*0.1%1,.6, .1 + HLR.fft3*HLR.fft3*0.7);
 
-//    HLC.horizon.setHSL(Math.sin(frameCount/360)*.4,.8, .5 - HLR.fft3);
-    HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
+    HLC.horizon.setHSL(Math.sin(frameCount/360)*.4,.2, .1 + HLR.fft3);
+    HL.materials.water.material.uniforms.sunColor.value = HLC.horizon;
+
+  // HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
+
     HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/36000)%1+.25,1, tempFFT2*.4+HLR.fft3*0.5);
     if(HLE.WATER)HL.materials.water.material.uniforms.color.value = HLC.sea.setHSL(0,0, .1+ millis*HLR.fft4*0.2%.5 );
     else HLC.sea.setHSL(0,0,.05-HLR.fft5*.5);
@@ -119,10 +122,10 @@ var HLR = {
       if(HLR.fft4>0.55) HL.materials.sea.wireframe = true;
       else HL.materials.sea.wireframe = false;
     }
-    else if(HLE.WATER){
-      if(HLR.fft4>0.55) HL.materials.water.material.uniforms.color.value = HLC.sea.set(0xffffff);
-      else HL.materials.water.material.uniforms.color.value = HLC.sea.set(0x000000);
-    }
+    // else if(HLE.WATER){
+    //   if(HLR.fft4>0.55) HL.materials.water.material.uniforms.color.value = HLC.sea.set(0xffffff);
+    //   else HL.materials.water.material.uniforms.color.value = HLC.sea.set(0x000000);
+    // }
 
     if(HLR.fft2<0.85) HL.materials.land.wireframe = true;
     else HL.materials.land.wireframe = false;
@@ -130,5 +133,7 @@ var HLR = {
       if(HLR.fft4>0.4) HLE.shotFlora = true;
       // HL.materials.clouds.opacity = 1-HLR.fft3;
     //  HLC.horizon.setHSL(millis*.1%1,.8, .2 + tempFFT3*.2 + HLR.fft3*.2);
+
+
     }
   }
