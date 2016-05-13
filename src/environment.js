@@ -7,7 +7,7 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 // HL Environment constants and parameters
 var HLE = {
   WORLD_WIDTH:5000,
-  WORLD_HEIGHT:1000,
+  WORLD_HEIGHT:300,
   WORLD_TILES:38, // change it according to device capabilities in initEnvironment()
   TILE_SIZE:null,
 
@@ -56,7 +56,7 @@ HLE.resetTriggers = function(){
 
 //HL Colors Library
 var HLC = {
-  horizon: new THREE.Color(0x000000),
+  horizon: new THREE.Color(0xffffff),
   land: new THREE.Color(0xff0000),
   sea: new THREE.Color(0x000000),
 
@@ -100,11 +100,11 @@ var HL = {
     water:null,
   },
   textures: {
-    skybox:null,
+    skybox:"img/skybox2/skydome2.jpg",
     land:null,
     sea:null,
     clouds:null,
-    flora:"img/tex_tree_82_128x128.png",
+    flora:"img/cloud3.png",//"img/tex_tree_82_128x128.png",
     fauna:null,
     water:"img/waternormals5.png"
   },
@@ -191,7 +191,7 @@ var HLEnvironment = function(){
     }
 
     // CAMERA
-    HL.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 2, HLE.WORLD_WIDTH);
+    HL.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 2, HLE.WORLD_WIDTH);
     HL.camera.focus = HLE.WORLD_WIDTH * 0.25; // USED ONLY IN StereoCamera, if any
     // TODO check filmGauge and filmOffset effects
     // HL.camera.filmGauge = 1;
@@ -246,8 +246,11 @@ var HLEnvironment = function(){
 
 
   function initGeometries(){
-    HL.geometries.skybox = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT*3, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
-    HL.geometries.skybox.translate(0,0, HLE.TILE_SIZE*0.5);
+  //  HL.geometries.skybox = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
+  //  HL.geometries.skybox.translate(0,0, HLE.TILE_SIZE*0.5);
+    HL.geometries.skybox = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*.5,10,10);
+    // SphereBufferGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
+
 
     HL.geometries.land = new THREE.PlaneGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
       HLE.WORLD_TILES , HLE.WORLD_TILES);
@@ -285,6 +288,7 @@ var HLEnvironment = function(){
 
 
   function initMaterials(){
+
     HL.materials.skybox = new THREE.MeshBasicMaterial({
       color: HLC.horizon,
       fog: false,
@@ -294,6 +298,8 @@ var HLEnvironment = function(){
       map:isWire?null:HL.textures.skybox,
     });
     HL.materials.skybox.color = HLC.horizon; // set by reference
+
+    //  HL.materials.skybox = new THREE.SkyboxMaterial('img/skybox1/','.jpg').material;
 
 
     // HL.materials.land = new THREE.MeshBasicMaterial({
@@ -405,13 +411,13 @@ var HLEnvironment = function(){
       side: THREE.DoubleSide,
       opacity: 0.75,
       transparent: true,
-      size: 100,
-      fog: false,
-      blending:THREE.AdditiveBlending,
+      size: 3000,
+      fog: true,
+      //blending:THREE.AdditiveBlending,
       sizeAttenuation: true,
       //alphaTest: 0.1,
       map:isWire?null:HL.textures.flora,
-
+      //depthTest:false,
     });
     HL.materials.flora.color = HLC.flora; // set by reference
 
@@ -461,7 +467,7 @@ var HLEnvironment = function(){
       HL.sea = new THREE.Mesh(HL.geometries.sea, HL.materials.sea);
     }
     HL.sea.name = "sea";
-   HL.scene.add(HL.sea);
+    HL.scene.add(HL.sea);
     // HL.sea.receiveShadows = true;
 
 
