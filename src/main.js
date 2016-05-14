@@ -64,6 +64,7 @@
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
     if(HLE.MIRROR) HLAnim.seaWMMove();
     HLAnim.land();
+    HLAnim.models();
 
     // Controls and camera
     if(isMobile)
@@ -87,7 +88,7 @@
     }
     else if(HLE.WATER) {
      HL.materials.water.render();
-     HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .01;
+     HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005;
     // HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
     }
     // Rendering

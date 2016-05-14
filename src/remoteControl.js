@@ -69,7 +69,7 @@ var HLR = {
 
       // compute move speed
       // lerp move speed according to audio
-      HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 + HLR.fft4) * .5 *HLE.MAX_MOVE_SPEED;
+      HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 + HLR.fft4) * .5 *HLE.MAX_MOVE_SPEED * 0.5;
       HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.05;
 
     //  HLE.CLOUDS_SPEED = 1 + tempFFT4*20;
@@ -106,29 +106,32 @@ var HLR = {
       // HLC.horizon.setHSL(millis*0.1%1,.4, HLR.fft3*.3);
     // HLC.horizon.setHSL(millis*0.1%1,.6, .1 + HLR.fft3*HLR.fft3*0.7);
 
-    HLC.horizon.setHSL(Math.sin(frameCount/360)*.4,.2, .1 + HLR.fft3);
-    HL.materials.water.material.uniforms.sunColor.value = HLC.horizon;
+    HLC.horizon.setHSL((frameCount/3600)%1,.2, .1 + HLR.fft3);
+  //  HL.materials.water.material.uniforms.sunColor.value = HLC.horizon;//HLC.horizon;
+    // HL.materials.water.material.uniforms.color.value = new THREE.Color(0x000000);//HLC.horizon;
 
   // HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
 
-    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/36000)%1+.25,1, tempFFT2*.4+HLR.fft3*0.5);
-    if(HLE.WATER)HL.materials.water.material.uniforms.color.value = HLC.sea.setHSL(0,0, .1+ millis*HLR.fft4*0.2%.5 );
-    else HLC.sea.setHSL(0,0,.05-HLR.fft5*.5);
+    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.9, tempFFT2*.4+HLR.fft3*0.4);
+    if(!HLE.WATER) HLC.sea.setHSL(0,0,.05-HLR.fft5*.5);
     //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 
 
     // TODO: debounce
-    if(!HLE.WATER && !HLE.MIRROR){
-      if(HLR.fft4>0.55) HL.materials.sea.wireframe = true;
-      else HL.materials.sea.wireframe = false;
-    }
-    else if(HLE.WATER){
-      if(HLR.fft4>0.65) HL.materials.water.material.uniforms.color.value = HLC.sea.set(0xffffff);
-      else HL.materials.water.material.uniforms.color.value = HLC.sea.set(0x000000);
-    }
+    // if(!HLE.WATER && !HLE.MIRROR){
+    //   if(HLR.fft4>0.55) HL.materials.sea.wireframe = true;
+    //   else HL.materials.sea.wireframe = false;
+    // }
+    // else if(HLE.WATER){
+    // //  if(HLR.fft4>0.65) HL.materials.water.material.uniforms.color.value = HLC.sea.set(0xffffff);
+    // //  else HL.materials.water.material.uniforms.color.value = HLC.sea.set(0x000000);
+    // }
 
-    if(HLR.fft2<0.85) HL.materials.land.wireframe = true;
-    else HL.materials.land.wireframe = false;
+    if(HLR.fft3>0.8 )
+      HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH,HLE.WORLD_WIDTH)*.5,HLE.WORLD_HEIGHT*2, 10);
+
+    // if(HLR.fft2<0.85) HL.materials.land.wireframe = true;
+    // else HL.materials.land.wireframe = false;
 
       if(HLR.fft4>0.4) HLE.shotFlora = true;
       // HL.materials.clouds.opacity = 1-HLR.fft3;

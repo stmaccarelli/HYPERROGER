@@ -58,7 +58,7 @@ HLE.resetTriggers = function(){
 var HLC = {
   horizon: new THREE.Color(0xffffff),
   land: new THREE.Color(0xff0000),
-  sea: new THREE.Color(0x000000),
+  sea: new THREE.Color(0x000611),
 
   underHorizon: new THREE.Color(.0, .02, .02),
   underLand: new THREE.Color(.1, .9, .9),
@@ -108,6 +108,9 @@ var HL = {
     fauna:null,
     water:"img/waternormals5.png"
   },
+  models: {
+    whale:"3dm/BL_WHALE/BL_WHALE.OBJ",
+  },
   // meshes
   skybox:null,
   land:null,
@@ -133,11 +136,12 @@ var HLEnvironment = function(){
     if(imagesLoaded==imagesCounter) { console.log("all images loaded"); initMaterials();}
   }
   function loadTextures(){
-      for (var key in HL.textures)
-        if(HL.textures[key]!=null){
-          imagesCounter++;
-          HL.textures[key] = new THREE.TextureLoader().load( HL.textures[key], imageLoaded );
-        }
+    var loader = new THREE.TextureLoader();
+    for (var key in HL.textures)
+      if(HL.textures[key]!=null){
+        imagesCounter++;
+        HL.textures[key] = loader.load( HL.textures[key], imageLoaded );
+      }
   }
 
   function init(){
@@ -191,7 +195,7 @@ var HLEnvironment = function(){
     }
 
     // CAMERA
-    HL.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 2, HLE.WORLD_WIDTH);
+    HL.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 3, HLE.WORLD_WIDTH*3);
     HL.camera.focus = HLE.WORLD_WIDTH * 0.25; // USED ONLY IN StereoCamera, if any
     // TODO check filmGauge and filmOffset effects
     // HL.camera.filmGauge = 1;
@@ -248,7 +252,7 @@ var HLEnvironment = function(){
   function initGeometries(){
   //  HL.geometries.skybox = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
   //  HL.geometries.skybox.translate(0,0, HLE.TILE_SIZE*0.5);
-    HL.geometries.skybox = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*.5,10,10);
+    HL.geometries.skybox = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*3-10,10,10);
     // SphereBufferGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
 
 
@@ -377,12 +381,10 @@ var HLEnvironment = function(){
   			textureHeight: 512,
   			waterNormals: HL.textures.water,
         noiseScale: 2.14,
-        opacity: 0.63,
 //  			sunDirection: HL.lights.directional.position.normalize(),
         sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
   			sunColor: 0x7f7f66,
-  			color: 0x00ff00,
-        waterReflectivity:0.25,
+  //			color: HLC.sea,
   			betaVersion: 1,
         fog: true,
         side: THREE.FrontSide
@@ -437,7 +439,46 @@ var HLEnvironment = function(){
     HL.materials.fauna.color = HLC.fauna; // set by reference
 
     console.log("materials init");
+
+    initModels();
+
     initMeshes();
+  }
+
+  function initModels(){
+
+    // instantiate a loader
+    var loader = new THREE.OBJLoader();
+
+    // load a resource
+    for (var key in HL.models)
+      if(HL.models[key]!==null)
+        loader.load(
+          // resource URL
+          HL.models[key],
+          // Function when resource is loaded
+          function ( object ) {
+            HL.models[key]=object.children[0];
+            HL.models[key].name = key;
+            HL.models[key].material = HL.materials.land;
+            HL.models[key].geometry.scale(50,50,50);
+            HL.scene.add( HL.models[key] );
+            HLH.resetModel(HL.models[key]);
+            console.log(HL.models[key]);
+          }
+        );
+  };
+
+
+  function initLights(){
+  //   HL.lights.ambient = new THREE.AmbientLight( 0x111111 );
+  //   HL.scene.add( HL.lights.ambient );
+  //
+  //   HL.lights.directional = new THREE.DirectionalLight( 0xffffff, 10);
+  //   HL.lights.directional.color = HLC.horizon;
+  //   HL.lights.directional.position.set(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.5);
+  // //  HL.lights.directional.castShadows = false;
+  //   HL.scene.add( HL.lights.directional );
   }
 
 
@@ -481,7 +522,7 @@ var HLEnvironment = function(){
     HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
     HL.flora.name = "flora";
     HL.flora.frustumCulled = false;
-    HL.scene.add(HL.flora);
+  //  HL.scene.add(HL.flora);
 
     // HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
     // HL.fauna.name = "fauna";
@@ -493,20 +534,6 @@ var HLEnvironment = function(){
     console.log("meshes init");
 
   }
-
-
-  function initLights(){
-  //   HL.lights.ambient = new THREE.AmbientLight( 0x111111 );
-  //   HL.scene.add( HL.lights.ambient );
-  //
-  //   HL.lights.directional = new THREE.DirectionalLight( 0xffffff, 10);
-  //   HL.lights.directional.color = HLC.horizon;
-  //   HL.lights.directional.position.set(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.5);
-  // //  HL.lights.directional.castShadows = false;
-  //   HL.scene.add( HL.lights.directional );
-  }
-
-
 
   return {
     init:init

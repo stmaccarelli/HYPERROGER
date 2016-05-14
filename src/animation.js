@@ -84,6 +84,12 @@ var HLAnim = function(){
 
   }
 
+  function models(){
+    for(var k in HL.models)
+      if(HL.models[k].position)
+        HLH.moveModel( HL.models[k] );
+  }
+
 
 
   // COLORS ANIMATIONS
@@ -115,6 +121,7 @@ var HLAnim = function(){
     seaWMMove:seaWMMove,
     land:land,
     particles:particles,
+    models:models,
     colors:colors,
   }
 }();

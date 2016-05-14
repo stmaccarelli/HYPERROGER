@@ -206,6 +206,43 @@ var HLH = function() {
 	}
 
 
+	/*
+	MODELS MANAGEMENT
+	*/
+
+	function resetModel(model){
+			model.position.set(0,0,-HLE.WORLD_WIDTH*10);
+	}
+
+	function resetAllModels(){
+		for(var key in HL.models)
+			if(HL.models[key]!==null)
+				HL.models[key].position.set(0,0,-HLE.WORLD_WIDTH*10);
+	}
+
+	function startModel(model,x,y,_speed){
+
+		var speed = _speed!==undefined?_speed:1;
+
+		if(model.position.z == -HLE.WORLD_WIDTH*10){
+			x = x || 0;
+			y = y || HLE.WORLD_HEIGHT*.5;
+
+			model.position.set(x,y,-HLE.WORLD_WIDTH+0.1);
+			model["speed"] = speed;
+			model["targetY"] = y;
+		}
+	}
+
+	function moveModel(model){
+		if(model.position.z >= -HLE.WORLD_WIDTH){
+			model.position.z += model.speed;
+			model.position.y = model["targetY"]-Math.abs(model.position.z)/HLE.WORLD_WIDTH*model["targetY"];
+		}
+		if(model.position.z>=HLE.WORLD_WIDTH)
+			resetModel(model);
+	}
+
 	return {
 		initParticleSystem: function(a, b, c, d, e) {
 			return initParticleSystem(a, b, c, d, e)
@@ -244,5 +281,9 @@ var HLH = function() {
 		landHeightNoise: function(a, b) {
 			return landHeightNoise(a, b)
 		},
+		resetModel: function(a) {resetModel(a)},
+		resetAllModels: resetAllModels,
+		startModel: function(a,b,c,d) {startModel(a,b,c,d)},
+		moveModel: function(a) {moveModel(a)},
 	}
 }();
