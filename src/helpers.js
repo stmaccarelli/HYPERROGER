@@ -11,6 +11,11 @@ var HLH = function() {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
+	function easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t };
+	function easeOutQuad(t) { return t*(2-t) };
+	function easeInQuad(t) { return t*t };
+
+
 	// GEOMETRIES
 
 	// Simple sine motion on Y axis for a plane geometry, for seawaves
@@ -220,13 +225,16 @@ var HLH = function() {
 				HL.models[key].position.set(0,0,-HLE.WORLD_WIDTH*10);
 	}
 
-	function startModel(model,x,y,_speed){
+	function startModel(model,x,y,speed){
 
-		var speed = _speed!==undefined?_speed:1;
-
-		if(model.position.z == -HLE.WORLD_WIDTH*10){
+		if(model.position.z === -HLE.WORLD_WIDTH*10){
+			speed = speed||1;
 			x = x || 0;
 			y = y || HLE.WORLD_HEIGHT*.5;
+			if(y === true){
+				y=landHeightNoise(x/HLE.WORLD_WIDTH,HLE.landStepsCount+0.1/HLE.WORLD_WIDTH);
+				speed = true;
+			}
 
 			model.position.set(x,y,-HLE.WORLD_WIDTH+0.1);
 			model["speed"] = speed;
@@ -236,8 +244,10 @@ var HLH = function() {
 
 	function moveModel(model){
 		if(model.position.z >= -HLE.WORLD_WIDTH){
-			model.position.z += model.speed;
-			model.position.y = model["targetY"]-Math.abs(model.position.z)/HLE.WORLD_WIDTH*model["targetY"];
+			if(model.speed!==true) model.position.z += model.speed;
+			else model.position.z+=HLE.moveSpeed;
+			model.position.y = model.targetY-easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)*model["targetY"];
+			if(model.speed!==true) model.position.y += Math.sin(model.position.y*0.02)*model.height*0.25;
 		}
 		if(model.position.z>=HLE.WORLD_WIDTH)
 			resetModel(model);

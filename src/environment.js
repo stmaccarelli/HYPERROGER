@@ -14,9 +14,9 @@ var HLE = {
   MAX_TOTAL_PARTICLES: 10, // change it according to device capabilities in initEnvironment()
 
   FOG:true,
-  MIRROR:false,
-  WATER:true,
-  PIXEL_RATIO_SCALE:0.5,
+  MIRROR:isWire===true?false: false,
+  WATER:isWire===true?false: true,
+  PIXEL_RATIO_SCALE:.5,
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: .1,
@@ -67,6 +67,8 @@ var HLC = {
   flora: new THREE.Color(1,1,0),
   fauna: new THREE.Color(1,0,0),
   clouds: new THREE.Color(1,1,1),
+
+  gWhite: new THREE.Color(0xffffff),
 }
 
 
@@ -91,13 +93,12 @@ var HL = {
   materials: {
     skybox:null,
     land:null,
-    landAbyss:null, // TODO material whose color becomes gradually black down sea level
-    // I'll combine this with a semi-transparent water shader, hoping would look like volumetric water color
     sea:null,
     clouds:null,
     flora:null,
     fauna:null,
     water:null,
+    models:null,
   },
   textures: {
     skybox:"img/skybox2/skydome2.jpg",
@@ -106,10 +107,11 @@ var HL = {
     clouds:null,
     flora:"img/cloud3.png",//"img/tex_tree_82_128x128.png",
     fauna:null,
-    water:"img/waternormals5.png"
+    water:"img/waternormals5.png",
+    whale:"3dm/BL_WHALE/BL_WHALE2.jpg",
   },
   models: {
-    whale:"3dm/BL_WHALE/BL_WHALE.OBJ",
+    whale:"3dm/BL_WHALE/BL_WHALE2.OBJ",
   },
   // meshes
   skybox:null,
@@ -122,6 +124,7 @@ var HL = {
   lights:{
     ambient:null,
     directional:null,
+    sun:null,
   },
 }
 
@@ -147,7 +150,7 @@ var HLEnvironment = function(){
   function init(){
 
     initEnvironment();
-    //  initLights();
+    initLights();
     initGeometries();
     loadTextures();
     // loadTextures() calls initMaterials() once all images are loaded
@@ -327,8 +330,9 @@ var HLEnvironment = function(){
      HL.materials.land = new THREE.LandDepthMaterial({
        color:HLC.land,
        waterColor: 0x444444,
-       wireframe:false,
+       wireframe:isWire,
        map:isWire?null:HL.textures.land,
+       fog:true,
     });
 
     if(!HLE.WATER && !HLE.MIRROR){
@@ -381,8 +385,8 @@ var HLEnvironment = function(){
   			textureHeight: 512,
   			waterNormals: HL.textures.water,
         noiseScale: 2.14,
-//  			sunDirection: HL.lights.directional.position.normalize(),
-        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
+  			sunDirection: HL.lights.sun.position.normalize(),
+//        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
   			sunColor: 0x7f7f66,
   //			color: HLC.sea,
   			betaVersion: 1,
@@ -438,6 +442,15 @@ var HLEnvironment = function(){
     });
     HL.materials.fauna.color = HLC.fauna; // set by reference
 
+
+    HL.materials.models = new THREE.MeshBasicMaterial({
+      color:0x000000,
+      map:isWire?null:HL.textures.whale,
+      fog:true,
+      wireframe:isWire,
+   });
+   if(!isWire) HL.materials.models.color = HLC.horizon;
+
     console.log("materials init");
 
     initModels();
@@ -460,8 +473,11 @@ var HLEnvironment = function(){
           function ( object ) {
             HL.models[key]=object.children[0];
             HL.models[key].name = key;
-            HL.models[key].material = HL.materials.land;
             HL.models[key].geometry.scale(50,50,50);
+            HL.models[key].geometry.computeBoundingBox();
+            HL.models[key]['height']=HL.models[key].geometry.boundingBox.size().y;
+            HL.models[key].material = HL.materials.models;
+
             HL.scene.add( HL.models[key] );
             HLH.resetModel(HL.models[key]);
             console.log(HL.models[key]);
@@ -471,14 +487,20 @@ var HLEnvironment = function(){
 
 
   function initLights(){
-  //   HL.lights.ambient = new THREE.AmbientLight( 0x111111 );
-  //   HL.scene.add( HL.lights.ambient );
+     HL.lights.ambient = new THREE.AmbientLight( 0x111111 );
+     HL.scene.add( HL.lights.ambient );
   //
   //   HL.lights.directional = new THREE.DirectionalLight( 0xffffff, 10);
   //   HL.lights.directional.color = HLC.horizon;
   //   HL.lights.directional.position.set(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.5);
   // //  HL.lights.directional.castShadows = false;
   //   HL.scene.add( HL.lights.directional );
+
+     HL.lights.sun = new THREE.DirectionalLight( 0xffffff, 10);
+    // HL.lights.sun.color = HLC.horizon;
+     HL.lights.sun.position.set(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.5);
+     //  HL.lights.sun.castShadows = false;
+     HL.scene.add( HL.lights.sun );
   }
 
 
@@ -508,7 +530,7 @@ var HLEnvironment = function(){
       HL.sea = new THREE.Mesh(HL.geometries.sea, HL.materials.sea);
     }
     HL.sea.name = "sea";
-    HL.scene.add(HL.sea);
+  //  HL.scene.add(HL.sea);
     // HL.sea.receiveShadows = true;
 
 
@@ -532,6 +554,8 @@ var HLEnvironment = function(){
     console.log(HLEload);
     window.dispatchEvent(HLEload);
     console.log("meshes init");
+
+    console.log(HL.models.whale);
 
   }
 

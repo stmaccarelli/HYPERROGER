@@ -72,6 +72,8 @@ var HLR = {
       HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 + HLR.fft4) * .5 *HLE.MAX_MOVE_SPEED * 0.5;
       HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.05;
 
+      if(HLE.WATER) HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005 + HLR.fft4*0.1;
+
     //  HLE.CLOUDS_SPEED = 1 + tempFFT4*20;
       // HLE.BASE_SEA_SPEED = 2.5 + HLR.fft3*1.1;
 
@@ -112,7 +114,7 @@ var HLR = {
 
   // HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
 
-    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.9, tempFFT2*.4+HLR.fft3*0.4);
+    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.1, .1+HLR.fft3*.5);
     if(!HLE.WATER) HLC.sea.setHSL(0,0,.05-HLR.fft5*.5);
     //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 
@@ -128,10 +130,10 @@ var HLR = {
     // }
 
     if(HLR.fft3>0.8 )
-      HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH,HLE.WORLD_WIDTH)*.5,HLE.WORLD_HEIGHT*2, 10);
+    //HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH,HLE.WORLD_WIDTH)*.1,HLE.WORLD_HEIGHT*2, 2);
+    HLH.startModel(HL.models[0],THREE.Math.randInt(-HLE.WORLD_WIDTH,HLE.WORLD_WIDTH)*.5,true, 10);
 
-    // if(HLR.fft2<0.85) HL.materials.land.wireframe = true;
-    // else HL.materials.land.wireframe = false;
+    // if(HLR.fft2>0.95) HL.materials.land.uniforms.color.value = HLC.gWhite;
 
       if(HLR.fft4>0.4) HLE.shotFlora = true;
       // HL.materials.clouds.opacity = 1-HLR.fft3;

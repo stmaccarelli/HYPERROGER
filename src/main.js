@@ -88,7 +88,6 @@
     }
     else if(HLE.WATER) {
      HL.materials.water.render();
-     HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005;
     // HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
     }
     // Rendering
