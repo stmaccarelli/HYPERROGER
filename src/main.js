@@ -64,6 +64,7 @@
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
     if(HLE.MIRROR) HLAnim.seaWMMove();
     HLAnim.land();
+    HLAnim.models();
 
     // Controls and camera
     if(isMobile)
@@ -76,7 +77,7 @@
     }
     // set camera move easing according to move speed
     if(!HLE.CENTER_PATH){
-      HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)-HLE.cameraHeight) * (HLE.moveSpeed * 0.05);
+      HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)-HLE.cameraHeight) * (HLE.moveSpeed * 0.08);
       HL.camera.position.y = 10 + HLE.cameraHeight * 1.5;
     }
 
@@ -87,7 +88,6 @@
     }
     else if(HLE.WATER) {
      HL.materials.water.render();
-     HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .01;
     // HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
     }
     // Rendering

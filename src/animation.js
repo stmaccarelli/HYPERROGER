@@ -9,10 +9,10 @@ var HLAnim = function(){
     HL.sea.position.z += HLE.moveSpeed;
 
     // if moved farther than 1 row
-    if (HL.sea.position.z > HLE.TILE_SIZE) {
+    if (HL.sea.position.z > HLE.SEA_TILE_SIZE) {
       HLE.seaStepsCount++;
       // put 1 row back
-      HL.sea.position.z  -= HLE.TILE_SIZE;
+      HL.sea.position.z  -= HLE.SEA_TILE_SIZE;
       // shift sea heights for rows
       for(var i=HL.geometries.sea.parameters.heightSegments; i > 0; i--){
         HL.geometries.seaHeights[i] = HL.geometries.seaHeights[i-1];
@@ -53,7 +53,7 @@ var HLAnim = function(){
       // then calculate LAND first row new heights with noise function
       for ( var i = 0; i < (HL.geometries.land.parameters.widthSegments + 1); i++){
         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(
-          i / (HL.geometries.land.parameters.widthSegments),
+          i / HLE.WORLD_TILES,
           (HLE.landStepsCount / HLE.WORLD_TILES) ) * (HLE.CENTER_PATH? Math.abs(HL.geometries.land.vertices[i].x/HLE.WORLD_WIDTH)*2:1) ;
       }
       // if we want to use shadows, we have to recalculate normals
@@ -76,12 +76,16 @@ var HLAnim = function(){
   //  HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
 
     HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
-    if(HLE.shotFlora){
-      HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 1);
-      HLE.shotFlora=false;
-    }
+
       // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
 
+  }
+
+  function models(){
+    for(var k in HL.models)
+      if(HL.models[k].position){
+        HLH.moveModel( HL.models[k], 'z' );
+      }
   }
 
 
@@ -115,6 +119,7 @@ var HLAnim = function(){
     seaWMMove:seaWMMove,
     land:land,
     particles:particles,
+    models:models,
     colors:colors,
   }
 }();
