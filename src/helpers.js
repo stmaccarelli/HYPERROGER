@@ -61,11 +61,17 @@ var HLH = function() {
   // }
 
 	// computes terrain heights
-	var noiseA,noiseB;
-	function landHeightNoise(x, y) {
-		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency, y * 0.5 * HLE.noiseFrequency , HLE.noiseSeed);
+	var noiseA,noiseB,noiseC;
+	function landHeightNoise(x, y, sparuto) {
+		sparuto = sparuto || HLE.landCliffFrequency;
+		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency*sparuto, y * 0.5 * HLE.noiseFrequency*sparuto , HLE.noiseSeed);
 		noiseB = HL.noise.nNoise(x * HLE.noiseFrequency2,y * 0.5 * HLE.noiseFrequency2, HLE.noiseSeed*2);
-		return (noiseA + (noiseA*0.5+1) * noiseB) * HLE.landHeight;
+		noiseC = HL.noise.nNoise(x * HLE.noiseFrequency2*20,y * 0.5 * HLE.noiseFrequency2*20, HLE.noiseSeed*3);
+	//	return (noiseA + (noiseA*0.5+1) * noiseB * noiseC) * HLE.landHeight;
+		// return ((noiseA*0.5+1) * (noiseB + noiseC)*0.5) * HLE.landHeight;
+//		return ((noiseA) *  (noiseC*0.5+1)) * HLE.landHeight;
+		return (noiseA + (noiseA*0.5+1) * noiseB * (noiseC*0.5+1)) * HLE.landHeight;
+
 	}
 
 
@@ -177,12 +183,11 @@ var HLH = function() {
 			// if particle is inactive at "standby" distance
 			if (geometry.attributes.position.array[i + 2] <= -HLE.WORLD_WIDTH) {
 				var nX = Math.random();
-				geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 4);
-				geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH+.1;//getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+1, -HLE.WORLD_WIDTH / 2);
-
-				var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5
-				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC + nY ))+5;
+				geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 2);
+				geometry.attributes.position.array[i + 2] = getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+.1, -HLE.WORLD_WIDTH * 0.5);
+				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC));
 				//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
+				if (geometry.attributes.position.array[i + 1]>0) i-=6;
 			} else skipped++;
 		}
 		geometry.attributes.position.needsUpdate = true;
@@ -190,26 +195,6 @@ var HLH = function() {
   // HLH.landHeightNoise(
   //  i / (HL.geometries.land.parameters.widthSegments),
   //  (HLE.landStepsCount / HLE.WORLD_TILES) );
-
-
-	function shotFloraParticle(geometry, stepsCount) {
-    // var skipped = 0;
-		// var sC = stepsCount / HLE.WORLD_TILES;
-		// for (i = 0; i < Math.min(geometry.attributes.position.array.length, amountToBurst + skipped); i++) {
-		// 	// if particle is inactive at "standby" distance
-		// 	if (geometry.attributes.position.array[i + 2] == -HLE.WORLD_WIDTH/2) {
-		// 		var nX = Math.random();
-		// 		geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 2);
-		// 		geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH/2+.1;//getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+1, -HLE.WORLD_WIDTH / 2);
-    //
-		// 		var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5
-		// 		geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC + nY));
-		// 		//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
-		// 	} else skipped++;
-		// }
-		// geometry.attributes.position.needsUpdate = true;
-	}
-
 
 	/*
 	MODELS MANAGEMENT
@@ -232,7 +217,7 @@ var HLH = function() {
 			x = x || 0;
 			y = y || HLE.WORLD_HEIGHT*.5;
 			if(y === true){
-				y=landHeightNoise(x/HLE.WORLD_WIDTH,HLE.landStepsCount+0.1/HLE.WORLD_WIDTH);
+				y=landHeightNoise((x/HLE.WORLD_WIDTH*0.5)+0.5,HLE.landStepsCount+0.1/HLE.WORLD_TILES);
 				speed = true;
 			}
 
@@ -242,12 +227,15 @@ var HLH = function() {
 		}
 	}
 
-	function moveModel(model){
+	function moveModel(model, rote){
 		if(model.position.z >= -HLE.WORLD_WIDTH){
 			if(model.speed!==true) model.position.z += model.speed;
 			else model.position.z+=HLE.moveSpeed;
-			model.position.y = model.targetY-easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)*model["targetY"];
-			if(model.speed!==true) model.position.y += Math.sin(model.position.y*0.02)*model.height*0.25;
+			model.position.y = -model.height*0.5 + (model.targetY+model.height*0.5) - easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)*(model.targetY+model.height*0.5);
+			//if(model.speed!==true) model.position.y += Math.sin(model.position.y*0.02)*model.height*0.25;
+			if(rote.indexOf('x')!=-1) model.rotateX(model.speed*.0001);
+			if(rote.indexOf('y')!=-1) model.rotateY(model.speed*.0001);
+			if(rote.indexOf('z')!=-1) model.rotateZ(model.speed*.0001);
 		}
 		if(model.position.z>=HLE.WORLD_WIDTH)
 			resetModel(model);
@@ -285,15 +273,12 @@ var HLH = function() {
 		shotFloraCluster: function(a, b, c) {
 			return shotFloraCluster(a, b, c)
 		},
-		shotFloraParticle: function(a, b) {
-			return shotFloraParticle(a, b)
-		},
-		landHeightNoise: function(a, b) {
-			return landHeightNoise(a, b)
+		landHeightNoise: function(a, b,c) {
+			return landHeightNoise(a, b, c)
 		},
 		resetModel: function(a) {resetModel(a)},
 		resetAllModels: resetAllModels,
 		startModel: function(a,b,c,d) {startModel(a,b,c,d)},
-		moveModel: function(a) {moveModel(a)},
+		moveModel: function(a,b) {moveModel(a,b)},
 	}
 }();

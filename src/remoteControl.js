@@ -61,7 +61,10 @@ var HLR = {
     this.updateFFT(AA.getFreq(0), AA.getFreq(1), AA.getFreq(12), AA.getFreq(32), AA.getFreq(64));
 
 
-      HLE.faunaAmount = Math.round(HLR.connectedUsers);
+      // HLE.faunaAmount = Math.round(HLR.connectedUsers);
+
+      HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.MAX_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.5;
+
 
     if(!isNaN(HLR.fft1)){
 
@@ -69,8 +72,7 @@ var HLR = {
 
       // compute move speed
       // lerp move speed according to audio
-      HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 + HLR.fft4) * .5 *HLE.MAX_MOVE_SPEED * 0.5;
-      HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.BASE_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.05;
+      HLE.reactiveMoveSpeed = (tempFFT1 + HLR.fft1 + HLR.fft4) * .3 *HLE.MAX_MOVE_SPEED;
 
       if(HLE.WATER) HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005 + HLR.fft4*0.1;
 
@@ -88,8 +90,8 @@ var HLR = {
       tempNoiseFreq2 = 1 + tempFFT4 * 30 * (tempFFT3+1)*1.3 ;//- tempFFT2*20 + tempFFT3*50;// 20; //tempFFT3*20;// += (HLR.fft3*2000 - HLE.noiseFrequency2)*0.0005;
       // TODO noiseFreq deve essere proporzionale al WORLD_WIDTH
 
-      HLE.noiseFrequency +=  (tempNoiseFreq *.7 - HLE.noiseFrequency) * 0.1;
-      HLE.noiseFrequency2 += (tempNoiseFreq2*.4 - HLE.noiseFrequency2) * 0.3;
+      HLE.noiseFrequency +=  (tempNoiseFreq *.7 - HLE.noiseFrequency) * 0.01; //TODO  l'easing deve avvenire in base alla larghezza tile
+      HLE.noiseFrequency2 += (tempNoiseFreq2*.4 - HLE.noiseFrequency2) * 0.03;
 
 
 
@@ -114,7 +116,7 @@ var HLR = {
 
   // HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
 
-    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.1, .1+HLR.fft3*.5);
+    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.9, .1+HLR.fft3*.5);
     if(!HLE.WATER) HLC.sea.setHSL(0,0,.05-HLR.fft5*.5);
     //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 
@@ -131,11 +133,16 @@ var HLR = {
 
     if(HLR.fft3>0.8 )
     //HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH,HLE.WORLD_WIDTH)*.1,HLE.WORLD_HEIGHT*2, 2);
-    HLH.startModel(HL.models[0],THREE.Math.randInt(-HLE.WORLD_WIDTH,HLE.WORLD_WIDTH)*.5,true, 10);
+    HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH/2,HLE.WORLD_WIDTH/2),HLE.WORLD_HEIGHT*3, 10);
 
     // if(HLR.fft2>0.95) HL.materials.land.uniforms.color.value = HLC.gWhite;
-
-      if(HLR.fft4>0.4) HLE.shotFlora = true;
+    if(HLR.fft4>0.6){
+      if(shotFlora){
+        HLH.shotFloraCluster(HL.geometries.flora, HLE.landStepsCount, 1);
+        shotFlora=false;
+      }
+    }
+    else shotFlora=true;
       // HL.materials.clouds.opacity = 1-HLR.fft3;
     //  HLC.horizon.setHSL(millis*.1%1,.8, .2 + tempFFT3*.2 + HLR.fft3*.2);
 

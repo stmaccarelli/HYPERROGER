@@ -8,8 +8,10 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:5000,
   WORLD_HEIGHT:300,
-  WORLD_TILES:38, // change it according to device capabilities in initEnvironment()
+  WORLD_TILES:256, // change it according to device capabilities in initEnvironment()
   TILE_SIZE:null,
+  SEA_TILES:32, // change it according to device capabilities in initEnvironment()
+  SEA_TILE_SIZE:null,
 
   MAX_TOTAL_PARTICLES: 10, // change it according to device capabilities in initEnvironment()
 
@@ -19,7 +21,7 @@ var HLE = {
   PIXEL_RATIO_SCALE:.5,
 
   MAX_MOVE_SPEED: null,
-  BASE_MOVE_SPEED: .1,
+  BASE_MOVE_SPEED: null,
   CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
@@ -32,6 +34,7 @@ var HLE = {
 
   landZeroPoint:0, // actually not a geometry, just a float to be multiplied to compute height
   landHeight:30, // actually not a geometry, just a float to be added to compute height
+  landCliffFrequency:1,
 
   seaStepsCount:0,
   landStepsCount:0,
@@ -40,7 +43,6 @@ var HLE = {
   FLORA_AMOUNT : 0,
   MAX_FAUNA: 0,
   faunaAmount : 1, // this will represent users, and will change live, so we set a MAX_FAUNA as top limit
-  shotFlora : true, //debounce 7 trigger
 
   noiseSeed:0,
   noiseFrequency:1,
@@ -105,7 +107,7 @@ var HL = {
     land:null,
     sea:null,
     clouds:null,
-    flora:"img/cloud3.png",//"img/tex_tree_82_128x128.png",
+    flora:"img/tex_tree_82_128x128.png",
     fauna:null,
     water:"img/waternormals5.png",
     whale:"3dm/BL_WHALE/BL_WHALE2.jpg",
@@ -175,10 +177,11 @@ var HLEnvironment = function(){
   function initEnvironment(){
     // SET CONSTANTS
     HLE.TILE_SIZE = HLE.WORLD_WIDTH / HLE.WORLD_TILES;
-    HLE.MAX_MOVE_SPEED = HLE.TILE_SIZE / 10 * 2;
+    HLE.SEA_TILE_SIZE = HLE.WORLD_WIDTH / HLE.SEA_TILES;
+    HLE.MAX_MOVE_SPEED = 20 / (HLE.TILE_SIZE / 10 );
     // MAX_TOTAL_PARTICLES: 1000, // TODO hange it according to device capabilities in initEnvironment()
     HLE.CLOUDS_AMOUNT = 100;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
-    HLE.FLORA_AMOUNT = 20;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
+    HLE.FLORA_AMOUNT = 200;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
     HLE.MAX_FAUNA = 1;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.10);
 
 
@@ -193,9 +196,10 @@ var HLEnvironment = function(){
     HL.scene = new THREE.Scene();
 
     if(HLE.FOG && !isWire){
-      HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * 0.05, HLE.WORLD_WIDTH * 0.45);
+      HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.20, HLE.WORLD_WIDTH * 0.45);
       HL.scene.fog.color = HLC.horizon;
     }
+
 
     // CAMERA
     HL.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 3, HLE.WORLD_WIDTH*3);
@@ -269,10 +273,10 @@ var HLEnvironment = function(){
       1,1);
     else if(HLE.MIRROR)
       HL.geometries.sea = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
-        HLE.WORLD_TILES ,  HLE.WORLD_TILES);
+        HLE.SEA_TILES ,  HLE.SEA_TILES);
     else
       HL.geometries.sea = new THREE.PlaneGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
-        HLE.WORLD_TILES ,  HLE.WORLD_TILES);
+        HLE.SEA_TILES ,  HLE.SEA_TILES);
 
     HL.geometries.sea.rotateX(-Math.PI / 2); // gotta rotate because Planes in THREE are created vertical
     //HL.geometries.sea.dynamic = true;
@@ -381,8 +385,8 @@ var HLEnvironment = function(){
 
   		// Create the water effect
   		HL.materials.water = new THREE.Water(HL.renderer, HL.camera, HL.scene, {
-  			textureWidth: 512,
-  			textureHeight: 512,
+  			textureWidth: 128,
+  			textureHeight: 128,
   			waterNormals: HL.textures.water,
         noiseScale: 2.14,
   			sunDirection: HL.lights.sun.position.normalize(),
@@ -400,13 +404,13 @@ var HLEnvironment = function(){
     HL.materials.clouds = new THREE.PointsMaterial({
       color: HLC.clouds,
       side: THREE.DoubleSide,
-      opacity:1,
-      transparent: false,
-      size: 10,
+      opacity:.5,
+      transparent: true,
+      size: 20,
       fog: true,
       sizeAttenuation: true,
       //alphaTest: 0.5,
-      depthWrite: true,
+      depthWrite: false,
       map:isWire?null:HL.textures.clouds,
     });
     HL.materials.clouds.color = HLC.clouds; // set by reference
@@ -415,13 +419,13 @@ var HLEnvironment = function(){
     HL.materials.flora = new THREE.PointsMaterial({
       color: HLC.flora,
       side: THREE.DoubleSide,
-      opacity: 0.75,
+      opacity: 0.5,
       transparent: true,
-      size: 3000,
+      size: 100,
       fog: true,
-//      blending:THREE.AdditiveBlending,
+      //blending:THREE.AdditiveBlending,
       sizeAttenuation: true,
-      //alphaTest: 0.1,
+      alphaTest: 0.1,
       map:isWire?null:HL.textures.flora,
       //depthTest:false,
     });
@@ -473,7 +477,8 @@ var HLEnvironment = function(){
           function ( object ) {
             HL.models[key]=object.children[0];
             HL.models[key].name = key;
-            HL.models[key].geometry.scale(50,50,50);
+            HL.models[key].geometry.scale(100,100,100);
+//            HL.models[key].geometry.rotateX(Math.PI*0.5);
             HL.models[key].geometry.computeBoundingBox();
             HL.models[key]['height']=HL.models[key].geometry.boundingBox.size().y;
             HL.models[key].material = HL.materials.models;
@@ -530,7 +535,7 @@ var HLEnvironment = function(){
       HL.sea = new THREE.Mesh(HL.geometries.sea, HL.materials.sea);
     }
     HL.sea.name = "sea";
-  //  HL.scene.add(HL.sea);
+    HL.scene.add(HL.sea);
     // HL.sea.receiveShadows = true;
 
 
@@ -544,7 +549,7 @@ var HLEnvironment = function(){
     HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
     HL.flora.name = "flora";
     HL.flora.frustumCulled = false;
-  //  HL.scene.add(HL.flora);
+    HL.scene.add(HL.flora);
 
     // HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
     // HL.fauna.name = "fauna";
@@ -554,8 +559,6 @@ var HLEnvironment = function(){
     console.log(HLEload);
     window.dispatchEvent(HLEload);
     console.log("meshes init");
-
-    console.log(HL.models.whale);
 
   }
 
