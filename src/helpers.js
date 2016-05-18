@@ -88,9 +88,9 @@ var HLH = function() {
 	var noiseA,noiseB,noiseC;
 	function landHeightNoise(x, y, sparuto) {
 		sparuto = sparuto || HLE.landCliffFrequency;
-		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency*sparuto, y * 0.5 * HLE.noiseFrequency*sparuto , HLE.noiseSeed);
-		noiseB = HL.noise.nNoise(x * HLE.noiseFrequency2,y * 0.5 * HLE.noiseFrequency2, HLE.noiseSeed*2);
-		noiseC = HL.noise.nNoise(x * HLE.noiseFrequency2*20,y * 0.5 * HLE.noiseFrequency2*20, HLE.noiseSeed*3);
+		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency*sparuto, y  * HLE.noiseFrequency*sparuto , HLE.noiseSeed);
+		noiseB = HL.noise.nNoise(x * HLE.noiseFrequency2,y  * HLE.noiseFrequency2, HLE.noiseSeed*2);
+		noiseC = HL.noise.nNoise(x * HLE.noiseFrequency2*5,y  * HLE.noiseFrequency2*5, HLE.noiseSeed*3);
 	//	return (noiseA + (noiseA*0.5+1) * noiseB * noiseC) * HLE.landHeight;
 		// return ((noiseA*0.5+1) * (noiseB + noiseC)*0.5) * HLE.landHeight;
 //		return ((noiseA) *  (noiseC*0.5+1)) * HLE.landHeight;
@@ -208,8 +208,9 @@ var HLH = function() {
 			if (geometry.attributes.position.array[i + 2] <= -HLE.WORLD_WIDTH) {
 				var nX = Math.random();
 				geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 2);
-				geometry.attributes.position.array[i + 2] = getRandomIntInclusive(-HLE.WORLD_WIDTH +.1, -HLE.WORLD_WIDTH * 0.5);
-				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC));
+				geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH * 0.5; //getRandomIntInclusive(-HLE.WORLD_WIDTH +.1, -HLE.WORLD_WIDTH * 0.5);
+				var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5
+				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC)) ;
 				//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
 				if (geometry.attributes.position.array[i + 1]>0) i-=6;
 			} else skipped++;

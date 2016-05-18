@@ -63,7 +63,7 @@ var HLR = {
 
       // HLE.faunaAmount = Math.round(HLR.connectedUsers);
 
-      HLE.moveSpeed += ((Math.max(Math.min(HLE.MAX_MOVE_SPEED, HLE.MAX_MOVE_SPEED + HLE.reactiveMoveSpeed),0))-HLE.moveSpeed) * 0.5;
+      HLE.moveSpeed += ((Math.max( HLE.reactiveMoveSpeed,0))-HLE.moveSpeed) * 0.05;
 
 
     if(!isNaN(HLR.fft1)){
@@ -88,10 +88,9 @@ var HLR = {
 
       tempNoiseFreq = 10 - (tempFFT2 * 10 - tempFFT3 * 9);
       tempNoiseFreq2 = 1 + tempFFT4 * 30 * (tempFFT3+1)*1.3 ;//- tempFFT2*20 + tempFFT3*50;// 20; //tempFFT3*20;// += (HLR.fft3*2000 - HLE.noiseFrequency2)*0.0005;
-      // TODO noiseFreq deve essere proporzionale al WORLD_WIDTH
 
-      HLE.noiseFrequency +=  (tempNoiseFreq *.7 - HLE.noiseFrequency) * 0.01; //TODO  l'easing deve avvenire in base alla larghezza tile
-      HLE.noiseFrequency2 += (tempNoiseFreq2*.4 - HLE.noiseFrequency2) * 0.03;
+      HLE.noiseFrequency +=  (tempNoiseFreq *.7 - HLE.noiseFrequency) * (0.01*HLE.moveSpeed); //TODO  l'easing deve avvenire in base alla larghezza tile
+      HLE.noiseFrequency2 += (tempNoiseFreq2*.4 - HLE.noiseFrequency2) * (0.03*HLE.moveSpeed);
 
 
 
@@ -101,7 +100,7 @@ var HLR = {
      tempDevLandHeight =
       // Math.sin(millis*.5)*
      (tempFFT1 * 0.55 + tempFFT3 * .45 ) * HLE.WORLD_HEIGHT * 0.5 + 0.1;
-      HLE.landHeight += (tempDevLandHeight-HLE.landHeight)*0.05;
+      HLE.landHeight += (tempDevLandHeight-HLE.landHeight)*0.5;
       // HLE.landHeight = Math.sin(millis*.5)*HLE.WORLD_HEIGHT*0.5;
       HLE.landZeroPoint = -HLE.landHeight * 0.1;// Math.sin(millis*(1-tempFFT2) * 0.5) * HLE.landHeight;// + HL.noise.noise(millis,millis*0.3,10000)*tempDevLandHeight;//tempFFT2 * HLE.landHeight*0.5;
     //  HL.materials.clouds.opacity = tempFFT1;

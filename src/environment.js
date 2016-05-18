@@ -8,7 +8,7 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:5000,
   WORLD_HEIGHT:300,
-  WORLD_TILES:128, // change it according to device capabilities in initEnvironment()
+  WORLD_TILES:256, // change it according to device capabilities in initEnvironment()
   TILE_SIZE:null,
   SEA_TILES:32, // change it according to device capabilities in initEnvironment()
   SEA_TILE_SIZE:null,
@@ -17,7 +17,7 @@ var HLE = {
 
   FOG:true,
   MIRROR:isWire===true?false: false,
-  WATER:isWire===true?false: true,
+  WATER:isWire===true?false: false,
   PIXEL_RATIO_SCALE:.5,
 
   MAX_MOVE_SPEED: null,
@@ -35,6 +35,7 @@ var HLE = {
   landZeroPoint:0, // actually not a geometry, just a float to be multiplied to compute height
   landHeight:30, // actually not a geometry, just a float to be added to compute height
   landCliffFrequency:.5,
+  LAND_Y_SHIFT:0,
 
   seaStepsCount:0,
   landStepsCount:0,
@@ -178,7 +179,9 @@ var HLEnvironment = function(){
     // SET CONSTANTS
     HLE.TILE_SIZE = HLE.WORLD_WIDTH / HLE.WORLD_TILES;
     HLE.SEA_TILE_SIZE = HLE.WORLD_WIDTH / HLE.SEA_TILES;
-    HLE.MAX_MOVE_SPEED = HLE.TILE_SIZE*0.25;
+    HLE.LAND_Y_SHIFT = -HLE.WORLD_HEIGHT*0.1;
+    HLE.MAX_MOVE_SPEED = Math.min(20,HLE.TILE_SIZE);
+    console.log("MAX_MOVE_SPEED "+HLE.MAX_MOVE_SPEED);
     // MAX_TOTAL_PARTICLES: 1000, // TODO hange it according to device capabilities in initEnvironment()
     HLE.CLOUDS_AMOUNT = 100;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
     HLE.FLORA_AMOUNT = 200;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
@@ -515,7 +518,7 @@ var HLEnvironment = function(){
     HL.scene.add(HL.skybox);
 
     HL.land = new THREE.Mesh(HL.geometries.land, HL.materials.land);
-    HL.land.position.y = -HLE.WORLD_HEIGHT*0.1; //hardset land at lower height, so we easily see sea
+    HL.land.position.y = HLE.LAND_Y_SHIFT; //hardset land at lower height, so we easily see sea
     HL.land.name = "land";
     // HL.land.castShadows = true;
     // HL.land.receiveShadows = true;
