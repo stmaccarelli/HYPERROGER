@@ -32,9 +32,10 @@ var HLH = function() {
 	function bufSinMotion(geometry, height, speed) {
 		height = height || 1;
 		speed = speed || 1;
-		for (i = 0; i < geometry.attributes.position.array.length - 2; i += 3)
-			geometry.attributes.position.array[i + 1] +=
-			Math.sin(millis * speed + i) * height; //add 1 to height because we don't want a completely flat sea
+		for (i = 0; i < geometry.attributes.position.array.length; i += 3){
+			geometry.attributes.position.array[i + 1] = 10000;
+//			Math.sin(millis * speed + i+1.45435) * height;
+		}
 		geometry.attributes.position.needsUpdate = true;
 	}
 
@@ -44,9 +45,32 @@ var HLH = function() {
 	function shiftHeights(geometry) {
 		for (y = geometry.parameters.heightSegments; y > 0; y--)
 			for (x = 0; x < geometry.parameters.widthSegments + 1; x++) {
-				geometry.vertices[y * (geometry.parameters.widthSegments + 1) + x].y = geometry.vertices[(y - 1) * (geometry.parameters.widthSegments + 1) + x].y;
+				geometry.vertices[y * (geometry.parameters.widthSegments + 1) + x].y =
+				geometry.vertices[(y - 1) * (geometry.parameters.widthSegments + 1) + x].y;
 			}
 		geometry.verticesNeedUpdate = true;
+	}
+
+	// shift vertex heights of all the geometry rows from the previous vertex row.
+	// it's the core of the landscape motion logic
+	// function shiftHeightsBuf(geometry) {
+	// 	for (y = geometry.parameters.heightSegments+1; y > 0; y--)
+	// 		for (x = 0; x < (geometry.parameters.widthSegments+1)*3; x+=3) {
+	// 			geometry.attributes.position.array[y * (geometry.parameters.widthSegments + 1) + x +1] =
+	// 				geometry.attributes.position.array[(y - 1) * (geometry.parameters.widthSegments + 1) + x +1]
+	// 		}
+	// 		geometry.attributes.position.needsUpdate = true;
+	// }
+
+	var ny=0,py=0;
+	function shiftHeightsBuf(geometry) {
+		for(y = geometry.parameters.heightSegments-1;y>=0;y--)
+			for(x = 0; x<geometry.parameters.widthSegments*3;x+=3){
+				ny = 		 y*(geometry.parameters.widthSegments+1)*3;
+				py = (y-1)*(geometry.parameters.widthSegments+1)*3;
+				geometry.attributes.position.array[ny+x+1] = geometry.attributes.position.array[py+x+1];
+			}
+			geometry.attributes.position.needsUpdate = true;
 	}
 
 	// // computes terrain heights
@@ -184,7 +208,7 @@ var HLH = function() {
 			if (geometry.attributes.position.array[i + 2] <= -HLE.WORLD_WIDTH) {
 				var nX = Math.random();
 				geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 2);
-				geometry.attributes.position.array[i + 2] = getRandomIntInclusive(-HLE.WORLD_WIDTH * 0.5+.1, -HLE.WORLD_WIDTH * 0.5);
+				geometry.attributes.position.array[i + 2] = getRandomIntInclusive(-HLE.WORLD_WIDTH +.1, -HLE.WORLD_WIDTH * 0.5);
 				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC));
 				//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
 				if (geometry.attributes.position.array[i + 1]>0) i-=6;
@@ -263,6 +287,9 @@ var HLH = function() {
 		// offsetUV:             function(a,b){        return offsetUV(a,b)                },
 		shiftHeights: function(a) {
 			return shiftHeights(a)
+		},
+		shiftHeightsBuf: function(a) {
+			return shiftHeightsBuf(a)
 		},
 		seaMotion: function(a, b, c, d) {
 			return seaMotion(a, b, c, d)

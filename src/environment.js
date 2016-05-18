@@ -8,12 +8,12 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:5000,
   WORLD_HEIGHT:300,
-  WORLD_TILES:256, // change it according to device capabilities in initEnvironment()
+  WORLD_TILES:128, // change it according to device capabilities in initEnvironment()
   TILE_SIZE:null,
   SEA_TILES:32, // change it according to device capabilities in initEnvironment()
   SEA_TILE_SIZE:null,
 
-  MAX_TOTAL_PARTICLES: 10, // change it according to device capabilities in initEnvironment()
+  MAX_TOTAL_PARTICLES: 10, // change it according to device capabilities in initEnvironment() TODO unused
 
   FOG:true,
   MIRROR:isWire===true?false: false,
@@ -34,7 +34,7 @@ var HLE = {
 
   landZeroPoint:0, // actually not a geometry, just a float to be multiplied to compute height
   landHeight:30, // actually not a geometry, just a float to be added to compute height
-  landCliffFrequency:1,
+  landCliffFrequency:.5,
 
   seaStepsCount:0,
   landStepsCount:0,
@@ -178,7 +178,7 @@ var HLEnvironment = function(){
     // SET CONSTANTS
     HLE.TILE_SIZE = HLE.WORLD_WIDTH / HLE.WORLD_TILES;
     HLE.SEA_TILE_SIZE = HLE.WORLD_WIDTH / HLE.SEA_TILES;
-    HLE.MAX_MOVE_SPEED = 20 / (HLE.TILE_SIZE / 10 );
+    HLE.MAX_MOVE_SPEED = HLE.TILE_SIZE*0.25;
     // MAX_TOTAL_PARTICLES: 1000, // TODO hange it according to device capabilities in initEnvironment()
     HLE.CLOUDS_AMOUNT = 100;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
     HLE.FLORA_AMOUNT = 200;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
@@ -263,7 +263,7 @@ var HLEnvironment = function(){
     // SphereBufferGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
 
 
-    HL.geometries.land = new THREE.PlaneGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
+    HL.geometries.land = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
       HLE.WORLD_TILES , HLE.WORLD_TILES);
     HL.geometries.land.rotateX(-Math.PI / 2); // gotta rotate because Planes in THREE are created vertical
     HL.geometries.land.dynamic = true;
@@ -385,8 +385,8 @@ var HLEnvironment = function(){
 
   		// Create the water effect
   		HL.materials.water = new THREE.Water(HL.renderer, HL.camera, HL.scene, {
-  			textureWidth: 128,
-  			textureHeight: 128,
+  			textureWidth: 256,
+  			textureHeight: 256,
   			waterNormals: HL.textures.water,
         noiseScale: 2.14,
   			sunDirection: HL.lights.sun.position.normalize(),
@@ -395,7 +395,7 @@ var HLEnvironment = function(){
   //			color: HLC.sea,
   			betaVersion: 1,
         fog: true,
-        side: THREE.FrontSide
+        side: THREE.FrontSide,
   		});
     }
 
@@ -515,7 +515,7 @@ var HLEnvironment = function(){
     HL.scene.add(HL.skybox);
 
     HL.land = new THREE.Mesh(HL.geometries.land, HL.materials.land);
-    HL.land.position.y = -5; //hardset land at lower height, so we easily see sea
+    HL.land.position.y = -HLE.WORLD_HEIGHT*0.1; //hardset land at lower height, so we easily see sea
     HL.land.name = "land";
     // HL.land.castShadows = true;
     // HL.land.receiveShadows = true;
