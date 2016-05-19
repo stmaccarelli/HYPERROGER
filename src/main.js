@@ -4,6 +4,7 @@
   var isVR = window.location.href.indexOf('?vr')>-1;
   var isDebug = window.location.href.indexOf('?debug')>-1;
   var isFPC = window.location.href.indexOf('?fpc')>-1;
+  var isOrbit = window.location.href.indexOf('?orbit')>-1;
   var isNoiseCam = window.location.href.indexOf('?noisecam')>-1;
   var isWire = window.location.href.indexOf('?wire')>-1;
   var hasShadows = false;
@@ -67,7 +68,7 @@
     HLAnim.models();
 
     // Controls and camera
-    if(isMobile)
+    if(isMobile || isOrbit)
       HL.controls.update(); //DeviceOrientationControls  mode
     else if(isFPC || isNoiseCam){
       HL.controls.update(delta,millis); //FPC mode
@@ -81,14 +82,8 @@
       HL.camera.position.y = 10 + HLE.cameraHeight * 1.5;
     }
 
-    // HL.camera.fov = 10 + HLE.cameraHeight * .6;
-    // HL.camera.updateProjectionMatrix ();
-    if(HLE.MIRROR) {
+    if(HLE.MIRROR || HLE.WATER) {
      HL.materials.water.render();
-    }
-    else if(HLE.WATER) {
-     HL.materials.water.render();
-    // HL.materials.water.material.uniforms.waterColor.value = HLC.horizon;
     }
     // Rendering
     if(isVR){
@@ -99,12 +94,12 @@
     else HL.renderer.render(HL.scene,HL.camera);
 
 
-    // Rendering
-    if(isVR){
-    //  HL.renderer.setRenderTarget( null ); not needed anymore??
-      HL.stereoEffect.render(HL.scene,HL.camera);
-    }
-    else HL.renderer.render(HL.scene,HL.camera);
+    // // Rendering
+    // if(isVR){
+    // //  HL.renderer.setRenderTarget( null ); not needed anymore??
+    //   HL.stereoEffect.render(HL.scene,HL.camera);
+    // }
+    // else HL.renderer.render(HL.scene,HL.camera);
 
   }
 

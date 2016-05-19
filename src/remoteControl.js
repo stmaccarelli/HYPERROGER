@@ -116,7 +116,7 @@ var HLR = {
   // HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
 
   //  HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.9, .1+HLR.fft3*.5);
-    if(!HLE.WATER) HLC.sea.setHSL(0,0,.05-HLR.fft5*.5);
+  //  if(!HLE.WATER) HLC.sea.setHSL(0,0,.05-HLR.fft5*.5);
     //HL.materials.clouds.size = 1000 - HLE.landHeight * 10;
 
 
@@ -129,10 +129,6 @@ var HLR = {
     // //  if(HLR.fft4>0.65) HL.materials.water.material.uniforms.color.value = HLC.sea.set(0xffffff);
     // //  else HL.materials.water.material.uniforms.color.value = HLC.sea.set(0x000000);
     // }
-
-    if(HLR.fft3>0.8 )
-    //HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH,HLE.WORLD_WIDTH)*.1,HLE.WORLD_HEIGHT*2, 2);
-    HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH/2,HLE.WORLD_WIDTH/2),HLE.WORLD_HEIGHT*3, 10);
 
     // if(HLR.fft2>0.95) HL.materials.land.uniforms.color.value = HLC.gWhite;
     if(HLR.fft4>0.6){
@@ -147,3 +143,14 @@ var HLR = {
 
     }
   }
+
+  HLR.modelshooting = function(k){
+    console.log(k);
+    if(k.keyCode==87)//w
+      HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH/2,HLE.WORLD_WIDTH/2),HLE.WORLD_HEIGHT*3, 10);
+    if(k.keyCode==88)//x
+      HLH.startModel(HL.models.ducky,THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),true, 0);
+    if(k.keyCode==89)//y
+      HLH.startModel(HL.models.whale2,THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),true, 0);
+  }
+  window.addEventListener('keyup',HLR.modelshooting);

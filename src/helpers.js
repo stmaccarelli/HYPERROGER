@@ -43,24 +43,26 @@ var HLH = function() {
 	// shift vertex heights of all the geometry rows from the previous vertex row.
 	// it's the core of the landscape motion logic
 	function shiftHeights(geometry) {
-		for (y = geometry.parameters.heightSegments; y > 0; y--)
-			for (x = 0; x < geometry.parameters.widthSegments + 1; x++) {
-				geometry.vertices[y * (geometry.parameters.widthSegments + 1) + x].y =
-				geometry.vertices[(y - 1) * (geometry.parameters.widthSegments + 1) + x].y;
+		for (y = HLE.WORLD_TILES; y > 0; y--)
+			for (x = 0; x < HLE.WORLD_TILES + 1; x++) {
+				geometry.vertices[y * (HLE.WORLD_TILES + 1) + x].y =
+				geometry.vertices[(y - 1) * (HLE.WORLD_TILES + 1) + x].y;
 			}
 		geometry.verticesNeedUpdate = true;
 	}
 
-	// shift vertex heights of all the geometry rows from the previous vertex row.
-	// it's the core of the landscape motion logic
+
+	// var ny=0,py=0;
 	// function shiftHeightsBuf(geometry) {
-	// 	for (y = geometry.parameters.heightSegments+1; y > 0; y--)
-	// 		for (x = 0; x < (geometry.parameters.widthSegments+1)*3; x+=3) {
-	// 			geometry.attributes.position.array[y * (geometry.parameters.widthSegments + 1) + x +1] =
-	// 				geometry.attributes.position.array[(y - 1) * (geometry.parameters.widthSegments + 1) + x +1]
+	// 	for(y = geometry.parameters.heightSegments-1;y>=0;y--)
+	// 		for(x = 0; x<geometry.parameters.widthSegments*3;x+=3){
+	// 			ny = 		 y*(geometry.parameters.widthSegments+1)*3;
+	// 			py = (y-1)*(geometry.parameters.widthSegments+1)*3;
+	// 			geometry.attributes.position.array[ny+x+1] = geometry.attributes.position.array[py+x+1];
 	// 		}
 	// 		geometry.attributes.position.needsUpdate = true;
 	// }
+
 
 	var ny=0,py=0;
 	function shiftHeightsBuf(geometry) {
@@ -73,16 +75,7 @@ var HLH = function() {
 			geometry.attributes.position.needsUpdate = true;
 	}
 
-	// // computes terrain heights
-  // function landHeightNoise(x, y) {
-  //   return ( HL.noise.nNoise(x * HLE.noiseFrequency , // fix audioreactivity issue: Y landscape freq is affected more by sound variations
-  //     y*0.5 * HLE.noiseFrequency * 1 , HLE.noiseSeed)
-	// 		+ ((HL.noise.nNoise(x * HLE.noiseFrequency2,
-  //     y*0.5 * HLE.noiseFrequency2 * 1, HLE.noiseSeed * 2) + 1) / 2) * 0.2
-	// 		)
-	// 		* HLE.landHeight + HLE.landZeroPoint
-	// 		;
-  // }
+
 
 	// computes terrain heights
 	var noiseA,noiseB,noiseC;
@@ -227,6 +220,7 @@ var HLH = function() {
 
 	function resetModel(model){
 			model.position.set(0,0,-HLE.WORLD_WIDTH*10);
+			model['moving']=false;
 	}
 
 	function resetAllModels(){
@@ -238,29 +232,29 @@ var HLH = function() {
 	function startModel(model,x,y,speed){
 
 		if(model.position.z === -HLE.WORLD_WIDTH*10){
-			speed = speed||1;
+			speed = speed || 0;
 			x = x || 0;
 			y = y || HLE.WORLD_HEIGHT*.5;
 			if(y === true){
 				y=landHeightNoise((x/HLE.WORLD_WIDTH*0.5)+0.5,HLE.landStepsCount+0.1/HLE.WORLD_TILES);
-				speed = true;
+				speed = 0;
 			}
 
 			model.position.set(x,y,-HLE.WORLD_WIDTH+0.1);
 			model["speed"] = speed;
 			model["targetY"] = y;
+			model['moving'] = true;
 		}
+
 	}
 
-	function moveModel(model, rote){
+	function moveModel(model){
 		if(model.position.z >= -HLE.WORLD_WIDTH){
-			if(model.speed!==true) model.position.z += model.speed;
+			if(model.speed!==0) model.position.z += model.speed;
 			else model.position.z+=HLE.moveSpeed;
-			model.position.y = -model.height*0.5 + (model.targetY+model.height*0.5) - easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)*(model.targetY+model.height*0.5);
-			//if(model.speed!==true) model.position.y += Math.sin(model.position.y*0.02)*model.height*0.25;
-			if(rote.indexOf('x')!=-1) model.rotateX(model.speed*.0001);
-			if(rote.indexOf('y')!=-1) model.rotateY(model.speed*.0001);
-			if(rote.indexOf('z')!=-1) model.rotateZ(model.speed*.0001);
+			model.position.y = -model.height*0.5 + (model.targetY+model.height*0.5)
+				- easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)
+					*(model.targetY+model.height*0.5);
 		}
 		if(model.position.z>=HLE.WORLD_WIDTH)
 			resetModel(model);

@@ -8,16 +8,16 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:5000,
   WORLD_HEIGHT:300,
-  WORLD_TILES:256, // change it according to device capabilities in initEnvironment()
+  WORLD_TILES:256,
   TILE_SIZE:null,
-  SEA_TILES:32, // change it according to device capabilities in initEnvironment()
+  SEA_TILES:32,
   SEA_TILE_SIZE:null,
 
   MAX_TOTAL_PARTICLES: 10, // change it according to device capabilities in initEnvironment() TODO unused
 
   FOG:true,
   MIRROR:isWire===true?false: false,
-  WATER:isWire===true?false: false,
+  WATER:isWire===true?false: true,
   PIXEL_RATIO_SCALE:.5,
 
   MAX_MOVE_SPEED: null,
@@ -36,6 +36,7 @@ var HLE = {
   landHeight:30, // actually not a geometry, just a float to be added to compute height
   landCliffFrequency:.5,
   LAND_Y_SHIFT:0,
+  LAND_IS_BUFFER:false,
 
   seaStepsCount:0,
   landStepsCount:0,
@@ -104,7 +105,7 @@ var HL = {
     models:null,
   },
   textures: {
-    skybox:"img/skybox2/skydome2.jpg",
+    skybox:"img/skybox2/skydome_low.jpg",
     land:null,
     sea:null,
     clouds:null,
@@ -112,9 +113,12 @@ var HL = {
     fauna:null,
     water:"img/waternormals5.png",
     whale:"3dm/BL_WHALE/BL_WHALE2.jpg",
+    ducky:"3dm/ducky/ducky.png",
   },
   models: {
-    whale:"3dm/BL_WHALE/BL_WHALE2.OBJ",
+    whale:["3dm/BL_WHALE/BL_WHALE2.OBJ",50],
+    ducky:["3dm/ducky/ducky.obj",1500],
+    whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",80],
   },
   // meshes
   skybox:null,
@@ -183,8 +187,8 @@ var HLEnvironment = function(){
     HLE.MAX_MOVE_SPEED = Math.min(20,HLE.TILE_SIZE);
     console.log("MAX_MOVE_SPEED "+HLE.MAX_MOVE_SPEED);
     // MAX_TOTAL_PARTICLES: 1000, // TODO hange it according to device capabilities in initEnvironment()
-    HLE.CLOUDS_AMOUNT = 100;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
-    HLE.FLORA_AMOUNT = 200;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
+    HLE.CLOUDS_AMOUNT = 10;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
+    HLE.FLORA_AMOUNT = 1;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.45);
     HLE.MAX_FAUNA = 1;//Math.round(HLE.MAX_TOTAL_PARTICLES * 0.10);
 
 
@@ -205,8 +209,13 @@ var HLEnvironment = function(){
 
 
     // CAMERA
-    HL.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 3, HLE.WORLD_WIDTH*3);
-    HL.camera.focus = HLE.WORLD_WIDTH * 0.25; // USED ONLY IN StereoCamera, if any
+    if(isVR){
+    HL.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 3, HLE.WORLD_WIDTH*3);
+    HL.camera.focus = HLE.WORLD_WIDTH * 1; // USED ONLY IN StereoCamera, if any
+    }
+    else
+      HL.camera = new THREE.PerspectiveCamera(95.0, window.innerWidth / window.innerHeight, 0.5, 3000000);
+
     // TODO check filmGauge and filmOffset effects
     // HL.camera.filmGauge = 1;
     // HL.camera.filmOffset = 100;
@@ -254,6 +263,9 @@ var HLEnvironment = function(){
     else if(isNoiseCam){
       HL.controls = new THREE.NoiseCameraMove(HL.camera);
     }
+    else if(isOrbit){
+      HL.controls = new THREE.OrbitControls(HL.camera);
+    }
 
     console.log("environment init");
   }
@@ -265,9 +277,12 @@ var HLEnvironment = function(){
     HL.geometries.skybox = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*3-10,10,10);
     // SphereBufferGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
 
-
+    if(HLE.LAND_IS_BUFFER)
     HL.geometries.land = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
       HLE.WORLD_TILES , HLE.WORLD_TILES);
+    else
+      HL.geometries.land = new THREE.PlaneGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
+        HLE.WORLD_TILES , HLE.WORLD_TILES);
     HL.geometries.land.rotateX(-Math.PI / 2); // gotta rotate because Planes in THREE are created vertical
     HL.geometries.land.dynamic = true;
 
@@ -366,8 +381,8 @@ var HLEnvironment = function(){
     if(HLE.MIRROR) {
       HL.materials.water = new THREE.Mirror( HL.renderer, HL.camera,
         { clipBias: 0,//0.0003,
-          textureWidth: 512,
-          textureHeight: 512,
+          textureWidth: 128,
+          textureHeight: 128,
           color: HLC.sea,//0x666666,
           fog: true,
           side: THREE.DoubleSide,
@@ -388,8 +403,8 @@ var HLEnvironment = function(){
 
   		// Create the water effect
   		HL.materials.water = new THREE.Water(HL.renderer, HL.camera, HL.scene, {
-  			textureWidth: 256,
-  			textureHeight: 256,
+  			textureWidth: 512,
+  			textureHeight: 512,
   			waterNormals: HL.textures.water,
         noiseScale: 2.14,
   			sunDirection: HL.lights.sun.position.normalize(),
@@ -450,13 +465,17 @@ var HLEnvironment = function(){
     HL.materials.fauna.color = HLC.fauna; // set by reference
 
 
-    HL.materials.models = new THREE.MeshBasicMaterial({
-      color:0x000000,
-      map:isWire?null:HL.textures.whale,
-      fog:true,
-      wireframe:isWire,
-   });
-   if(!isWire) HL.materials.models.color = HLC.horizon;
+    //create materials for each model
+    for(var k in HL.models){
+      HL.materials[k] = new THREE.MeshPhongMaterial({
+        color:HL.textures[k]!==undefined?0xffffff:0x7f7f7f,
+        map:isWire?null:(HL.textures[k]!==undefined?HL.textures[k]:null),
+        fog:false,
+        wireframe:isWire,
+        side:THREE.DoubleSide,
+      });
+    }
+
 
     console.log("materials init");
 
@@ -467,35 +486,45 @@ var HLEnvironment = function(){
 
   function initModels(){
 
-    // instantiate a loader
-    var loader = new THREE.OBJLoader();
-
+    var loader = new THREE.OBJLoader(), modelPath, modelScale, counter=0;
+    var keys = {};
     // load a resource
-    for (var key in HL.models)
-      if(HL.models[key]!==null)
+    for (var key in HL.models){
+      if(HL.models[key]!==null){
+        modelPath = HL.models[key][0];
+        modelScale = HL.models[key][1];
         loader.load(
           // resource URL
-          HL.models[key],
+          modelPath,
           // Function when resource is loaded
-          function ( object ) {
-            HL.models[key]=object.children[0];
-            HL.models[key].name = key;
-            HL.models[key].geometry.scale(100,100,100);
+          // use the closure trick to dereference and pass key to the delayed out onLoad funtion
+        //  (function(i) { return function() { alert( i ) } })(i);
+          (function ( nK , modelScale) {
+            return function( object ){
+            console.log(object);
+            HL.models[nK]=object.children[0];
+            HL.models[nK].name = nK;
+            HL.models[nK].geometry.scale(modelScale,modelScale,modelScale);
 //            HL.models[key].geometry.rotateX(Math.PI*0.5);
-            HL.models[key].geometry.computeBoundingBox();
-            HL.models[key]['height']=HL.models[key].geometry.boundingBox.size().y;
-            HL.models[key].material = HL.materials.models;
+            HL.models[nK].geometry.computeBoundingBox();
+            HL.models[nK]['height']=HL.models[nK].geometry.boundingBox.size().y;
+            HL.models[nK].material = HL.materials[nK];
 
-            HL.scene.add( HL.models[key] );
-            HLH.resetModel(HL.models[key]);
-            console.log(HL.models[key]);
-          }
+            HL.scene.add( HL.models[nK] );
+            HLH.resetModel(HL.models[nK] );
+            console.log(HL.models[nK]);
+            }
+          })(key, modelScale)
         );
+      }
+    }
+    console.log("start models loading");
+    console.log(HL.models);
   };
 
 
   function initLights(){
-     HL.lights.ambient = new THREE.AmbientLight( 0x111111 );
+     HL.lights.ambient = new THREE.AmbientLight( 0x7f7f7f );
      HL.scene.add( HL.lights.ambient );
   //
   //   HL.lights.directional = new THREE.DirectionalLight( 0xffffff, 10);

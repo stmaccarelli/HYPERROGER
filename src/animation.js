@@ -37,37 +37,57 @@ var HLAnim = function(){
   HL.materials.water.material.uniforms.step.value = HLE.landStepsCount;
   }
 
-
   function land(){
-    // move
+    if(HLE.LAND_IS_BUFFER)
+      landBufferGeometry();
+    else
+      landGeometry();
+  }
+
+  function landBufferGeometry(){
     HL.land.position.z += HLE.moveSpeed;
-    // if plane moved more than a row
     if (HL.land.position.z > HLE.TILE_SIZE) {
       HLE.landStepsCount++;
-      // put plane back 1 row, so it will look moving seamless
       HL.land.position.z -= HLE.TILE_SIZE;
-
-      // HL.materials.land.uniforms.step.value = HLE.landStepsCount;
-      //then shift land heights on next rows
       HLH.shiftHeightsBuf(HL.geometries.land);
       // then calculate LAND first row new heights with noise function
       for ( var i = 0; i < (HL.geometries.land.parameters.widthSegments)*3; i+=3){
         HL.geometries.land.attributes.position.array[i + 1] = HLH.landHeightNoise(
           i / HLE.WORLD_TILES,
-          (HLE.landStepsCount / HLE.WORLD_TILES) ) * (HLE.CENTER_PATH? Math.abs(HL.geometries.land.attributes.position.array[i]/HLE.WORLD_WIDTH)*2:1) ;
+          (HLE.landStepsCount / HLE.WORLD_TILES) )
+        * (HLE.CENTER_PATH? Math.abs(HL.geometries.land.attributes.position.array[i]/HLE.WORLD_WIDTH)*2:1) ;
       }
-      // if we want to use shadows, we have to recalculate normals
-      // if(hasShadows){
-        //  HL.geometries.land.computeFaceNormals();
-        //  HL.geometries.land.computeVertexNormals();
+      // if(hasShadows){///TODO check if works on BufferGeometry
+      //     HL.geometries.land.computeFaceNormals();
+      //     HL.geometries.land.computeVertexNormals();
       // }
-
-      // if LAND is land-depth-material
-      // update landZeroPoint and landHeight in shader
       HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
       HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
     }
+  }
 
+  function landGeometry(){
+    HL.land.position.z += HLE.moveSpeed;
+    if (HL.land.position.z > HLE.TILE_SIZE) {
+      HLE.landStepsCount++;
+      HL.land.position.z -= HLE.TILE_SIZE;
+      HLH.shiftHeights(HL.geometries.land);
+      // then calculate LAND first row new heights with noise function
+      for ( var i = 0; i < HLE.WORLD_TILES; i++){
+        HL.geometries.land.vertices[i].y =
+        HLH.landHeightNoise(
+          i / HLE.WORLD_TILES,
+          (HLE.landStepsCount / HLE.WORLD_TILES) )
+        * (HLE.CENTER_PATH? Math.abs(HL.geometries.land.vertices[i].x/HLE.WORLD_WIDTH)*2:1) ;
+      }
+      // if(hasShadows){
+      //     HL.geometries.land.computeFaceNormals();
+      //     HL.geometries.land.computeVertexNormals();
+      // }
+      HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
+      HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
+    }
+    HL.geometries.land.verticesNeedUpdate = true;
   }
 
   // FOR CLOUDS, FLORA AND FAUNA
