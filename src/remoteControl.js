@@ -108,8 +108,9 @@ var HLR = {
 
   var colorCycle=0;
   HLR.scene2 = function(){
-    colorCycle+= HLR.fft5*0.01;
     HLR.raf = window.requestAnimationFrame(HLR.scene2);
+
+    colorCycle+= HLR.fft5*0.01;
     // HLC.horizon.setRGB(.2+(frameCount/300)%.8,.1+(frameCount/300)%.8,(frameCount/300)%.8);
     HLC.horizon.setRGB(.2+(colorCycle)%.8,.1+(colorCycle)%.8,(colorCycle)%.8);
   }
@@ -118,6 +119,7 @@ var HLR = {
 
   HLR.scene1 = function(){
     HLR.raf = window.requestAnimationFrame(HLR.scene1);
+
     // supported: timer for scene switch from one to another
     if(frameCount-HLR.sceneStart>=600) HLR.startScene('scene2');
 
@@ -180,6 +182,7 @@ var HLR = {
     if(k.keyCode==67){
       HLE.CENTER_PATH=!HLE.CENTER_PATH;
       HLE.cameraHeight = 0;
+      HUD.displayDiv('HLE.CENTER_PATH= '+HLE.CENTER_PATH, 5);
     }
 
   }
