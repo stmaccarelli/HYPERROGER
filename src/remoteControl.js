@@ -68,9 +68,9 @@ var HLR = {
 
       // compute seawaves height
       if(HLE.MIRROR)
-        HL.materials.mirror.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005 + HLR.fft4*0.1;
+        HL.materials.mirror.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .004 + HLR.fft4*0.2;
       else if(HLE.WATER)
-        HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005 + HLR.fft4*0.1;
+        HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .004 + HLR.fft4*0.2;
       else
         HLE.reactiveSeaHeight = HLR.fft3*HLE.WORLD_HEIGHT*0.1;
 
@@ -106,9 +106,12 @@ var HLR = {
     HL.materials.land.uniforms.color.value = HLC.land.setRGB(Math.random(),Math.random(),Math.random());
   }
 
+  var colorCycle=0;
   HLR.scene2 = function(){
+    colorCycle+= HLR.fft5*0.01;
     HLR.raf = window.requestAnimationFrame(HLR.scene2);
-    HLC.horizon.setRGB((frameCount/300)%1,(frameCount/300)%1,(frameCount/300)%1);
+    // HLC.horizon.setRGB(.2+(frameCount/300)%.8,.1+(frameCount/300)%.8,(frameCount/300)%.8);
+    HLC.horizon.setRGB(.2+(colorCycle)%.8,.1+(colorCycle)%.8,(colorCycle)%.8);
   }
 
 
@@ -131,7 +134,7 @@ var HLR = {
   //  HL.materials.water.material.uniforms.sunColor.value = HLC.horizon;//HLC.horizon;
     // HL.materials.water.material.uniforms.color.value = new THREE.Color(0x000000);//HLC.horizon;
 
-    // HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
+     HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
     //HLC.horizon.setRGB((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
 
    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.9, .1+HLR.fft3*.5);
@@ -167,7 +170,7 @@ var HLR = {
     if(k.keyCode==87)//w
       HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH/2,HLE.WORLD_WIDTH/2),HLE.WORLD_HEIGHT*3, 10);
     if(k.keyCode==88)//x
-      HLH.startModel(HL.models.ducky,THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),0, 0);
+      HLH.startModel(HL.models.ducky,THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),0.1, 0);
     if(k.keyCode==89)//y
       HLH.startModel(HL.models.whale2,THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),true, 0);
     if(k.keyCode==90)//z

@@ -356,6 +356,7 @@ var HLEnvironment = function(){
        wireframe:isWire,
        map:isWire?null:HL.textures.land,
        fog:true,
+       landHeight:HLE.WORLD_HEIGHT * 0.5,
     });
 
     if(!HLE.WATER && !HLE.MIRROR){

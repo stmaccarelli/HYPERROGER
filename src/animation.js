@@ -61,8 +61,9 @@ var HLAnim = function(){
       //     HL.geometries.land.computeFaceNormals();
       //     HL.geometries.land.computeVertexNormals();
       // }
-      HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
-      HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
+      // this is for land shadermaterial, to compute depth colors
+      // HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
+      // HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
     }
   }
 
@@ -84,8 +85,7 @@ var HLAnim = function(){
       //     HL.geometries.land.computeFaceNormals();
       //     HL.geometries.land.computeVertexNormals();
       // }
-      HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
-      HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
+    //  HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
     }
     HL.geometries.land.verticesNeedUpdate = true;
   }
