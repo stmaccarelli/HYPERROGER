@@ -78,9 +78,10 @@
     }
     // set camera move easing according to move speed
     if(!HLE.CENTER_PATH){
-      HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)-HLE.cameraHeight) * (HLE.moveSpeed * 0.08);
-      HL.camera.position.y = 10 + HLE.cameraHeight * 1.5;
+      HLE.cameraHeight = HLE.landHeight+HLE.landZeroPoint;
     }
+    HLE.smoothCameraHeight += (HLE.cameraHeight - HLE.smoothCameraHeight) * (HLE.moveSpeed * 0.001);
+    HL.camera.position.y = 20 + HLE.smoothCameraHeight * 1.6;
 
     if(HLE.MIRROR || HLE.WATER) {
      HL.materials.water.render();

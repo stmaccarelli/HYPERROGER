@@ -55,7 +55,7 @@ var HLAnim = function(){
         HL.geometries.land.attributes.position.array[i + 1] = HLH.landHeightNoise(
           i / HLE.WORLD_TILES,
           (HLE.landStepsCount / HLE.WORLD_TILES) )
-        * (HLE.CENTER_PATH? Math.abs(HL.geometries.land.attributes.position.array[i]/HLE.WORLD_WIDTH)*2:1) ;
+        * (HLE.CENTER_PATH? (Math.abs(HL.geometries.land.attributes.position.array[i]/HLE.WORLD_WIDTH)*2):1) ;
       }
       // if(hasShadows){///TODO check if works on BufferGeometry
       //     HL.geometries.land.computeFaceNormals();

@@ -22,7 +22,7 @@ var HLE = {
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: null,
-  CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
+  CENTER_PATH:true, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computed move speed
@@ -50,7 +50,8 @@ var HLE = {
   noiseFrequency:1,
   noiseFrequency2:1,
 
-  cameraHeight:10, // will change live
+  cameraHeight:0, // will change live
+  smoothCameraHeight:10, // will change live
 }
 
 HLE.resetTriggers = function(){
@@ -117,7 +118,7 @@ var HL = {
   },
   models: {
     whale:["3dm/BL_WHALE/BL_WHALE2.OBJ",50],
-    ducky:["3dm/ducky/ducky.obj",1500],
+    ducky:["3dm/ducky/ducky.obj",500],
     whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",80],
   },
   // meshes
@@ -214,7 +215,7 @@ var HLEnvironment = function(){
     HL.camera.focus = HLE.WORLD_WIDTH * 1; // USED ONLY IN StereoCamera, if any
     }
     else
-      HL.camera = new THREE.PerspectiveCamera(95.0, window.innerWidth / window.innerHeight, 0.5, 3000000);
+      HL.camera = new THREE.PerspectiveCamera(65.0, window.innerWidth / window.innerHeight, 0.5, 3000000);
 
     // TODO check filmGauge and filmOffset effects
     // HL.camera.filmGauge = 1;

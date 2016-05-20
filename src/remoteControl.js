@@ -67,10 +67,12 @@ var HLR = {
       HLE.moveSpeed += ((Math.max( HLE.reactiveMoveSpeed,0))-HLE.moveSpeed) * 0.5;
 
       // compute seawaves height
-      if(!HLE.WATER)
-        HLE.reactiveSeaHeight = HLR.fft3*HLE.WORLD_HEIGHT*0.1;
-      else
+      if(HLE.MIRROR)
+        HL.materials.mirror.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005 + HLR.fft4*0.1;
+      else if(HLE.WATER)
         HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005 + HLR.fft4*0.1;
+      else
+        HLE.reactiveSeaHeight = HLR.fft3*HLE.WORLD_HEIGHT*0.1;
 
       // compute land Heights
       HLR.tempNoiseFreq = 7 - (HLR.smoothFFT2 * 7 - HLR.smoothFFT3 * 6.5);
@@ -81,6 +83,7 @@ var HLR = {
       //
       HLR.tempLandHeight = (HLR.smoothFFT1 * 0.55 + HLR.smoothFFT3 * .45 )
         * HLE.WORLD_HEIGHT * 0.5 + 0.1;
+      if(HLE.CENTER_PATH) HLR.tempLandHeight*=3;
       HLE.landHeight += (HLR.tempLandHeight-HLE.landHeight)*0.5;
       HLE.landZeroPoint = -HLE.landHeight * 0.1;
     }// end audioreactive stuff
@@ -171,6 +174,10 @@ var HLR = {
       {HLR.startScene('scene1');}
     if(k.keyCode==86)//v
       {HLR.startScene('scene2');}
+    if(k.keyCode==67){
+      HLE.CENTER_PATH=!HLE.CENTER_PATH;
+      HLE.cameraHeight = 0;
+    }
 
   }
   window.addEventListener('keyup',HLR.modelshooting);
