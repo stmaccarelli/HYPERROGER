@@ -73,11 +73,11 @@ var HLR = {
         HL.materials.water.material.uniforms.time.value += 0.001 + HLE.moveSpeed * .005 + HLR.fft4*0.1;
 
       // compute land Heights
-      HLR.tempNoiseFreq = 10 - (HLR.smoothFFT2 * 10 - HLR.smoothFFT3 * 9);
-      HLR.tempNoiseFreq2 = 1 + HLR.smoothFFT4 * 30 * (HLR.smoothFFT3+1)*1.3 ;
+      HLR.tempNoiseFreq = 7 - (HLR.smoothFFT2 * 7 - HLR.smoothFFT3 * 6.5);
+      HLR.tempNoiseFreq2 = .5 + HLR.smoothFFT4 * 15 * (HLR.smoothFFT3+1)*0.65 ;
       //TODO CHECK l'easing deve avvenire in base alla larghezza tile
-      HLE.noiseFrequency +=  (HLR.tempNoiseFreq *.7 - HLE.noiseFrequency) * (0.01*HLE.moveSpeed);
-      HLE.noiseFrequency2 += (HLR.tempNoiseFreq2*.4 - HLE.noiseFrequency2) * (0.03*HLE.moveSpeed);
+      HLE.noiseFrequency +=  (HLR.tempNoiseFreq  - HLE.noiseFrequency ) * (1/HLE.WORLD_TILES * HLE.moveSpeed/HLE.MAX_MOVE_SPEED);
+      HLE.noiseFrequency2 += (HLR.tempNoiseFreq2 - HLE.noiseFrequency2) * (1/HLE.WORLD_TILES * HLE.moveSpeed/HLE.MAX_MOVE_SPEED);
       //
       HLR.tempLandHeight = (HLR.smoothFFT1 * 0.55 + HLR.smoothFFT3 * .45 )
         * HLE.WORLD_HEIGHT * 0.5 + 0.1;
@@ -124,11 +124,11 @@ var HLR = {
       // HLC.horizon.setHSL(millis*0.1%1,.4, HLR.fft3*.3);
     // HLC.horizon.setHSL(millis*0.1%1,.6, .1 + HLR.fft3*HLR.fft3*0.7);
 
-  //  HLC.horizon.setHSL((frameCount/3600)%1,.2, .1 + HLR.fft3);
+    HLC.horizon.setHSL((frameCount/3600)%1,.2, .1 + HLR.fft3);
   //  HL.materials.water.material.uniforms.sunColor.value = HLC.horizon;//HLC.horizon;
     // HL.materials.water.material.uniforms.color.value = new THREE.Color(0x000000);//HLC.horizon;
 
-     HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
+    // HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
     //HLC.horizon.setRGB((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
 
    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.9, .1+HLR.fft3*.5);
