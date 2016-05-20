@@ -110,7 +110,7 @@ var HLAnim = function(){
 
 
 
-  // COLORS ANIMATIONS
+  // COLORS ANIMATIONS for underwater
   var colorsDebounce = true;
   function colors(){
     if(HL.camera.position.y > 0 && colorsDebounce){

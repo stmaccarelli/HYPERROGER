@@ -8,7 +8,7 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:5000,
   WORLD_HEIGHT:300,
-  WORLD_TILES:256,
+  WORLD_TILES:40,
   TILE_SIZE:null,
   SEA_TILES:32,
   SEA_TILE_SIZE:null,
@@ -365,7 +365,7 @@ var HLEnvironment = function(){
         wireframe: isWire,
         wireframeLinewidth: 2,
          transparent:false,
-         opacity:0.85,
+         opacity:0.80,
          alphaTest: 0.5,
          map:isWire?null:HL.textures.sea
       });
@@ -387,7 +387,7 @@ var HLEnvironment = function(){
           fog: true,
           side: THREE.DoubleSide,
           worldWidth: HLE.WORLD_WIDTH,
-          transparent:true,
+          transparent:false,
           opacity:1,//0.657,
           wireframe:isWire,
          }
@@ -410,8 +410,8 @@ var HLEnvironment = function(){
   			sunDirection: HL.lights.sun.position.normalize(),
 //        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
   			sunColor: 0x7f7f66,
-  //			color: HLC.sea,
-  			betaVersion: 1,
+  			// color: HLC.sea,
+  			// betaVersion: 1,
         fog: true,
         side: THREE.FrontSide,
   		});
@@ -467,10 +467,10 @@ var HLEnvironment = function(){
 
     //create materials for each model
     for(var k in HL.models){
-      HL.materials[k] = new THREE.MeshPhongMaterial({
+      HL.materials[k] = new THREE.MeshBasicMaterial({
         color:HL.textures[k]!==undefined?0xffffff:0x7f7f7f,
         map:isWire?null:(HL.textures[k]!==undefined?HL.textures[k]:null),
-        fog:false,
+        fog:true,
         wireframe:isWire,
         side:THREE.DoubleSide,
       });
@@ -557,7 +557,7 @@ var HLEnvironment = function(){
 
 
     if(HLE.MIRROR) {
-      HL.sea = new THREE.Mesh( HL.geometries.sea, HL.materials.water.material );
+      HL.sea = new THREE.Mesh( HL.geometries.sea, HL.materials.water );
       HL.sea.add( HL.materials.water );
     } else if(HLE.WATER){
       HL.sea = new THREE.Mesh( new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH,HLE.WORLD_WIDTH*3,1,1), HL.materials.water.material );
