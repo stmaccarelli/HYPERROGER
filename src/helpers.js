@@ -252,9 +252,9 @@ var HLH = function() {
 		if(model.position.z >= -HLE.WORLD_WIDTH){
 			if(model.speed!==0) model.position.z += model.speed;
 			else model.position.z+=HLE.moveSpeed;
-			model.position.y = -model.height*0.5 + (model.targetY+model.height*0.5)
+			model.position.y = -model.height + (model.targetY+model.height)
 				- easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)
-					*(model.targetY+model.height*0.5);
+					*(model.targetY+model.height);
 		}
 		if(model.position.z>=HLE.WORLD_WIDTH)
 			resetModel(model);
