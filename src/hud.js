@@ -1,17 +1,19 @@
 var HUD ={
-  canvas:null,
-  c:null,
-  text:null,
+  isCanvas:null,
 
   raf:null,
   timer:null,
   duration:null,
 };
 
-HUD.init = function(){
-  HUD.canvas = document.getElementById('hud');
+HUD.initCanvas = function(){
+  HUD.isCanvas = true;
+  HUD.canvas = document.createElement('canvas');
+  HUD.canvas.setAttribute("style", "position: absolute; top:0;left:0; background:transparent; z-index:999;"); // Multiple style properties
   HUD.canvas.width = window.innerWidth;
   HUD.canvas.height = window.innerHeight;
+  document.body.appendChild(HUD.canvas);
+
   HUD.c = HUD.canvas.getContext('2d');
 
   HUD.c.font = "Normal "+(window.innerWidth/10)+"px Arial";
@@ -20,9 +22,13 @@ HUD.init = function(){
 }
 
 HUD.initDiv = function(){
-  HUD.div = document.getElementById('divHud');
+  HUD.isCanvas = false;
+  HUD.div = document.createElement('div');
+  HUD.div.setAttribute("style", "position: absolute; top:0;left:0; background:transparent; z-index:999; font-size:"+(window.innerHeight*0.05)+"px;"); // Multiple style properties
   HUD.div.width = window.innerWidth;
   HUD.div.height = window.innerHeight;
+  document.body.appendChild(HUD.div);
+
 }
 
 
@@ -31,19 +37,18 @@ HUD.display = function(text,duration){
     window.cancelAnimationFrame(HUD.raf);
     HUD.timer = millis;
     HUD.duration = duration;
-    HUD.text = text;
-    console.log("init forced hud anim");
-    HUD.raf = window.requestAnimationFrame(HUD.showText);
-}
 
-HUD.displayDiv = function(text,duration){
+    if(HUD.isCanvas){
+      HUD.text = text;
+      HUD.raf = window.requestAnimationFrame(HUD.showText);
+    }
+    else {
+      HUD.div.innerHTML = text;
+      HUD.raf = window.requestAnimationFrame(HUD.showTextDiv);
+    }
 
-    window.cancelAnimationFrame(HUD.raf);
-    HUD.timer = millis;
-    HUD.duration = duration;
-    HUD.div.innerHTML = text;
-    console.log("init forced hud anim");
-    HUD.raf = window.requestAnimationFrame(HUD.showTextDiv);
+    console.log("init hud canvas anim");
+
 }
 
 HUD.showText = function(){
@@ -66,8 +71,10 @@ HUD.showText = function(){
 HUD.showTextDiv = function(){
   if(HUD.raf!==null){
     HUD.raf = window.requestAnimationFrame(HUD.showTextDiv);
-    HUD.div.style = "color: rgba(245,245,245,"+(1-(millis-HUD.timer)/HUD.duration)+")";
+    HUD.div.style.color = "rgba(245,245,245,"+(1-(millis-HUD.timer)/HUD.duration)+")";
   }
+
+  console.log("showTextDiv");
 
   if(millis-HUD.timer>HUD.duration){
     window.cancelAnimationFrame(HUD.raf);

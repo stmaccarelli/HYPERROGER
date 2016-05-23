@@ -26,6 +26,8 @@ var HLR = {
   key4: false,
   key5: false,
 
+
+  //temp vars to be used by scenes
   tempLandHeight:0,
   tempLandZeroPoint:0,
   tempNoiseFreq:0,
@@ -51,7 +53,7 @@ var HLR = {
 
 
   HLR.updateHLParams = function(){
-    this.updateFFT(AA.getFreq(0), AA.getFreq(1), AA.getFreq(12), AA.getFreq(32), AA.getFreq(64));
+      this.updateFFT(AA.getFreq(0), AA.getFreq(1), AA.getFreq(12), AA.getFreq(32), AA.getFreq(64));
 
     // begin audioreactive stuff
     if(!isNaN(HLR.fft1)){
@@ -102,6 +104,7 @@ var HLR = {
   }
 
   HLR.scene2init = function(){
+    HUD.display('SCENE TWO. FOLLOW YOUR FOLLOWER',3);
     HL.materials.land.wireframe=false;
     HL.materials.land.uniforms.color.value = HLC.land.setRGB(Math.random(),Math.random(),Math.random());
   }
@@ -116,12 +119,15 @@ var HLR = {
   }
 
 
+  HLR.scene1init = function(){
+    HUD.display('SCENE ONE. ONLY GOD KNOWS',3);
 
+  }
   HLR.scene1 = function(){
     HLR.raf = window.requestAnimationFrame(HLR.scene1);
 
     // supported: timer for scene switch from one to another
-    if(frameCount-HLR.sceneStart>=600) HLR.startScene('scene2');
+  //  if(frameCount-HLR.sceneStart>=600) HLR.startScene('scene2');
 
     //  HLE.CLOUDS_SPEED = 1 + HLR.smoothFFT4*20;
       // HLE.BASE_SEA_SPEED = 2.5 + HLR.fft3*1.1;
@@ -182,7 +188,7 @@ var HLR = {
     if(k.keyCode==67){
       HLE.CENTER_PATH=!HLE.CENTER_PATH;
       HLE.cameraHeight = 0;
-      HUD.displayDiv('HLE.CENTER_PATH= '+HLE.CENTER_PATH, 5);
+      HUD.display('HLE.CENTER_PATH= '+HLE.CENTER_PATH, 5);
     }
 
   }
