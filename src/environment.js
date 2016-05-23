@@ -136,7 +136,6 @@ var HL = {
   },
 }
 
-var HLEload = new Event("HLEload");
 
 var HLEnvironment = function(){
 
@@ -589,7 +588,7 @@ var HLEnvironment = function(){
     // HL.fauna.name = "fauna";
     // HL.scene.add(HL.fauna);
 
-
+    var HLEload = new Event("HLEload");
     console.log(HLEload);
     window.dispatchEvent(HLEload);
     console.log("meshes init");
