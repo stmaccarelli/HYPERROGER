@@ -104,7 +104,7 @@ var HLR = {
   }
 
   HLR.scene2init = function(){
-    HUD.display('SCENE TWO. FOLLOW YOUR FOLLOWER',3);
+    if(hud!==undefined) hud.display('SCENE TWO. FOLLOW YOUR FOLLOWER',3);
     HL.materials.land.wireframe=false;
     HL.materials.land.uniforms.color.value = HLC.land.setRGB(Math.random(),Math.random(),Math.random());
   }
@@ -120,8 +120,7 @@ var HLR = {
 
 
   HLR.scene1init = function(){
-    HUD.display('SCENE ONE. ONLY GOD KNOWS',3);
-
+    if(hud!==undefined) hud.display('SCENE ONE. ONLY GOD KNOWS',3);
   }
   HLR.scene1 = function(){
     HLR.raf = window.requestAnimationFrame(HLR.scene1);
@@ -188,7 +187,7 @@ var HLR = {
     if(k.keyCode==67){
       HLE.CENTER_PATH=!HLE.CENTER_PATH;
       HLE.cameraHeight = 0;
-      HUD.display('HLE.CENTER_PATH= '+HLE.CENTER_PATH, 5);
+      hud.display('HLE.CENTER_PATH= '+HLE.CENTER_PATH, 5);
     }
 
   }

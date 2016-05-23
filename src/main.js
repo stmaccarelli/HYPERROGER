@@ -111,7 +111,8 @@
     guiInit();
     // init HyperLand Environment
     HLEnvironment.init();
-    HUD.initCanvas();
+    hud = new HUD();
+    //hud.initCanvas();
     // run is called by HLEnvironment.init() when it's all loaded
     window.addEventListener('HLEload', function(){console.log("event HLEload received"); run();});
   });

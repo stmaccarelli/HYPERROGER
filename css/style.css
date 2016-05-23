@@ -7,18 +7,3 @@ body {
 			position:relative;
 
 		}
-
-canvas{
-	position:absolute;
-	background:transparent;
-}
-
-#divHud{
-	position:absolute;
-	background:transparent;
-	z-index:1000;
-}
-
-canvas#hud{
-	z-index:999;
-}
