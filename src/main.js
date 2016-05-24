@@ -63,7 +63,8 @@
     //if(HLDEV.animColors) HLAnim.colors();
     HLAnim.particles();
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
-    if(HLE.MIRROR) HLAnim.seaWMMove();
+    if(HLE.MIRROR) HLAnim.mirrorWaves();
+    if(HLE.WATER) HLAnim.waterShaderBaseMotion();
     HLAnim.land();
     HLAnim.models();
 
@@ -78,41 +79,33 @@
     }
     // set camera move easing according to move speed
     if(!HLE.CENTER_PATH){
-      HLE.cameraHeight = HLE.landHeight+HLE.landZeroPoint;
+      HLE.cameraHeight = HLE.landHeight;
     }
     HLE.smoothCameraHeight += (HLE.cameraHeight - HLE.smoothCameraHeight) * (HLE.moveSpeed * 0.001);
-    HL.camera.position.y = 20 + HLE.smoothCameraHeight * 1.6;
+    HL.camera.position.y = 10 + HLE.smoothCameraHeight * 1.1;
 
-    if(HLE.MIRROR || HLE.WATER) {
-     HL.materials.water.render();
-    }
+
     // Rendering
+    if(HLE.WATER)
+      HL.materials.water.render();
+    if(HLE.MIRROR)
+      HL.materials.mirror.render();
     if(isVR){
       if(HLE.MIRROR || HLE.WATER)
         HL.renderer.setRenderTarget( null );
       HL.stereoEffect.render(HL.scene,HL.camera);
     }
     else HL.renderer.render(HL.scene,HL.camera);
-
-
-    // // Rendering
-    // if(isVR){
-    // //  HL.renderer.setRenderTarget( null ); not needed anymore??
-    //   HL.stereoEffect.render(HL.scene,HL.camera);
-    // }
-    // else HL.renderer.render(HL.scene,HL.camera);
-
   }
 
 
 
   window.addEventListener('load',function(){
     mainInit();
-    guiInit();
+    // guiInit();
     // init HyperLand Environment
     HLEnvironment.init();
-    hud = new HUD();
-    //hud.initCanvas();
+    hud = new HUD(true);
     // run is called by HLEnvironment.init() when it's all loaded
     window.addEventListener('HLEload', function(){console.log("event HLEload received"); run();});
   });
