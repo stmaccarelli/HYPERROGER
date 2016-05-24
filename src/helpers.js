@@ -209,6 +209,7 @@ var HLH = function() {
 			} else skipped++;
 		}
 		geometry.attributes.position.needsUpdate = true;
+		console.log("HLH.shotFlora");
 	}
   // HLH.landHeightNoise(
   //  i / (HL.geometries.land.parameters.widthSegments),
@@ -229,36 +230,85 @@ var HLH = function() {
 				HL.models[key].position.set(0,0,-HLE.WORLD_WIDTH*10);
 	}
 
+	// function startModel(model,x,y,speed){
+	//
+	// 	if(model.position.z === -HLE.WORLD_WIDTH*10){
+	// 		speed = speed || 0;
+	// 		x = x || 0;
+	// 		y = y || HLE.WORLD_HEIGHT*.5;
+	// 		if(y === true){
+	// 			y=landHeightNoise((x/HLE.WORLD_WIDTH*0.5)+0.5,HLE.landStepsCount+0.1/HLE.WORLD_TILES);
+	// 			speed = 0;
+	// 		}
+	//
+	// 		model.position.set(x,y,-HLE.WORLD_WIDTH+0.1);
+	// 		model["speed"] = speed;
+	// 		model["targetY"] = y;
+	// 		model['moving'] = true;
+	// 	}
+	//
+	// }
+
 	function startModel(model,x,y,speed){
+		if(HL.movingModels.length >= HLE.MAX_MODELS_OUT) {console.log('MAX_MODELS_OUT'); return}
 
-		if(model.position.z === -HLE.WORLD_WIDTH*10){
-			speed = speed || 0;
-			x = x || 0;
-			y = y || HLE.WORLD_HEIGHT*.5;
-			if(y === true){
-				y=landHeightNoise((x/HLE.WORLD_WIDTH*0.5)+0.5,HLE.landStepsCount+0.1/HLE.WORLD_TILES);
-				speed = 0;
-			}
+		HL.movingModels['m'+frameCount] = model.clone();
+		HL.movingModels['m'+frameCount].size = model.size;
+		HL.movingModels['m'+frameCount].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
+		HL.movingModels['m'+frameCount]['key']='m'+frameCount;
+		HL.scene.add(HL.movingModels['m'+frameCount]);
+		HL.movingModels.length++;
 
-			model.position.set(x,y,-HLE.WORLD_WIDTH+0.1);
-			model["speed"] = speed;
-			model["targetY"] = y;
-			model['moving'] = true;
+		speed = speed || 0;
+		x = x || 0;
+		y = y || 0;
+		var z = -HLE.WORLD_WIDTH;
+		if(y === true){
+			y=landHeightNoise((x/HLE.WORLD_WIDTH*0.5)+0.5,HLE.landStepsCount/HLE.WORLD_TILES)
+				+HL.land.position.y;
+			y=Math.max(y,0);
+			speed = 0;
+			z=-HLE.WORLD_WIDTH*0.5-HL.land.position.y;
 		}
 
+		HL.movingModels['m'+frameCount].position.set(x,y,z);
+		HL.movingModels['m'+frameCount]["speed"] = speed;
+		HL.movingModels['m'+frameCount]["targetY"] = y;
+		HL.movingModels['m'+frameCount]['moving'] = true;
+
 	}
+
 
 	function moveModel(model){
 		if(model.position.z >= -HLE.WORLD_WIDTH){
 			if(model.speed!==0) model.position.z += model.speed;
 			else model.position.z+=HLE.moveSpeed;
-			model.position.y = -model.height + (model.targetY+model.height)
+			model.position.y = -model.size.y + (model.targetY+model.size.y)
 				- easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)
-					*(model.targetY+model.height);
+					*(model.targetY+model.size.y);
 		}
-		if(model.position.z>=HLE.WORLD_WIDTH)
-			resetModel(model);
+		if(model.position.z>=HLE.WORLD_WIDTH*0.5+model.size.z*.5){
+			//resetModel(model);
+			HL.scene.remove(model);
+			model.material.dispose();
+			model.geometry.dispose();
+			delete HL.movingModels[model.key];
+			HL.movingModels.length--;
+		}
 	}
+
+	function destroyAllModels(){
+		for(var k in HL.movingModels){
+			if(k.indexOf('length')===-1){
+				HL.scene.remove(HL.movingModels[k]);
+				HL.movingModels[k].material.dispose();
+				HL.movingModels[k].geometry.dispose();
+				delete HL.movingModels[k];
+			}
+		}
+	}
+
+
 
 	return {
 		initParticleSystem: function(a, b, c, d, e) {
@@ -302,5 +352,6 @@ var HLH = function() {
 		resetAllModels: resetAllModels,
 		startModel: function(a,b,c,d) {startModel(a,b,c,d)},
 		moveModel: function(a,b) {moveModel(a,b)},
+		destroyAllModels:destroyAllModels,
 	}
 }();

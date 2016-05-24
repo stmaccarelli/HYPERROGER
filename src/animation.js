@@ -30,11 +30,13 @@ var HLAnim = function(){
      }
   }
 
-  // when SEA is a MIRROR or WATER material
-  function seaWMMove(){
-  // now in shader  HL.sea.position.z = (HL.sea.position.z+HLE.moveSpeed)%(HLE.TILE_SIZE);
-  HL.materials.water.material.uniforms.time.value = millis;
-  HL.materials.water.material.uniforms.step.value = HLE.landStepsCount;
+  function mirrorWaves(){
+      HL.materials.mirror.material.uniforms.time.value += 0.01 + HLE.moveSpeed * .01;
+//      HL.materials.mirror.material.uniforms.step.value = HLE.landStepsCount;
+  }
+
+  function waterShaderBaseMotion(){
+    HL.materials.water.material.uniforms.time.value += 0.01 + HLE.moveSpeed * .01;
   }
 
   function land(){
@@ -53,7 +55,7 @@ var HLAnim = function(){
       // then calculate LAND first row new heights with noise function
       for ( var i = 0; i < (HL.geometries.land.parameters.widthSegments)*3; i+=3){
         HL.geometries.land.attributes.position.array[i + 1] = HLH.landHeightNoise(
-          i / HLE.WORLD_TILES,
+          i / 3 / (HLE.WORLD_TILES-1),
           (HLE.landStepsCount / HLE.WORLD_TILES) )
         * (HLE.CENTER_PATH? (Math.abs(HL.geometries.land.attributes.position.array[i]/HLE.WORLD_WIDTH)*2):1) ;
       }
@@ -77,7 +79,7 @@ var HLAnim = function(){
       for ( var i = 0; i < HLE.WORLD_TILES; i++){
         HL.geometries.land.vertices[i].y =
         HLH.landHeightNoise(
-          i / HLE.WORLD_TILES,
+          i / (HLE.WORLD_TILES-1),
           (HLE.landStepsCount / HLE.WORLD_TILES) )
         * (HLE.CENTER_PATH? Math.abs(HL.geometries.land.vertices[i].x/HLE.WORLD_WIDTH)*2:1) ;
       }
@@ -102,10 +104,17 @@ var HLAnim = function(){
   }
 
   function models(){
-    for(var k in HL.models)
-      if(HL.models[k].position){
-        HLH.moveModel( HL.models[k], 'z' );
+    // for(var k in HL.models)
+    //   if(HL.models[k].position){
+    //     HLH.moveModel( HL.models[k], 'z' );
+    //   }
+    //
+    for(var k in HL.movingModels){
+      if(HL.movingModels[k].position){
+       HLH.moveModel( HL.movingModels[k], 'z' );
       }
+    }
+
   }
 
 
@@ -136,7 +145,8 @@ var HLAnim = function(){
 
   return{
     sea:sea,
-    seaWMMove:seaWMMove,
+    mirrorWaves:mirrorWaves,
+    waterShaderBaseMotion:waterShaderBaseMotion,
     land:land,
     particles:particles,
     models:models,
