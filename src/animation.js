@@ -92,9 +92,9 @@ var HLAnim = function(){
     HL.geometries.land.verticesNeedUpdate = true;
   }
 
-  // FOR CLOUDS, FLORA AND FAUNA
+  // FOR CLOUDS, FLORA AND FAUNA, I'd move this in HLS sceneManager
   function particles(){
-    HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.moveSpeed+HLE.CLOUDS_SPEED);
+
   //  HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
 
     HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
@@ -109,9 +109,9 @@ var HLAnim = function(){
     //     HLH.moveModel( HL.models[k], 'z' );
     //   }
     //
-    for(var k in HL.movingModels){
-      if(HL.movingModels[k].position){
-       HLH.moveModel( HL.movingModels[k], 'z' );
+    for(var k in HL.dynamicModels){
+      if(HL.dynamicModels[k].position){
+       HLH.moveModel( HL.dynamicModels[k], 'z' );
       }
     }
 

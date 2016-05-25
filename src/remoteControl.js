@@ -1,4 +1,6 @@
 // this stores all data coming from websocket / any remote source we want to connect
+// TODO socket here
+
 
 var HLR = {
   //audio
@@ -60,6 +62,14 @@ var HLR = {
       HLR.smoothFFT3 += (HLR.fft3 - HLR.smoothFFT3)*0.001;
       HLR.smoothFFT4 += (HLR.fft4 - HLR.smoothFFT4)*0.001;
       HLR.smoothFFT5 += (HLR.fft5 - HLR.smoothFFT5)*0.001;
+
+      //compute max
+      HLR.maxFFT1 = Math.max(HLR.maxFFT1, HLR.fft1);
+      HLR.maxFFT2 = Math.max(HLR.maxFFT2, HLR.fft2);
+      HLR.maxFFT3 = Math.max(HLR.maxFFT3, HLR.fft3);
+      HLR.maxFFT4 = Math.max(HLR.maxFFT4, HLR.fft4);
+      HLR.maxFFT5 = Math.max(HLR.maxFFT5, HLR.fft5);
+
 
       // compute move speed
       HLE.reactiveMoveSpeed = Math.max(1 + (HLR.fft1 + HLR.fft3 + HLR.fft4) * 0.333 * HLE.BASE_MOVE_SPEED, HLE.MAX_MOVE_SPEED);

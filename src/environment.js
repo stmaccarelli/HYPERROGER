@@ -7,7 +7,7 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 // HL Environment constants and parameters
 var HLE = {
   WORLD_WIDTH:5000,
-  WORLD_HEIGHT:450,
+  WORLD_HEIGHT:400,
   WORLD_TILES:128,
   TILE_SIZE:null,
   SEA_TILES:32,
@@ -21,7 +21,7 @@ var HLE = {
   WATER:isWire===true?false: true,
 
   MAX_MOVE_SPEED: null,
-  BASE_MOVE_SPEED: null,
+  BASE_MOVE_SPEED: 0,
   CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
@@ -30,7 +30,7 @@ var HLE = {
   BASE_SEA_SPEED:2.5,
   CLOUDS_SPEED:1,
 
-  MAX_MODELS_OUT:20,
+  MAX_MODELS_OUT:50,
 
   reactiveSeaHeight:0, // changes programmatically - audio
 
@@ -106,6 +106,7 @@ var HL = {
   },
   textures: {
     skybox:"img/skybox2/skydome2.jpg",
+    skymapcity:"img/skybox2/skymapcity.jpg",
     land:null,
     sea:null,
     clouds:null,
@@ -121,10 +122,10 @@ var HL = {
   },
   models: {
     whale:["3dm/BL_WHALE/BL_WHALE2.OBJ",50],
-    ducky:["3dm/ducky/ducky.obj",30],
+    ducky:["3dm/ducky/ducky.obj",50],
     whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",80],
   },
-  movingModels:{length:0},
+  dynamicModels:{length:0},
   // meshes
   skybox:null,
   land:null,
@@ -146,31 +147,34 @@ var HLEnvironment = function(){
   var imagesCounter=0,imagesLoaded=0;
   function imageLoaded(){
     imagesLoaded++;
-    console.log("images loaded "+imagesLoaded+"/"+imagesCounter);
-    if(imagesLoaded==imagesCounter) { console.log("all images loaded"); initMaterials();}
+    console.log("image loaded "+imagesLoaded+"/"+imagesCounter);
+    if(imagesLoaded==imagesCounter) { console.timeEnd('images'); initMaterials();}
   }
   function loadTextures(){
+    console.time('images');
     var loader = new THREE.TextureLoader();
     for (var key in HL.textures)
       if(HL.textures[key]!=null){
         imagesCounter++;
-        HL.textures[key] = loader.load( HL.textures[key], imageLoaded );
+        HL.textures[key] = loader.load( HL.textures[key], imageLoaded , null,function(i){console.error(i)});
       }
   }
 
   function initDynamicTextures(){
-    for(var k in HL.dynamicTextures){
+    console.time('dyn textures');
 
+    for(var k in HL.dynamicTextures){
       HL.dynamicTextures[k] = document.createElement('canvas');
       HL.dynamicTextures[k].width = 512;
       HL.dynamicTextures[k].height = 512;
       HL.dynamicTextures[k]['c'] = HL.dynamicTextures[k].getContext('2d');
       HL.dynamicTextures[k]['texture'] = new THREE.Texture(HL.dynamicTextures[k]);
     }
-
+    console.timeEnd('dyn textures');
   }
 
   function init(){
+    console.time('HL environment');
 
     initEnvironment();
     initLights();
@@ -179,23 +183,15 @@ var HLEnvironment = function(){
     loadTextures();
     // loadTextures() calls initMaterials() once all images are loaded
     // initMaterials() calls initMeshes()
-    // initMeshes() dispatcehs HLEload event
-    // log
-    console.log('---');
-    console.log('scene');
-    console.log(HL.scene);
-    console.log('renderer');
-    console.log(HL.renderer);
-    console.log('camera');
-    console.log(HL.camera);
-    console.log('controls');
-    console.log(HL.controls);
-    console.log('---');
+    // initMeshes() is the last call, so it dispatches HLEload event
+
     // start clock;
     HL.clock.start();
   }
 
   function initEnvironment(){
+    console.time('environment');
+
     // SET CONSTANTS
     HLE.TILE_SIZE = HLE.WORLD_WIDTH / HLE.WORLD_TILES;
     HLE.SEA_TILE_SIZE = HLE.WORLD_WIDTH / HLE.SEA_TILES;
@@ -278,11 +274,13 @@ var HLEnvironment = function(){
       HL.controls = new THREE.OrbitControls(HL.camera);
     }
 
-    console.log("environment init");
+    console.timeEnd('environment');
   }
 
 
   function initGeometries(){
+    console.time('geometries');
+
   //  HL.geometries.skybox = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
   //  HL.geometries.skybox.translate(0,0, HLE.TILE_SIZE*0.5);
     HL.geometries.skybox = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*3-10,10,10);
@@ -322,12 +320,12 @@ var HLEnvironment = function(){
     HL.geometries.fauna = new THREE.BufferGeometry();
     HLH.initBufParticleSystem(HL.geometries.fauna , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT*0.5, HLE.MAX_FAUNA, true, true);
 
-    console.log("geometries init");
-
+    console.timeEnd('geometries');
   }
 
 
   function initMaterials(){
+    console.time('materials');
 
     HL.materials.skybox = new THREE.MeshBasicMaterial({
       color: HLC.horizon,
@@ -428,7 +426,7 @@ var HLEnvironment = function(){
   			// color: HLC.sea,
   			// betaVersion: 1,
         fog: true,
-        side: THREE.FrontSide,
+        side: THREE.DoubleSide,
         wireframe:isWire,
         wireframeLinewidth:2,
   		});
@@ -440,7 +438,7 @@ var HLEnvironment = function(){
       color: HLC.clouds,
       side: THREE.DoubleSide,
       opacity:.5,
-      transparent: true,
+      transparent: false,
       size: 20,
       fog: true,
       sizeAttenuation: true,
@@ -484,18 +482,18 @@ var HLEnvironment = function(){
 
     //create materials for each model
     for(var k in HL.models){
-      HL.materials[k] = new THREE.MeshBasicMaterial({
+      HL.materials[k] = new THREE.MeshLambertMaterial({
         color:HL.textures[k]!==undefined?0xffffff:(isWire?0xff0000:0x7f7f7f),
         map:isWire?null:(HL.textures[k]!==undefined?HL.textures[k]:null),
         fog:true,
         wireframe:isWire,
         wireframeLinewidth:2,
-        side:THREE.DoubleSide,
+        side:THREE.FrontSide,
       });
     }
 
 
-    console.log("materials init");
+    console.timeEnd('materials');
 
     initModels();
 
@@ -503,6 +501,7 @@ var HLEnvironment = function(){
   }
 
   function initModels(){
+    console.time('models');
 
     var loader = new THREE.OBJLoader(), modelPath, modelScale, counter=0;
     var keys = {};
@@ -535,13 +534,15 @@ var HLEnvironment = function(){
         );
       }
     }
-    console.log("start models loading");
-    console.log(HL.models);
+
+    console.timeEnd('models');
   };
 
 
   function initLights(){
-     HL.lights.ambient = new THREE.AmbientLight( 0x7f7f7f );
+    console.time('lights');
+
+     HL.lights.ambient = new THREE.AmbientLight( 0xbbbbbb );
      HL.scene.add( HL.lights.ambient );
   //
   //   HL.lights.directional = new THREE.DirectionalLight( 0xffffff, 10);
@@ -550,15 +551,27 @@ var HLEnvironment = function(){
   // //  HL.lights.directional.castShadows = false;
   //   HL.scene.add( HL.lights.directional );
 
-     HL.lights.sun = new THREE.DirectionalLight( 0xffffff, 10);
-    // HL.lights.sun.color = HLC.horizon;
-     HL.lights.sun.position.set(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.5);
+     HL.lights.sun = new THREE.DirectionalLight( 0xffffff, .5);
+     HL.lights.sun.color = HLC.horizon;
+     HL.lights.sun.position.set(0,HLE.WORLD_HEIGHT*4, -HLE.WORLD_WIDTH*2);
      //  HL.lights.sun.castShadows = false;
      HL.scene.add( HL.lights.sun );
+
+
+     HL.lights['moon'] = new THREE.DirectionalLight( 0xdddd77, .5);
+     HL.lights.moon.position.set(0,HLE.WORLD_HEIGHT*4, 0);
+     //  HL.lights.sun.castShadows = false;
+     HL.scene.add( HL.lights.moon );
+
+
+     console.timeEnd('lights');
+
   }
 
 
   function initMeshes(){
+    console.time('meshes');
+
     HL.skybox = new THREE.Mesh(HL.geometries.skybox, HL.materials.skybox);
     HL.skybox.name = "skybox";
     HL.scene.add(HL.skybox);
@@ -578,7 +591,7 @@ var HLEnvironment = function(){
       HL.sea.add( HL.materials.mirror );
     }
     else if(HLE.WATER){
-      HL.sea = new THREE.Mesh( new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH,HLE.WORLD_WIDTH*3,1,1), HL.materials.water.material );
+      HL.sea = new THREE.Mesh( new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH,HLE.WORLD_WIDTH,1,1), HL.materials.water.material );
       HL.sea.add(HL.materials.water);
       HL.sea.rotateX(-Math.PI * .5);
     } else {
@@ -604,12 +617,12 @@ var HLEnvironment = function(){
     // HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
     // HL.fauna.name = "fauna";
     // HL.scene.add(HL.fauna);
+    console.timeEnd('meshes');
+
 
     var HLEload = new Event("HLEload");
-    console.log(HLEload);
     window.dispatchEvent(HLEload);
-    console.log("meshes init");
-
+    console.timeEnd('HL environment');
   }
 
   return {

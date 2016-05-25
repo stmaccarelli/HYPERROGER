@@ -41,12 +41,7 @@
   function guiInit(){
     var gui = new dat.GUI();
     var guiTweak = gui.addFolder('manuali');
-    guiTweak.add(HLE, 'reactiveMoveSpeed',0,10.0);
-    guiTweak.add(HLE, 'reactiveSeaHeight',0.001,2.0);
-    guiTweak.add(HLE, 'noiseFrequency',0,20);
-    guiTweak.add(HLE, 'noiseFrequency2',0,20);
-    guiTweak.add(HLE, 'landZeroPoint',-150,150);
-    guiTweak.add(HLE, 'landHeight',0,150);
+    guiTweak.add(HLE, 'BASE_MOVE_SPEED',0,30);
   }
 
 
@@ -75,7 +70,7 @@
       HL.controls.update(delta,millis); //FPC mode
     }
     else{
-     HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
+    // HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
     }
     // set camera move easing according to move speed
     if(!HLE.CENTER_PATH){
@@ -102,7 +97,7 @@
 
   window.addEventListener('load',function(){
     mainInit();
-    // guiInit();
+  //   guiInit();
     // init HyperLand Environment
     HLEnvironment.init();
     hud = new HUD(true);

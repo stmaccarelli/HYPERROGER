@@ -132,7 +132,7 @@ var HLH = function() {
 				geometry.vertices.push(
 					new THREE.Vector3(
 						Math.random() * worldWidth - worldWidth / 2,
-						Math.random() * worldHeight, // TBD find a standard solution
+						Math.random() * worldWidth / 2,
 						Math.random() * worldWidth - worldWidth / 2)
 				);
 			else
@@ -170,12 +170,12 @@ var HLH = function() {
 	}
 
   function loopParticles(geometry, worldSize, moveSpeed) {
-
 		for (i = 0; i < geometry.attributes.position.array.length; i += 3) {
 			if (geometry.attributes.position.array[i + 2] > -worldSize)
 				geometry.attributes.position.array[i + 2] += moveSpeed;
 			if (geometry.attributes.position.array[i + 2] >= worldSize){
-        geometry.attributes.position.array[i] = (Math.random()*2-1) * worldSize/2;
+				geometry.attributes.position.array[i] = (Math.random()*2-1) * worldSize/2;
+				geometry.attributes.position.array[i+ 2] = (Math.random()*2-1) * worldSize/2;
 				geometry.attributes.position.array[i + 2] = -worldSize + .1;
       }
 		}
@@ -230,51 +230,44 @@ var HLH = function() {
 				HL.models[key].position.set(0,0,-HLE.WORLD_WIDTH*10);
 	}
 
-	// function startModel(model,x,y,speed){
-	//
-	// 	if(model.position.z === -HLE.WORLD_WIDTH*10){
-	// 		speed = speed || 0;
-	// 		x = x || 0;
-	// 		y = y || HLE.WORLD_HEIGHT*.5;
-	// 		if(y === true){
-	// 			y=landHeightNoise((x/HLE.WORLD_WIDTH*0.5)+0.5,HLE.landStepsCount+0.1/HLE.WORLD_TILES);
-	// 			speed = 0;
-	// 		}
-	//
-	// 		model.position.set(x,y,-HLE.WORLD_WIDTH+0.1);
-	// 		model["speed"] = speed;
-	// 		model["targetY"] = y;
-	// 		model['moving'] = true;
-	// 	}
-	//
-	// }
 
 	function startModel(model,x,y,speed){
-		if(HL.movingModels.length >= HLE.MAX_MODELS_OUT) {console.log('MAX_MODELS_OUT'); return}
-
-		HL.movingModels['m'+frameCount] = model.clone();
-		HL.movingModels['m'+frameCount].size = model.size;
-		HL.movingModels['m'+frameCount].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
-		HL.movingModels['m'+frameCount]['key']='m'+frameCount;
-		HL.scene.add(HL.movingModels['m'+frameCount]);
-		HL.movingModels.length++;
+		if(HL.dynamicModels.length >= HLE.MAX_MODELS_OUT) return
 
 		speed = speed || 0;
 		x = x || 0;
 		y = y || 0;
 		var z = -HLE.WORLD_WIDTH;
+		// y === true means we wand models attached to landscape
 		if(y === true){
-			y=landHeightNoise((x/HLE.WORLD_WIDTH*0.5)+0.5,HLE.landStepsCount/HLE.WORLD_TILES)
+			y=landHeightNoise((x/HLE.WORLD_WIDTH)+0.5,HLE.landStepsCount/HLE.WORLD_TILES)
 				+HL.land.position.y;
-			y=Math.max(y,0);
+			y=Math.max(y,0);//TODO if y is 0, gotta move according to seawaves, if any ---
 			speed = 0;
 			z=-HLE.WORLD_WIDTH*0.5-HL.land.position.y;
-		}
 
-		HL.movingModels['m'+frameCount].position.set(x,y,z);
-		HL.movingModels['m'+frameCount]["speed"] = speed;
-		HL.movingModels['m'+frameCount]["targetY"] = y;
-		HL.movingModels['m'+frameCount]['moving'] = true;
+			HL.dynamicModels['m'+frameCount] = model.clone();
+			if(y!=0){
+				HL.dynamicModels['m'+frameCount].rotateX((Math.random()-0.5)*3);
+				HL.dynamicModels['m'+frameCount].rotateY((Math.random()-0.5)*3);
+				HL.dynamicModels['m'+frameCount].rotateZ((Math.random()-0.5)*3);
+			}
+
+		}
+		else
+			HL.dynamicModels['m'+frameCount] = model.clone();
+		HL.dynamicModels['m'+frameCount].size = model.size;
+		HL.dynamicModels['m'+frameCount].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
+		HL.dynamicModels['m'+frameCount]['key']='m'+frameCount;
+		HL.scene.add(HL.dynamicModels['m'+frameCount]);
+		HL.dynamicModels.length++;
+
+
+
+		HL.dynamicModels['m'+frameCount].position.set(x,y,z);
+		HL.dynamicModels['m'+frameCount]["speed"] = speed;
+		HL.dynamicModels['m'+frameCount]["targetY"] = y;
+		HL.dynamicModels['m'+frameCount]['moving'] = true;
 
 	}
 
@@ -292,20 +285,21 @@ var HLH = function() {
 			HL.scene.remove(model);
 			model.material.dispose();
 			model.geometry.dispose();
-			delete HL.movingModels[model.key];
-			HL.movingModels.length--;
+			delete HL.dynamicModels[model.key];
+			HL.dynamicModels.length--;
 		}
 	}
 
 	function destroyAllModels(){
-		for(var k in HL.movingModels){
+		for(var k in HL.dynamicModels){
 			if(k.indexOf('length')===-1){
-				HL.scene.remove(HL.movingModels[k]);
-				HL.movingModels[k].material.dispose();
-				HL.movingModels[k].geometry.dispose();
-				delete HL.movingModels[k];
+				HL.scene.remove(HL.dynamicModels[k]);
+				HL.dynamicModels[k].material.dispose();
+				HL.dynamicModels[k].geometry.dispose();
+				delete HL.dynamicModels[k];
 			}
 		}
+		HL.dynamicModels.length = 0;
 	}
 
 
