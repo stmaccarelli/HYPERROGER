@@ -127,6 +127,10 @@ var HL = {
     ducky:["3dm/ducky/ducky.obj",50],
     whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",80],
   },
+  modelsKeys:null,
+  mGroups:{
+    animals:['whale','ducky'],
+  },
   dynamicModels:{length:0},
   // meshes
   skybox:null,
@@ -484,7 +488,7 @@ var HLEnvironment = function(){
 
     //create materials for each model
     for(var k in HL.models){
-      HL.materials[k] = new THREE.MeshLambertMaterial({
+      HL.materials[k] = new THREE.MeshPhongMaterial({
         color:HL.textures[k]!==undefined?0xffffff:(isWire?0xff0000:0x7f7f7f),
         map:isWire?null:(HL.textures[k]!==undefined?HL.textures[k]:null),
         fog:true,
@@ -536,7 +540,7 @@ var HLEnvironment = function(){
         );
       }
     }
-
+    HL.modelsKeys = Object.keys(HL.models);
     console.timeEnd('models');
   };
 
@@ -553,15 +557,15 @@ var HLEnvironment = function(){
   // //  HL.lights.directional.castShadows = false;
   //   HL.scene.add( HL.lights.directional );
 
-     HL.lights.sun = new THREE.DirectionalLight( 0xffffff, .5);
+     HL.lights.sun = new THREE.DirectionalLight( 0xffffff, 2);
      HL.lights.sun.color = HLC.horizon;
      HL.lights.sun.position.set(0,HLE.WORLD_HEIGHT*4, -HLE.WORLD_WIDTH*2);
      //  HL.lights.sun.castShadows = false;
      HL.scene.add( HL.lights.sun );
 
 
-     HL.lights['moon'] = new THREE.DirectionalLight( 0xdddd77, .5);
-     HL.lights.moon.position.set(0,HLE.WORLD_HEIGHT*4, 0);
+     HL.lights['moon'] = new THREE.DirectionalLight( 0xffffff, 1.5);
+     HL.lights.moon.position.set(0,HLE.WORLD_HEIGHT*2, 100);
      //  HL.lights.sun.castShadows = false;
      HL.scene.add( HL.lights.moon );
 
