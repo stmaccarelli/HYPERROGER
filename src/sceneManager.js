@@ -183,8 +183,10 @@ var HLS ={
 
   HLS.modelshooting = function(k){
     if(k.keyCode==87)//w
-    {
-      HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH/2,HLE.WORLD_WIDTH/2),HLE.WORLD_HEIGHT*1.2, 0);
+    { // shoot totally random between any
+      // HLH.startModel(HL.models[HL.modelsKeys[Math.floor(Math.random()*HL.modelsKeys.length)]],THREE.Math.randInt(-HLE.WORLD_WIDTH/2,HLE.WORLD_WIDTH/2),HLE.WORLD_HEIGHT*1.2, 0);
+      HLH.startModel(HL.models[HL.mGroups.animals[Math.floor(Math.random()*HL.mGroups.animals.length)]],THREE.Math.randInt(-HLE.WORLD_WIDTH/2,HLE.WORLD_WIDTH/2),HLE.WORLD_HEIGHT*1.2, 0);
+
       // console.log(HL.dynamicModels.length);
     }
     if(k.keyCode==88)//x
