@@ -54,7 +54,7 @@
     delta = HL.clock.getDelta();
 
     // remote control / audioreactive
-    HLR.updateHLParams();
+    HLR.updateHLParams(); // CHOOSE if handle from linein or socket
     //if(HLDEV.animColors) HLAnim.colors();
     HLAnim.particles();
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();

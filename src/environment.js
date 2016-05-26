@@ -46,7 +46,9 @@ var HLE = {
   CLOUDS_AMOUNT : 200,
   FLORA_AMOUNT : 1,
   MAX_FAUNA: 50,
-  faunaAmount : 1, // this will represent users, and will change live, so we set a MAX_FAUNA as top limit
+
+  mobileConnected : 1, // this will represent mobile users, and will change live, so we set a MAX_FAUNA as top limit
+
 
   noiseSeed:0,
   noiseFrequency:1,
@@ -106,15 +108,15 @@ var HL = {
   },
   textures: {
     skybox:"img/skybox2/skydome2.jpg",
-    skymapcity:"img/skybox2/skymapcity.jpg",
+    skymapcity:"img/skybox2/skymap_photo9.jpg",
     land:null,
     sea:null,
     clouds:null,
     flora:"img/tex_tree_82_128x128.png",
     fauna:null,
-    water:"img/waternormals5.png",
+    water:"img/waternormals3.png",//wn5
     whale:"3dm/BL_WHALE/BL_WHALE2.jpg",
-    whale2:"img/dvdp4.gif",//",
+    whale2:null,
     ducky:"3dm/ducky/ducky.png",
   },
   dynamicTextures:{

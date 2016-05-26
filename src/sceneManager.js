@@ -92,7 +92,7 @@ var HLS ={
     HL.camera.rotateY((HLR.fft3-0.5)*0.01);
     HL.camera.rotateX((HLR.fft5/HLR.maxFFT5 * 0.5)*0.001);
 
-    if(HLR.fft3>0.8) HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),Math.random()*HLE.WORLD_HEIGHT, 0);
+    //if(HLR.fft3>0.8) HLH.startModel(HL.models.whale,THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),Math.random()*HLE.WORLD_HEIGHT, 0);
 
     // supported: timer for scene switch from one to another
   //  if(frameCount-HLS.sceneStart>=600) HLR.startScene('scene2');

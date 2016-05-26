@@ -47,12 +47,13 @@ var HLR = {
 
   // TODO bind to SOCKET
   HLR.updateClientsNumber = function(clientsConnected){
-    HLE.faunaAmount = Math.round(clientsConnected);
+    HLE.mobileConnected = Math.round(clientsConnected);
   }
 
 
-  HLR.updateHLParams = function(){
-      this.updateFFT(AA.getFreq(0), AA.getFreq(1), AA.getFreq(12), AA.getFreq(32), AA.getFreq(64));
+  HLR.updateHLParams = function(socket){
+    if(socket!==undefined) this.updateFFT(AA.getFreq(0), AA.getFreq(1), AA.getFreq(12), AA.getFreq(32), AA.getFreq(64));
+    else this.updateFFT(AA.getFreq(0), AA.getFreq(1), AA.getFreq(12), AA.getFreq(32), AA.getFreq(64));
 
     // begin audioreactive stuff
     if(!isNaN(HLR.fft1)){
