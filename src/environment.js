@@ -13,7 +13,7 @@ var HLE = {
   SEA_TILES:32,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:0.5,
+  PIXEL_RATIO_SCALE:.5,
 
 
   FOG:true,
@@ -300,16 +300,19 @@ var HLEnvironment = function(){
         HLE.WORLD_TILES , HLE.WORLD_TILES);
     HL.geometries.land.rotateX(-Math.PI / 2); // gotta rotate because Planes in THREE are created vertical
     HL.geometries.land.dynamic = true;
+    HL.geometries.land.name = 'land-geometry';
 
-    if(HLE.WATER)
+    if(HLE.WATER){
       HL.geometries.sea = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
       1,1);
-    if(HLE.MIRROR)
+      HL.geometries.sea.name = 'sea-water-geometry';
+
+    }
+    else{
       HL.geometries.sea = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
         HLE.SEA_TILES ,  HLE.SEA_TILES);
-    else
-      HL.geometries.sea = new THREE.PlaneGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
-        HLE.SEA_TILES ,  HLE.SEA_TILES);
+      HL.geometries.sea.name = 'sea-geometry';
+    }
 
     HL.geometries.sea.rotateX(-Math.PI / 2); // gotta rotate because Planes in THREE are created vertical
     //HL.geometries.sea.dynamic = true;
@@ -320,10 +323,15 @@ var HLEnvironment = function(){
 
     // init and set oarticle systems geometries
     HL.geometries.clouds = new THREE.BufferGeometry();
+    HL.geometries.clouds.name = 'clouds-geometry';
     HLH.initBufParticleSystem(HL.geometries.clouds, HLE.WORLD_WIDTH*2, HLE.WORLD_HEIGHT, HLE.CLOUDS_AMOUNT, true, true);
+
     HL.geometries.flora = new THREE.BufferGeometry();
+    HL.geometries.flora.name = 'flora-geometry';
     HLH.initBufParticleSystem(HL.geometries.flora , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT, HLE.FLORA_AMOUNT, false, true);
+
     HL.geometries.fauna = new THREE.BufferGeometry();
+    HL.geometries.fauna.name = 'fauna-geometry';
     HLH.initBufParticleSystem(HL.geometries.fauna , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT*0.5, HLE.MAX_FAUNA, true, true);
 
     console.timeEnd('geometries');
@@ -488,7 +496,7 @@ var HLEnvironment = function(){
 
     //create materials for each model
     for(var k in HL.models){
-      HL.materials[k] = new THREE.MeshPhongMaterial({
+      HL.materials[k] = new THREE.MeshBasicMaterial({
         color:HL.textures[k]!==undefined?0xffffff:(isWire?0xff0000:0x7f7f7f),
         map:isWire?null:(HL.textures[k]!==undefined?HL.textures[k]:null),
         fog:true,
@@ -630,8 +638,5 @@ var HLEnvironment = function(){
     window.dispatchEvent(HLEload);
     console.timeEnd('HL environment');
   }
-
-  return {
-    init:init
-  }
+  return{init:init}
 }();

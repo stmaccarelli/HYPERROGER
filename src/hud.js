@@ -104,8 +104,6 @@ function HUD(iscanvas){
     _HUD.initCanvas();
   else _HUD.initDiv();
 
-  window.addEventListener('resize',_HUD.resize);
-
   return{
     display:function(a,b,c){_HUD.display(a,b,c)},
     HUD:_HUD,

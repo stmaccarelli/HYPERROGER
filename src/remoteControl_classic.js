@@ -1,5 +1,7 @@
 // this stores all data coming from websocket / any remote source we want to connect
 // TODO socket here
+
+
 var HLR = {
   //audio
   fft1: 0.0,
@@ -35,11 +37,7 @@ var HLR = {
 
 }
 
-
-var HLRemote = function(){
-
-
-  function updateFFT(a,b,c,d,e){
+  HLR.updateFFT = function(a,b,c,d,e){
     HLR.fft1 = a;
     HLR.fft2 = b;
     HLR.fft3 = c;
@@ -48,14 +46,12 @@ var HLRemote = function(){
   }
 
   // TODO bind to SOCKET
-  function updateClientsNumber(clientsConnected){
+  HLR.updateClientsNumber = function(clientsConnected){
     HLE.mobileConnected = Math.round(clientsConnected);
   }
 
-  function updateHLParams(a,b,c,d,e){
-    // TODO: memory optimization
-
-      updateFFT(a,b,c,d,e);
+    HLR.updateHLParams = function(a,b,c,d,e){
+  //  this.updateFFT(a,b,c,d,e);
 
     // begin audioreactive stuff
 //    if(!isNaN(HLR.fft1)){
@@ -67,24 +63,19 @@ var HLRemote = function(){
       HLR.smoothFFT5 += (HLR.fft5 - HLR.smoothFFT5)*0.001;
 
       //compute max
-      // HLR.maxFFT1 = HLR.fft1>HLR.maxFFT1?HLR.fft1:HLR.maxFFT1; UNUSED
-      // HLR.maxFFT2 = HLR.fft2>HLR.maxFFT2?HLR.fft2:HLR.maxFFT2; UNUSED
-      // HLR.maxFFT3 = HLR.fft3>HLR.maxFFT3?HLR.fft3:HLR.maxFFT3; UNUSED
-      // HLR.maxFFT4 = HLR.fft4>HLR.maxFFT4?HLR.fft4:HLR.maxFFT4; UNUSED
-      HLR.maxFFT5 = HLR.fft5>HLR.maxFFT5?HLR.fft5:HLR.maxFFT5; // USED in sceneManaer
+      HLR.maxFFT1 = Math.max(HLR.maxFFT1, HLR.fft1);
+      HLR.maxFFT2 = Math.max(HLR.maxFFT2, HLR.fft2);
+      HLR.maxFFT3 = Math.max(HLR.maxFFT3, HLR.fft3);
+      HLR.maxFFT4 = Math.max(HLR.maxFFT4, HLR.fft4);
+      HLR.maxFFT5 = Math.max(HLR.maxFFT5, HLR.fft5);
 
-
-      // // compute move speed
-      // HLE.reactiveMoveSpeed = max(1 + (HLR.fft1 + HLR.fft3 + HLR.fft4) * 0.333 * HLE.BASE_MOVE_SPEED, HLE.MAX_MOVE_SPEED);
-      // // HLE.moveSpeed += ((Math.max( HLE.reactiveMoveSpeed*delta*100,0))-HLE.moveSpeed) * 0.25;
-      // HLE.moveSpeed += ((max( HLE.reactiveMoveSpeed,0))-HLE.moveSpeed) * 0.25;
 
       // compute move speed
-      HLE.reactiveMoveSpeed = 1 + (HLR.fft1 + HLR.fft3 + HLR.fft4) * 0.333 * HLE.BASE_MOVE_SPEED;
-      HLE.moveSpeed += (HLE.reactiveMoveSpeed-HLE.moveSpeed)*0.5;
-  //    HLE.moveSpeed = HLE.reactiveMoveSpeed<0?0:HLE.reactiveMoveSpeed;
+      HLE.reactiveMoveSpeed = Math.max(1 + (HLR.fft1 + HLR.fft3 + HLR.fft4) * 0.333 * HLE.BASE_MOVE_SPEED, HLE.MAX_MOVE_SPEED);
+      // HLE.moveSpeed += ((Math.max( HLE.reactiveMoveSpeed*delta*100,0))-HLE.moveSpeed) * 0.25;
+      HLE.moveSpeed += ((Math.max( HLE.reactiveMoveSpeed,0))-HLE.moveSpeed) * 0.25;
 
-      // sea height of uniforms update
+      // compute seawaves height
       if(HLE.MIRROR)
         HL.materials.mirror.material.uniforms.time.value += HLR.fft4*0.2;
       if(HLE.WATER)
@@ -106,8 +97,3 @@ var HLRemote = function(){
       // HLE.landZeroPoint = +HLE.landHeight * 20.1;
   //  }// end audioreactive stuff
   }
-
-  return{
-    updateHLParams:function(a,b,c,d,e){return updateHLParams(a,b,c,d,e)},
-  }
-}();

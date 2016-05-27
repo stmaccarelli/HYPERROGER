@@ -6,6 +6,9 @@ var HLS ={
 
     //local debouncers
     shotFlora:true,
+
+    // varie
+    tempColor:0,
 }
 
   HLS.startScene = function(sceneId){
@@ -41,23 +44,22 @@ var HLS ={
   }
 
   HLS.scene2init = function(){
-    if(hud!==undefined) hud.display('CHAPTER TWO.\nFOLLOW YOUR FOLLOWERS',3,true);
+    // if(hud!==undefined) hud.display('CHAPTER TWO.\nFOLLOW YOUR FOLLOWERS',3,true);
     HL.materials.skybox.map = null;
     HL.materials.skybox.needsUpdate = true;
     HL.materials.land.wireframe=true;
-    HL.materials.land.uniforms.color.value = HLC.land.setHSL(Math.random(),1,.5);//,.5+Math.random(),.5+Math.random());
+    HL.materials.land.uniforms.color.value = HLC.land.setHSL(Math.random(),1,.75);//,.5+Math.random(),.5+Math.random());
     // HL.materials.water
     HL.models.whale.material.map = HL.dynamicTextures.stars.texture;
     HL.models.whale.material.needsUpdate = true;
   }
 
-  var tempColor=0;
   HLS.scene2 = function(){
     HLS.raf = window.requestAnimationFrame(HLS.scene2);
 
-    tempColor = HLR.fft2*HLR.fft2*HLR.fft2;
+    HLS.tempColor = HLR.fft2*HLR.fft2*HLR.fft2;
 
-    HLC.horizon.setRGB(tempColor,tempColor,tempColor);
+    HLC.horizon.setRGB(HLS.tempColor,HLS.tempColor,HLS.tempColor);
     //HLC.horizon.setRGB(.2+(colorCycle)%.8,.1+(colorCycle)%.8,(colorCycle)%.8);
     HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, 10, 1);
     //stars dynamicTextureAni
@@ -68,16 +70,14 @@ var HLS ={
         HL.dynamicTextures.stars.c.fillRect(x+HLR.fft3*y*.5, y+HLR.fft2*x*.5, HLR.fft2*10,HLR.fft4*20);
       }
     }
-    // HL.dynamicTextures.stars.c.fillRect(0,0, 30,HLR.fft4*512);
-    // HL.dynamicTextures.stars.c.fillRect(0,0, HLR.fft2*512,HLR.fft4*512);
     HL.dynamicTextures.stars.texture.needsUpdate=true;
 
   }
 
 
   HLS.scene1init = function(){
-    if(hud!==undefined) hud.display('CHAPTER ONE.\nDEEP LIKE THE VOID',3, true);
-    HL.materials.skybox.map = HL.textures.ducky;
+    // if(hud!==undefined) hud.display('CHAPTER ONE.\nDEEP LIKE THE VOID',3, true);
+    HL.materials.skybox.map = HL.textures.skybox;
     HL.materials.skybox.needsUpdate = true;
 
     HL.materials.land.wireframe=false;
@@ -110,7 +110,7 @@ var HLS ={
   //  HL.materials.water.material.uniforms.sunColor.value = HLC.horizon;//HLC.horizon;
     // HL.materials.water.material.uniforms.color.value = new THREE.Color(0x000000);//HLC.horizon;
 
-     HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
+//     HLC.horizon.setHSL((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
     //HLC.horizon.setRGB((frameCount/36000)%1,1-HLR.fft1*HLR.fft4*0.4, .2 + HLR.fft1*.4);
 
    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25,.9, .1+HLR.fft3*.5);
@@ -142,7 +142,7 @@ var HLS ={
   }
 
   HLS.scene3init = function(){
-    if(hud!==undefined) hud.display('CHAPTER THREE.FLYING LIKE AN EAGLE IN A RIVER',3, true);
+    // if(hud!==undefined) hud.display('CHAPTER THREE.FLYING LIKE AN EAGLE IN A RIVER',3, true);
     HL.materials.skybox.map = null;
     HL.materials.skybox.needsUpdate = true;
 
@@ -203,7 +203,7 @@ var HLS ={
     if(k.keyCode==67){//c
       HLE.CENTER_PATH=!HLE.CENTER_PATH;
       HLE.cameraHeight = 0;
-      if(hud!==undefined) hud.display('HLE.CENTER_PATH= '+HLE.CENTER_PATH, 5);
+      // if(hud!==undefined) hud.display('HLE.CENTER_PATH= '+HLE.CENTER_PATH, 5);
     }
 
   }

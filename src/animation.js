@@ -110,7 +110,7 @@ var HLAnim = function(){
     //   }
     //
     for(var k in HL.dynamicModels){
-      if(HL.dynamicModels[k].position){
+      if(HL.dynamicModels[k] && HL.dynamicModels[k].position){
        HLH.moveModel( HL.dynamicModels[k], 'z' );
       }
     }

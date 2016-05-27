@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>HYPERLAND DUMMY MOBILE CLIENT</title>
+	<meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+	<link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body width="100%" style="margin:20px;">
+
+	<!-- Utils Libs -->
+  <script src="lib/NoSleep.min.js"></script>
+  <script src="lib/NoScroll.js"></script>
+
+	<!-- NODE SOCKET.IO -->
+	<script src="http://pixelsmasher.io:1502/socket.io/socket.io.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+	window.addEventListener('load',init, true);
+
+	function init(){
+		var socket = io('http://pixelsmasher.io:1502');
+
+ 		socket.emit('ack',{whoami:'mobile'});
+		console.log('sent ack');
+
+		window.addEventListener('keyup',function(){socket.emit('mobi_push_key',{a:10});});
+
+		// socket.on('mxr_push_to_cli_fft', function(d){console.log(d.msg);});
+		// socket.on('mxr_push_to_cli_key', function(d){console.log(d.msg);});
+	}
+	</script>
+
+</body>
+</html>
