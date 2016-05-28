@@ -73,66 +73,69 @@
 	<script src="lib/dev/AudioAnalyzerDev.js"></script>
 
 	<script type="text/javascript">
-	window.addEventListener('load',init, true);
-	var socketOn=false;
-	var connectedMobiles=document.getElementById("connectedMobiles");
-
-	function init(){
-		var socket = io('http://pixelsmasher.io:1502');
-		socket.emit('ack',{whoami:'mixer'});
-
-		// TODO: webworker per emit messaggi FFT
-		function fakeAudioAnalysis(){
-			window.setTimeout(function(){ window.requestAnimationFrame(fakeAudioAnalysis)}, 1000/20);
-			if(socketOn){
-				socket.emit('mxr_push_fft',{
-					a:AA.getFreq(0),
-					b:AA.getFreq(1),
-					c:AA.getFreq(12),
-					d:AA.getFreq(32),
-					e:AA.getFreq(64)
-				});
-			}
-		}
-
-
-		//	AA.getFreqArray
-		// window.addEventListener("AAload",fakeAudioAnalysis);
-		 window.addEventListener("AAload",function(){
-		//	window.setInterval(fakeAudioAnalysis,1000/30);
-		fakeAudioAnalysis();
-		});
-
-		window.addEventListener('keyup',emit_keystroke,true);
-		function emit_keystroke(e){
-			socket.emit('mxr_push_key',{a:e.keyCode});
-		}
-
-		socket.on('mobi_count',function(e){console.log(e)});
-
-		console.log("socket init ok");
-	}
+	// window.addEventListener('load',init, true);
+	// var socketOn=false;
+	// var connectedMobiles=document.getElementById("connectedMobiles");
+	//
+	// function init(){
+	// 	var socket = io('http://pixelsmasher.io:1502');
+	// 	socket.emit('ack',{whoami:'mixer'});
+	//
+	// 	// TODO: webworker per emit messaggi FFT
+	// 	function fakeAudioAnalysis(){
+	// 		window.setTimeout(function(){ window.requestAnimationFrame(fakeAudioAnalysis)}, 1000/20);
+	// 		if(socketOn){
+	// 			socket.emit('mxr_push_fft',{
+	// 				a:AA.getFreq(0),
+	// 				b:AA.getFreq(1),
+	// 				c:AA.getFreq(12),
+	// 				d:AA.getFreq(32),
+	// 				e:AA.getFreq(64)
+	// 			});
+	// 		}
+	// 	}
+	//
+	//
+	// 	//	AA.getFreqArray
+	// 	// window.addEventListener("AAload",fakeAudioAnalysis);
+	// 	 window.addEventListener("AAload",function(){
+	// 	//	window.setInterval(fakeAudioAnalysis,1000/30);
+	// 	fakeAudioAnalysis();
+	// 	});
+	//
+	// 	window.addEventListener('keyup',emit_keystroke,true);
+	// 	function emit_keystroke(e){
+	// 		socket.emit('mxr_push_key',{a:e.keyCode});
+	// 	}
+	//
+	// 	socket.on('mobi_count',function(e){console.log(e)});
+	//
+	// 	console.log("socket init ok");
+	// }
 	</script>
 
   <script type="text/javascript">
+
+		var audioMonitor = function() {
     var canvas = document.getElementById("canvas");
-		var resScale = 0.5;
+		var resScale = 0.25;
     canvas.width = document.body.clientWidth*resScale;
 		canvas.style.width = document.body.clientWidth+"px";
 		canvas.style.imageRendering = 'pixelated';
 		canvas.style.imageRendering += '-webkit-crisp-edges';
 		canvas.style.imageRendering += '-moz-crisp-edges';
     var c = canvas.getContext("2d");
-    var totalFreqs = AA.getFreqArray.length;
+    var totalFreqs = AA.getFreqArray.length / 1;
     var barWidth = canvas.width/totalFreqs-resScale;
     var barHeight = canvas.width * 0.25;
 		canvas.height = barHeight;
 
-    var freq;//temp freq to draw
+    var freq=0;//temp freq to draw
     var peak = [];
-		var useful;
+		var usefulColor=0;
 		var showUseful = true;
 		var REDUCEPEAKS = false;
+		var i =0;
 
     function update(){
       // c.clearRect(0,0,c.width,c.height);
@@ -140,12 +143,13 @@
       c.fillRect (0, 0, canvas.width, barHeight);
 
 			//DRAW BARS
-      for(var i in AA.getFreqArray){
+      for(i=0; i<AA.getFreqArray.length; i++){
         freq = AA.getFreq(i);
-				if(showUseful) useful = (i==0 || i==1 || i==12 || i==32 || i==64)?50:15;
-				else useful = 50;
 
-					c.fillRect (i*(barWidth+resScale), barHeight, barWidth, -barWidth);
+				if(showUseful) useful = (i==1 || i==0 || i==400 || i==64 || i==200)?50:15;
+				else usefulColor = 50;
+
+				c.fillRect (i*(barWidth+resScale), barHeight, barWidth, -barWidth);
         c.fillStyle = "hsl("+(256-freq*256)+",100%,"+useful+"%)";
         c.fillRect (i*(barWidth+resScale), barHeight, barWidth, -freq*barHeight);
 
@@ -184,6 +188,7 @@
 				socketOn=!socketOn;
 				e.target.style.backgroundColor=socketOn?'green':'red';
 			},false);
+		}();
   </script>
 
 </body>

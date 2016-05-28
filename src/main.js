@@ -57,7 +57,7 @@
     // remote control / audioreactive
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
-   HLRemote.updateHLParams(AA.getFreq(0), AA.getFreq(1), AA.getFreq(12), AA.getFreq(32), AA.getFreq(64));
+   HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
     //  HLRemote.updateHLParams(1,1,1,1,1);
 
     // HLAnim.particles(); // moved in sceneManager
@@ -75,7 +75,7 @@
     }
     else{
     // this function sucks spu, use just if really needed
-    // HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
+    //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
     }
     // set camera move easing according to move speed
     if(!HLE.CENTER_PATH){

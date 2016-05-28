@@ -231,12 +231,16 @@ var HLH = function() {
 	}
 
 
-	function startModel(model,x,y,speed){
+	function startModel(model,x,y,speed,rotations){
 		if(HL.dynamicModels.length >= HLE.MAX_MODELS_OUT) return
 
 		speed = speed || 0;
 		x = x || 0;
 		y = y || 0;
+		rotations = rotations || 'n';
+
+		HL.dynamicModels['m'+frameCount] = model.clone();
+
 		var z = -HLE.WORLD_WIDTH;
 		// y === true means we want models attached to landscape
 		if(y === true){
@@ -246,16 +250,20 @@ var HLH = function() {
 			speed = 0;
 			z=-HLE.WORLD_WIDTH*0.5-HL.land.position.y;
 
-			HL.dynamicModels['m'+frameCount] = model.clone();
 			if(y!=0){
 				HL.dynamicModels['m'+frameCount].rotateX((Math.random()-0.5)*3);
 				HL.dynamicModels['m'+frameCount].rotateY((Math.random()-0.5)*3);
 				HL.dynamicModels['m'+frameCount].rotateZ((Math.random()-0.5)*3);
 			}
-
 		}
-		else
-			HL.dynamicModels['m'+frameCount] = model.clone();
+
+		if(rotations.indexOf('x')!=-1)
+			HL.dynamicModels['m'+frameCount].rotateX((Math.random()-0.5)*3);
+		if(rotations.indexOf('y')!=-1)
+			HL.dynamicModels['m'+frameCount].rotateY((Math.random()-0.5)*3);
+		if(rotations.indexOf('z')!=-1)
+			HL.dynamicModels['m'+frameCount].rotateZ((Math.random()-0.5)*3);
+
 		HL.dynamicModels['m'+frameCount].size = model.size;
 		HL.dynamicModels['m'+frameCount].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
 		HL.dynamicModels['m'+frameCount]['key']='m'+frameCount;
@@ -266,6 +274,7 @@ var HLH = function() {
 		HL.dynamicModels['m'+frameCount]["speed"] = speed;
 		HL.dynamicModels['m'+frameCount]["targetY"] = y;
 		HL.dynamicModels['m'+frameCount]['moving'] = true;
+		HL.dynamicModels['m'+frameCount]['rotations'] = rotations;
 
 	}
 
@@ -277,6 +286,10 @@ var HLH = function() {
 			model.position.y = -model.size.y + (model.targetY+model.size.y)
 				- easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)
 					*(model.targetY+model.size.y);
+
+			if(model.rotations.indexOf('x')!=-1) model.rotateX(millis*.0000025*HLE.moveSpeed);
+			if(model.rotations.indexOf('y')!=-1) model.rotateY(millis*.0000030*HLE.moveSpeed);
+			if(model.rotations.indexOf('z')!=-1) model.rotateZ(millis*.0000035*HLE.moveSpeed);
 		}
 		if(model.position.z>=HLE.WORLD_WIDTH*0.5+model.size.z*.5){
 			//resetModel(model);
@@ -342,7 +355,7 @@ var HLH = function() {
 		},
 		resetModel: function(a) {resetModel(a)},
 		resetAllModels: resetAllModels,
-		startModel: function(a,b,c,d) {startModel(a,b,c,d)},
+		startModel: function(a,b,c,d,e) {startModel(a,b,c,d,e)},
 		moveModel: function(a,b) {moveModel(a,b)},
 		destroyAllModels:destroyAllModels,
 	}

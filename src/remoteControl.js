@@ -60,11 +60,11 @@ var HLRemote = function(){
     // begin audioreactive stuff
 //    if(!isNaN(HLR.fft1)){
       // compute smooth
-      HLR.smoothFFT1 += (HLR.fft1 - HLR.smoothFFT1)*0.001;
-      HLR.smoothFFT2 += (HLR.fft2 - HLR.smoothFFT2)*0.001;
-      HLR.smoothFFT3 += (HLR.fft3 - HLR.smoothFFT3)*0.001;
-      HLR.smoothFFT4 += (HLR.fft4 - HLR.smoothFFT4)*0.001;
-      HLR.smoothFFT5 += (HLR.fft5 - HLR.smoothFFT5)*0.001;
+      HLR.smoothFFT1 += (HLR.fft1 - HLR.smoothFFT1)*0.005;
+      HLR.smoothFFT2 += (HLR.fft2 - HLR.smoothFFT2)*0.005;
+      HLR.smoothFFT3 += (HLR.fft3 - HLR.smoothFFT3)*0.005;
+      HLR.smoothFFT4 += (HLR.fft4 - HLR.smoothFFT4)*0.005;
+      HLR.smoothFFT5 += (HLR.fft5 - HLR.smoothFFT5)*0.005;
 
       //compute max
       // HLR.maxFFT1 = HLR.fft1>HLR.maxFFT1?HLR.fft1:HLR.maxFFT1; UNUSED
@@ -80,7 +80,7 @@ var HLRemote = function(){
       // HLE.moveSpeed += ((max( HLE.reactiveMoveSpeed,0))-HLE.moveSpeed) * 0.25;
 
       // compute move speed
-      HLE.reactiveMoveSpeed = 1 + (HLR.fft1 + HLR.fft3 + HLR.fft4) * 0.333 * HLE.BASE_MOVE_SPEED;
+      HLE.reactiveMoveSpeed = 1 + (HLR.fft1 + HLR.fft4) * 0.75 * HLE.BASE_MOVE_SPEED;
       HLE.moveSpeed += (HLE.reactiveMoveSpeed-HLE.moveSpeed)*0.5;
   //    HLE.moveSpeed = HLE.reactiveMoveSpeed<0?0:HLE.reactiveMoveSpeed;
 
@@ -93,17 +93,24 @@ var HLRemote = function(){
         HLE.reactiveSeaHeight = HLR.fft3*HLE.WORLD_HEIGHT*0.1;
 
       // compute land Heights
-      HLR.tempNoiseFreq = 7 - (HLR.smoothFFT2 * 7 - HLR.smoothFFT3 * 6.5);
-      HLR.tempNoiseFreq2 = .5 + HLR.smoothFFT4 * 15 * (HLR.smoothFFT3+1)*0.65 ;
+      // HLR.tempNoiseFreq = 7 - (HLR.smoothFFT2 * 7 - HLR.smoothFFT3 * 6.5);
+      // HLR.tempNoiseFreq2 = .5 + HLR.smoothFFT4 * 15 * (HLR.smoothFFT3+1)*0.65 ;
+      HLR.tempNoiseFreq = 7 - (HLR.smoothFFT2 - HLR.smoothFFT3)*3;
+      HLR.tempNoiseFreq2 = .5 + HLR.smoothFFT4 * 15;
+
       //TODO CHECK l'easing deve avvenire in base alla larghezza tile
       HLE.noiseFrequency +=  (HLR.tempNoiseFreq  - HLE.noiseFrequency ) * (1/HLE.WORLD_TILES * HLE.moveSpeed/HLE.BASE_MOVE_SPEED);
       HLE.noiseFrequency2 += (HLR.tempNoiseFreq2 - HLE.noiseFrequency2) * (1/HLE.WORLD_TILES * HLE.moveSpeed/HLE.BASE_MOVE_SPEED);
+
+      HL.land.position.x += HLR.fft3;
+      // HLE.noiseFrequency2
+
       //
-      HLR.tempLandHeight = (HLR.smoothFFT1 * 0.55 + HLR.smoothFFT3 * .45 )
-        * HLE.WORLD_HEIGHT * 0.75;
+      HLR.tempLandHeight = (HLR.smoothFFT1 + HLR.smoothFFT3 )
+        * HLE.WORLD_HEIGHT*0.5;
       if(HLE.CENTER_PATH) HLR.tempLandHeight*=3;
-      HLE.landHeight += (HLR.tempLandHeight-HLE.landHeight)*0.25;
-      // HLE.landZeroPoint = +HLE.landHeight * 20.1;
+      HLE.landHeight += (HLR.tempLandHeight-HLE.landHeight)*0.35;
+      //  HLE.landZeroPoint = - HLR.fft3 * HLE.landHeight * .5;
   //  }// end audioreactive stuff
   }
 

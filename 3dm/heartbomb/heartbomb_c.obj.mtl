@@ -1,0 +1,57 @@
+#
+# Wavefront material file
+# Converted by Meshlab Group
+#
+
+newmtl material_0
+Ka 0.200000 0.200000 0.200000
+Kd 0.341176 0.176471 0.003922
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+
+newmtl material_1
+Ka 0.200000 0.200000 0.200000
+Kd 0.341176 0.176471 0.003922
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+map_Kd heartbomb_fullpng.png
+
+newmtl material_2
+Ka 0.200000 0.200000 0.200000
+Kd 0.152941 0.003922 0.000000
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+map_Kd heartbomb_fullpng.png
+
+newmtl material_3
+Ka 0.200000 0.200000 0.200000
+Kd 0.298039 0.003922 0.003922
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+map_Kd heartbomb_fullpng.png
+
+newmtl material_4
+Ka 0.200000 0.200000 0.200000
+Kd 0.007843 0.043137 0.011765
+Ks 1.000000 1.000000 1.000000
+Tr 1.000000
+illum 2
+Ns 0.000000
+map_Kd heartbomb_fullpng.png
+
+newmtl material_5
+Ka 0.200000 0.200000 0.200000
+Kd 0.874510 0.309804 0.380392
+Ks 1.000000 1.000000 1.000000
+Tr 0.054902
+illum 2
+Ns 0.000000
+

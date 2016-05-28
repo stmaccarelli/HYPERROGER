@@ -13,7 +13,7 @@ var HLE = {
   SEA_TILES:32,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:.5,
+  PIXEL_RATIO_SCALE:.25,
 
 
   FOG:true,
@@ -115,21 +115,34 @@ var HL = {
     flora:"img/tex_tree_82_128x128.png",
     fauna:null,
     water:"img/waternormals3.png",//wn5
-    whale:"3dm/BL_WHALE/BL_WHALE2.jpg",
-    whale2:null,
+    //models
+
+    whale:"3dm/BL_WHALE/BL_WHALE.jpg",
     ducky:"3dm/ducky/ducky.png",
+    airbus:"3dm/airbus/airbus_a.png",
+    aurora:"3dm/aurora/aurora.png",
+    heartbomb:"3dm/heartbomb/heartbomb_full.png",
+    mercury:"3dm/mercury/mercury.png",
+    tiger:"3dm/uncletiger/uncletiger_al.png",
   },
   dynamicTextures:{
     stars:null,
   },
   models: {
     whale:["3dm/BL_WHALE/BL_WHALE2.OBJ",50],
-    ducky:["3dm/ducky/ducky.obj",50],
-    whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",80],
+    whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",120],
+    ducky:["3dm/ducky/ducky.obj",80],
+    airbus:["3dm/airbus/airbus_c.obj",100],
+    aurora:["3dm/aurora/aurora_c.obj",70],
+    heartbomb:["3dm/heartbomb/heartbomb_c.obj",50],
+    mercury:["3dm/mercury/mercury_c.obj",80],
+    tiger:["3dm/uncletiger/uncletiger_c.obj",50],
   },
   modelsKeys:null,
   mGroups:{
-    animals:['whale','ducky'],
+    weird:['ducky','tiger','mercury','ducky'],
+    space:['mercury','aurora','airbus','heartbomb'],
+    sea:['whale','whale2'],
   },
   dynamicModels:{length:0},
   // meshes
@@ -162,7 +175,7 @@ var HLEnvironment = function(){
     for (var key in HL.textures)
       if(HL.textures[key]!=null){
         imagesCounter++;
-        HL.textures[key] = loader.load( HL.textures[key], imageLoaded , null,function(i){console.error(i)});
+        HL.textures[key] = loader.load( HL.textures[key], imageLoaded , null,function(i){imagesCounter--; console.error(i)});
       }
   }
 
@@ -233,6 +246,8 @@ var HLEnvironment = function(){
     // HL.camera.filmGauge = 1;
     // HL.camera.filmOffset = 100;
     HL.camera.position.y = 40;
+    HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
+
 
 
     // RENDERER
@@ -243,7 +258,7 @@ var HLEnvironment = function(){
 
     if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
       HL.renderer = new THREE.WebGLRenderer({antialias: false});
-      HL.renderer.setSize(window.innerWidth, window.innerHeight, true);
+      HL.renderer.setSize(window.innerWidth, window.innerHeight*0.75, true);
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
       HL.renderer.domElement.style.imageRendering = 'pixelated';
       HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
@@ -496,14 +511,17 @@ var HLEnvironment = function(){
 
     //create materials for each model
     for(var k in HL.models){
-      HL.materials[k] = new THREE.MeshBasicMaterial({
-        color:HL.textures[k]!==undefined?0xffffff:(isWire?0xff0000:0x7f7f7f),
+      HL.materials[k] = new THREE.MeshPhongMaterial({
+        color: 0x000000,
         map:isWire?null:(HL.textures[k]!==undefined?HL.textures[k]:null),
         fog:true,
         wireframe:isWire,
         wireframeLinewidth:2,
         side:THREE.FrontSide,
+      //  transparent:true,
       });
+      HL.materials[k].color=HLC.horizon;
+
     }
 
 
@@ -513,6 +531,7 @@ var HLEnvironment = function(){
 
     initMeshes();
   }
+
 
   function initModels(){
     console.time('models');
@@ -532,7 +551,7 @@ var HLEnvironment = function(){
         //  (function(i) { return function() { alert( i ) } })(i);
           (function ( nK , modelScale) {
             return function( object ){
-            HL.models[nK]=object.children[0];
+            HL.models[nK]= new THREE.Mesh(object.children[0].geometry);
             HL.models[nK].name = nK;
             HL.models[nK].geometry.scale(modelScale,modelScale,modelScale);
 //            HL.models[key].geometry.rotateX(Math.PI*0.5);
@@ -572,7 +591,7 @@ var HLEnvironment = function(){
      HL.scene.add( HL.lights.sun );
 
 
-     HL.lights['moon'] = new THREE.DirectionalLight( 0xffffff, 1.5);
+     HL.lights['moon'] = new THREE.DirectionalLight( 0x007bff, 1.5);
      HL.lights.moon.position.set(0,HLE.WORLD_HEIGHT*2, 100);
      //  HL.lights.sun.castShadows = false;
      HL.scene.add( HL.lights.moon );
