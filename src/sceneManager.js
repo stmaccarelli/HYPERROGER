@@ -61,17 +61,13 @@ var HLS ={
   }
 
   HLS.scene1 = function(){
-    // if(frameCount%500==0)
-    //   HLS.startScene('scene2');
-
     HLS.raf = window.requestAnimationFrame(HLS.scene1);
     HLS.cameraRotation();
-    if(frameCount%300==0)
-      HLS.shootGroup('sea',5,false);
+
 
     HLS.sceneProgress=(frameCount - HLS.sceneStart)*0.001;
 
-    HLC.horizon.setHSL((frameCount/3600)%1,.2, (Math.sin(HLS.sceneProgress)+1)*0.25 + HLR.fft2*1.1-HLR.fft3*5.5);
+    HLC.horizon.setHSL((frameCount/3600)%1,.2, (Math.sin(HLS.sceneProgress)+1)*0.25 + HLR.fft1*0.75-HLR.fft3*5.5);
 
     HL.materials.land.uniforms.color.value = HLC.land.setHSL(0,0, .1+HLR.fft3*.3);
   }
@@ -94,13 +90,9 @@ var HLS ={
   }
 
   HLS.scene2 = function(){
-    if(frameCount%500==0)
-      HLS.startScene('scene3');
-
     HLS.raf = window.requestAnimationFrame(HLS.scene2);
     HLS.cameraRotation();
-    if(frameCount%300==0)
-      HLS.shootGroup('weird',5,true);
+
 
 
     HLS.tempColor = HLR.fft2*HLR.fft2*HLR.fft2*.5 - HLR.fft3*3;
@@ -154,14 +146,8 @@ var HLS ={
   HLS.story = 'HYPEROCEAN NIAGARA'.split(' ');
 
   HLS.scene3 = function(){
-    if(frameCount%500==0)
-      HLS.startScene('scene1');
-
     HLS.raf = window.requestAnimationFrame(HLS.scene3);
     HLS.cameraRotation();
-    if(frameCount%300==0)
-      HLS.shootGroup('space',5,true);
-
 
     HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.moveSpeed*4);
 
@@ -181,7 +167,7 @@ var HLS ={
   }
 
   HLS.cameraRotation = function(){
-    // HL.camera.rotateY(HL.noise.nNoise(HLR.fft3*0.0002, HLR.fft1*0.0015,100));
+    HL.camera.rotateY(HL.noise.nNoise(HLR.fft3*0.0002, HLR.fft1*0.0015,100));
     //HL.camera.rotateX(HL.noise.nNoise(HLR.fft5*0.00013, HLR.fft2*0.0005,100));
   }
 

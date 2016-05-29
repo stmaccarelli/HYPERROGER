@@ -13,7 +13,7 @@ var HLE = {
   SEA_TILES:32,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:.25,
+  PIXEL_RATIO_SCALE:.5,
 
 
   FOG:true,
