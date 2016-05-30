@@ -2,7 +2,7 @@
 // GEOMETRY, ANIMATION AND GENERIC HELPER FUNCTIONS
 
 var HLH = function() {
-	var i,x,y;
+	var i,x,y,dynModelsCounter=0;
 	// GENERIC
 
 	// Returns a random integer between min (included) and max (included)
@@ -233,13 +233,13 @@ var HLH = function() {
 
 	function startModel(model,x,y,speed,rotations){
 		if(HL.dynamicModels.length >= HLE.MAX_MODELS_OUT) return
-
+		dynModelsCounter++;
 		speed = speed || 0;
 		x = x || 0;
 		y = y || 0;
 		rotations = rotations || 'n';
 
-		HL.dynamicModels['m'+frameCount] = model.clone();
+		HL.dynamicModels['m'+dynModelsCounter] = model.clone();
 
 		var z = -HLE.WORLD_WIDTH;
 		// y === true means we want models attached to landscape
@@ -251,30 +251,30 @@ var HLH = function() {
 			z=-HLE.WORLD_WIDTH*0.5-HL.land.position.y;
 
 			if(y!=0){
-				HL.dynamicModels['m'+frameCount].rotateX((Math.random()-0.5)*3);
-				HL.dynamicModels['m'+frameCount].rotateY((Math.random()-0.5)*3);
-				HL.dynamicModels['m'+frameCount].rotateZ((Math.random()-0.5)*3);
+				HL.dynamicModels['m'+dynModelsCounter].rotateX((Math.random()-0.5)*3);
+				HL.dynamicModels['m'+dynModelsCounter].rotateY((Math.random()-0.5)*3);
+				HL.dynamicModels['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
 			}
 		}
 
 		if(rotations.indexOf('x')!=-1)
-			HL.dynamicModels['m'+frameCount].rotateX((Math.random()-0.5)*3);
+			HL.dynamicModels['m'+dynModelsCounter].rotateX((Math.random()-0.5)*3);
 		if(rotations.indexOf('y')!=-1)
-			HL.dynamicModels['m'+frameCount].rotateY((Math.random()-0.5)*3);
+			HL.dynamicModels['m'+dynModelsCounter].rotateY((Math.random()-0.5)*3);
 		if(rotations.indexOf('z')!=-1)
-			HL.dynamicModels['m'+frameCount].rotateZ((Math.random()-0.5)*3);
+			HL.dynamicModels['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
 
-		HL.dynamicModels['m'+frameCount].size = model.size;
-		HL.dynamicModels['m'+frameCount].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
-		HL.dynamicModels['m'+frameCount]['key']='m'+frameCount;
-		HL.scene.add(HL.dynamicModels['m'+frameCount]);
+		HL.dynamicModels['m'+dynModelsCounter].size = model.size;
+		HL.dynamicModels['m'+dynModelsCounter].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
+		HL.dynamicModels['m'+dynModelsCounter]['key']='m'+dynModelsCounter;
+		HL.scene.add(HL.dynamicModels['m'+dynModelsCounter]);
 		HL.dynamicModels.length++;
 
-		HL.dynamicModels['m'+frameCount].position.set(x,y,z);
-		HL.dynamicModels['m'+frameCount]["speed"] = speed;
-		HL.dynamicModels['m'+frameCount]["targetY"] = y;
-		HL.dynamicModels['m'+frameCount]['moving'] = true;
-		HL.dynamicModels['m'+frameCount]['rotations'] = rotations;
+		HL.dynamicModels['m'+dynModelsCounter].position.set(x,y,z);
+		HL.dynamicModels['m'+dynModelsCounter]["speed"] = speed;
+		HL.dynamicModels['m'+dynModelsCounter]["targetY"] = y;
+		HL.dynamicModels['m'+dynModelsCounter]['moving'] = true;
+		HL.dynamicModels['m'+dynModelsCounter]['rotations'] = rotations;
 
 	}
 
