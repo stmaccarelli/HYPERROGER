@@ -5,29 +5,29 @@ This module is for animations: moving objects, changing colors, etc
 var HLAnim = function(){
 
   function sea(){
-    // move
-    HL.sea.position.z += HLE.moveSpeed;
-
-    // if moved farther than 1 row
-    if (HL.sea.position.z > HLE.SEA_TILE_SIZE) {
-      HLE.seaStepsCount++;
-      // put 1 row back
-      HL.sea.position.z  -= HLE.SEA_TILE_SIZE;
-      // shift sea heights for rows
-      for(var i=HL.geometries.sea.parameters.heightSegments; i > 0; i--){
-        HL.geometries.seaHeights[i] = HL.geometries.seaHeights[i-1];
-      }
-      // calculate new height ot first row
-      HL.geometries.seaHeights[0] = HLE.reactiveSeaHeight;
-    }
-     // compute row-shifting basic sea waves
-     HLH.seaMotion(HL.geometries.sea, HLE.seaStepsCount, HL.geometries.seaHeights, HLE.BASE_SEA_SPEED);
-
-     // if we want to use shadows, we have to recalculate normals
-     if(hasShadows){
-       HL.geometries.sea.computeFaceNormals();
-       HL.geometries.sea.computeVertexNormals();
-     }
+    // // move
+    // HL.sea.position.z += HLE.moveSpeed;
+    //
+    // // if moved farther than 1 row
+    // if (HL.sea.position.z > HLE.SEA_TILE_SIZE) {
+    //   HLE.seaStepsCount++;
+    //   // put 1 row back
+    //   HL.sea.position.z  -= HLE.SEA_TILE_SIZE;
+    //   // shift sea heights for rows
+    //   for(var i=HL.geometries.sea.parameters.heightSegments; i > 0; i--){
+    //     HL.geometries.seaHeights[i] = HL.geometries.seaHeights[i-1];
+    //   }
+    //   // calculate new height ot first row
+    //   HL.geometries.seaHeights[0] = HLE.reactiveSeaHeight;
+    // }
+    //  // compute row-shifting basic sea waves
+    //  HLH.seaMotion(HL.geometries.sea, HLE.seaStepsCount, HL.geometries.seaHeights, HLE.BASE_SEA_SPEED);
+    //
+    //  // if we want to use shadows, we have to recalculate normals
+    //  if(hasShadows){
+    //    HL.geometries.sea.computeFaceNormals();
+    //    HL.geometries.sea.computeVertexNormals();
+    //  }
   }
 
   function mirrorWaves(){
@@ -72,6 +72,9 @@ var HLAnim = function(){
   function landGeometry(){
     HL.land.position.z += HLE.moveSpeed;
     if (HL.land.position.z > HLE.TILE_SIZE) {
+      // for(var i=0;i<HLE.WORLD_TILES;i++){
+      //   HLH.startModel(HL.models.ducky,(i*HLE.TILE_SIZE)-HLE.WORLD_WIDTH/2,true );
+      // }
       HLE.landStepsCount++;
       HL.land.position.z -= HLE.TILE_SIZE;
       HLH.shiftHeights(HL.geometries.land);
