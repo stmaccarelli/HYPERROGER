@@ -258,7 +258,7 @@ var HLEnvironment = function(){
 
     if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
       HL.renderer = new THREE.WebGLRenderer({antialias: false});
-      HL.renderer.setSize(window.innerWidth, window.innerHeight*0.75, true);
+      HL.renderer.setSize(window.innerWidth, window.innerHeight, true);
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
       HL.renderer.domElement.style.imageRendering = 'pixelated';
       HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
