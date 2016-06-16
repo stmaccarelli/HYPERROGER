@@ -2,7 +2,7 @@
 // GEOMETRY, ANIMATION AND GENERIC HELPER FUNCTIONS
 
 var HLH = function() {
-	var i,x,y;
+	var i,x,y,dynModelsCounter=0;
 	// GENERIC
 
 	// Returns a random integer between min (included) and max (included)
@@ -132,7 +132,7 @@ var HLH = function() {
 				geometry.vertices.push(
 					new THREE.Vector3(
 						Math.random() * worldWidth - worldWidth / 2,
-						Math.random() * worldHeight, // TBD find a standard solution
+						Math.random() * worldWidth / 2,
 						Math.random() * worldWidth - worldWidth / 2)
 				);
 			else
@@ -170,12 +170,12 @@ var HLH = function() {
 	}
 
   function loopParticles(geometry, worldSize, moveSpeed) {
-
 		for (i = 0; i < geometry.attributes.position.array.length; i += 3) {
 			if (geometry.attributes.position.array[i + 2] > -worldSize)
 				geometry.attributes.position.array[i + 2] += moveSpeed;
 			if (geometry.attributes.position.array[i + 2] >= worldSize){
-        geometry.attributes.position.array[i] = (Math.random()*2-1) * worldSize/2;
+				geometry.attributes.position.array[i] = (Math.random()*2-1) * worldSize/2;
+				geometry.attributes.position.array[i+ 2] = (Math.random()*2-1) * worldSize/2;
 				geometry.attributes.position.array[i + 2] = -worldSize + .1;
       }
 		}
@@ -209,6 +209,7 @@ var HLH = function() {
 			} else skipped++;
 		}
 		geometry.attributes.position.needsUpdate = true;
+		console.log("HLH.shotFlora");
 	}
   // HLH.landHeightNoise(
   //  i / (HL.geometries.land.parameters.widthSegments),
@@ -229,36 +230,90 @@ var HLH = function() {
 				HL.models[key].position.set(0,0,-HLE.WORLD_WIDTH*10);
 	}
 
-	function startModel(model,x,y,speed){
 
-		if(model.position.z === -HLE.WORLD_WIDTH*10){
-			speed = speed || 0;
-			x = x || 0;
-			y = y || HLE.WORLD_HEIGHT*.5;
-			if(y === true){
-				y=landHeightNoise((x/HLE.WORLD_WIDTH*0.5)+0.5,HLE.landStepsCount+0.1/HLE.WORLD_TILES);
-				speed = 0;
+	function startModel(model,x,y,speed,rotations){
+		if(HL.dynamicModels.length >= HLE.MAX_MODELS_OUT) return
+		dynModelsCounter++;
+		speed = speed || 0;
+		x = x || 0;
+		y = y || 0;
+		rotations = rotations || 'n';
+
+		HL.dynamicModels['m'+dynModelsCounter] = model.clone();
+
+		var z = -HLE.WORLD_WIDTH;
+		// y === true means we want models attached to landscape
+		if(y === true){
+			y=landHeightNoise((x/HLE.WORLD_WIDTH)+0.5,HLE.landStepsCount/HLE.WORLD_TILES)
+				+HL.land.position.y;
+			y=Math.max(y,0);//TODO if y is 0, gotta move according to seawaves, if any ---
+			speed = 0;
+			z=-HLE.WORLD_WIDTH*0.5-HL.land.position.y;
+
+			if(y!=0){
+				HL.dynamicModels['m'+dynModelsCounter].rotateX((Math.random()-0.5)*3);
+				HL.dynamicModels['m'+dynModelsCounter].rotateY((Math.random()-0.5)*3);
+				HL.dynamicModels['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
 			}
-
-			model.position.set(x,y,-HLE.WORLD_WIDTH+0.1);
-			model["speed"] = speed;
-			model["targetY"] = y;
-			model['moving'] = true;
 		}
 
+		if(rotations.indexOf('x')!=-1)
+			HL.dynamicModels['m'+dynModelsCounter].rotateX((Math.random()-0.5)*3);
+		if(rotations.indexOf('y')!=-1)
+			HL.dynamicModels['m'+dynModelsCounter].rotateY((Math.random()-0.5)*3);
+		if(rotations.indexOf('z')!=-1)
+			HL.dynamicModels['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
+
+		HL.dynamicModels['m'+dynModelsCounter].size = model.size;
+		HL.dynamicModels['m'+dynModelsCounter].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
+		HL.dynamicModels['m'+dynModelsCounter]['key']='m'+dynModelsCounter;
+		HL.scene.add(HL.dynamicModels['m'+dynModelsCounter]);
+		HL.dynamicModels.length++;
+
+		HL.dynamicModels['m'+dynModelsCounter].position.set(x,y,z);
+		HL.dynamicModels['m'+dynModelsCounter]["speed"] = speed;
+		HL.dynamicModels['m'+dynModelsCounter]["targetY"] = y;
+		HL.dynamicModels['m'+dynModelsCounter]['moving'] = true;
+		HL.dynamicModels['m'+dynModelsCounter]['rotations'] = rotations;
+
 	}
+
 
 	function moveModel(model){
 		if(model.position.z >= -HLE.WORLD_WIDTH){
 			if(model.speed!==0) model.position.z += model.speed;
 			else model.position.z+=HLE.moveSpeed;
-			model.position.y = -model.height*0.5 + (model.targetY+model.height*0.5)
+			model.position.y = -model.size.y + (model.targetY+model.size.y)
 				- easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)
-					*(model.targetY+model.height*0.5);
+					*(model.targetY+model.size.y);
+
+			if(model.rotations.indexOf('x')!=-1) model.rotateX(millis*.0000025*HLE.moveSpeed);
+			if(model.rotations.indexOf('y')!=-1) model.rotateY(millis*.0000030*HLE.moveSpeed);
+			if(model.rotations.indexOf('z')!=-1) model.rotateZ(millis*.0000035*HLE.moveSpeed);
 		}
-		if(model.position.z>=HLE.WORLD_WIDTH)
-			resetModel(model);
+		if(model.position.z>=HLE.WORLD_WIDTH*0.5+model.size.z*.5){
+			//resetModel(model);
+			HL.scene.remove(model);
+			model.material.dispose();
+			model.geometry.dispose();
+			delete HL.dynamicModels[model.key];
+			HL.dynamicModels.length--;
+		}
 	}
+
+	function destroyAllModels(){
+		for(var k in HL.dynamicModels){
+			if(k.indexOf('length')===-1){
+				HL.scene.remove(HL.dynamicModels[k]);
+				HL.dynamicModels[k].material.dispose();
+				HL.dynamicModels[k].geometry.dispose();
+				delete HL.dynamicModels[k];
+			}
+		}
+		HL.dynamicModels.length = 0;
+	}
+
+
 
 	return {
 		initParticleSystem: function(a, b, c, d, e) {
@@ -300,7 +355,8 @@ var HLH = function() {
 		},
 		resetModel: function(a) {resetModel(a)},
 		resetAllModels: resetAllModels,
-		startModel: function(a,b,c,d) {startModel(a,b,c,d)},
+		startModel: function(a,b,c,d,e) {startModel(a,b,c,d,e)},
 		moveModel: function(a,b) {moveModel(a,b)},
+		destroyAllModels:destroyAllModels,
 	}
 }();

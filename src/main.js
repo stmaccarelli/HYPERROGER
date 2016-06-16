@@ -33,6 +33,7 @@
       if(isVR) HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
       HL.camera.aspect = window.innerWidth / window.innerHeight;
       HL.camera.updateProjectionMatrix();
+      // hud.resize();
     }
 
     window.addEventListener("resize", onResized);
@@ -41,12 +42,7 @@
   function guiInit(){
     var gui = new dat.GUI();
     var guiTweak = gui.addFolder('manuali');
-    guiTweak.add(HLE, 'reactiveMoveSpeed',0,10.0);
-    guiTweak.add(HLE, 'reactiveSeaHeight',0.001,2.0);
-    guiTweak.add(HLE, 'noiseFrequency',0,20);
-    guiTweak.add(HLE, 'noiseFrequency2',0,20);
-    guiTweak.add(HLE, 'landZeroPoint',-150,150);
-    guiTweak.add(HLE, 'landHeight',0,150);
+    guiTweak.add(HLE, 'BASE_MOVE_SPEED',0,30);
   }
 
 
@@ -59,11 +55,15 @@
     delta = HL.clock.getDelta();
 
     // remote control / audioreactive
-    HLR.updateHLParams();
-    //if(HLDEV.animColors) HLAnim.colors();
-    HLAnim.particles();
+    // if we are on SOCKET MODE this function will be called by a socket.on() event
+    // so we should not call it here.
+   HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
+    //  HLRemote.updateHLParams(1,1,1,1,1);
+
+    // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
-    if(HLE.MIRROR) HLAnim.seaWMMove();
+    if(HLE.MIRROR) HLAnim.mirrorWaves();
+    if(HLE.WATER) HLAnim.waterShaderBaseMotion();
     HLAnim.land();
     HLAnim.models();
 
@@ -74,42 +74,41 @@
       HL.controls.update(delta,millis); //FPC mode
     }
     else{
-     HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2)); // camera looks at center point on horizon
+    // this function sucks spu, use just if really needed
+    //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
     }
     // set camera move easing according to move speed
     if(!HLE.CENTER_PATH){
-      HLE.cameraHeight += ((HLE.landHeight+HLE.landZeroPoint)-HLE.cameraHeight) * (HLE.moveSpeed * 0.08);
-      HL.camera.position.y = 10 + HLE.cameraHeight * 1.5;
+      // HLE.cameraHeight = HLE.landHeight;
+      HLE.smoothCameraHeight += (HLE.landHeight - HLE.smoothCameraHeight) * (HLE.moveSpeed * 0.001);
+      HL.camera.position.y = 10 + HLE.smoothCameraHeight * 1.1;
     }
 
-    if(HLE.MIRROR || HLE.WATER) {
-     HL.materials.water.render();
-    }
+
     // Rendering
+    if(HLE.WATER)
+      HL.materials.water.render();
+    if(HLE.MIRROR)
+      HL.materials.mirror.render();
     if(isVR){
       if(HLE.MIRROR || HLE.WATER)
-        HL.renderer.setRenderTarget( null );
+      HL.renderer.setRenderTarget( null );
       HL.stereoEffect.render(HL.scene,HL.camera);
     }
-    else HL.renderer.render(HL.scene,HL.camera);
+    else
+      HL.renderer.render(HL.scene,HL.camera);
 
-
-    // // Rendering
-    // if(isVR){
-    // //  HL.renderer.setRenderTarget( null ); not needed anymore??
-    //   HL.stereoEffect.render(HL.scene,HL.camera);
-    // }
-    // else HL.renderer.render(HL.scene,HL.camera);
-
+    delta = null;
   }
 
-
-
-  window.addEventListener('load',function(){
+  function loadRoutine(){
     mainInit();
-    guiInit();
+    // guiInit();
     // init HyperLand Environment
     HLEnvironment.init();
+    // hud = new HUD(true);
     // run is called by HLEnvironment.init() when it's all loaded
     window.addEventListener('HLEload', function(){console.log("event HLEload received"); run(); });
-  });
+    window.removeEventListener('load',loadRoutine,false);
+  }
+  window.addEventListener('load',loadRoutine,false);

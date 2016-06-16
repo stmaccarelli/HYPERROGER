@@ -1,0 +1,51 @@
+# Blender MTL File: 'heartbomb_light.blend'
+# Material Count: 5
+
+newmtl Material.004
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.300600 0.007189 0.004639
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd heartbomb_fullpng.png
+
+newmtl Material.005
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.156791 0.004704 0.003204
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd heartbomb_fullpng.png
+
+newmtl Material.006
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.343381 0.178466 0.005509
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Material.006_Untitled
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.343381 0.178466 0.005509
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd heartbomb_fullpng.png
+
+newmtl Material.007
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.008098 0.043975 0.013595
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd heartbomb_fullpng.png

@@ -4,4 +4,6 @@ body {
 			color: #fff;
 			font-family: monospace;
 			cursor:none;
+			position:relative;
+
 		}
