@@ -55,7 +55,13 @@ var HLRemote = function(){
   function updateHLParams(a,b,c,d,e){
     // TODO: memory optimization
 
-      updateFFT(a,b,c,d,e);
+      updateFFT(
+        Math.max(a,0.0001),
+        Math.max(b,0.0001),
+        Math.max(c,0.0001),
+        Math.max(d,0.0001),
+        Math.max(e,0.0001)
+      );
 
     // begin audioreactive stuff
 //    if(!isNaN(HLR.fft1)){
@@ -81,14 +87,16 @@ var HLRemote = function(){
 
       // compute move speed
       HLE.reactiveMoveSpeed = 1 + (HLR.fft1 + HLR.fft4) * 0.75 * HLE.BASE_MOVE_SPEED;
-      HLE.moveSpeed += (HLE.reactiveMoveSpeed-HLE.moveSpeed)*0.5;
+      HLE.moveSpeed += (HLE.reactiveMoveSpeed-HLE.moveSpeed)*0.15;
   //    HLE.moveSpeed = HLE.reactiveMoveSpeed<0?0:HLE.reactiveMoveSpeed;
 
       // sea height of uniforms update
       if(HLE.MIRROR)
         HL.materials.mirror.material.uniforms.time.value += HLR.fft4*0.2;
-      if(HLE.WATER)
+      if(HLE.WATER){
         HL.materials.water.material.uniforms.time.value += HLR.fft4*0.2;
+        //HL.materials.land.uniforms.buildFreq.value += Math.min(HLR.fft2-0.85, 0.00001) * 0.01;
+      }
       else
         HLE.reactiveSeaHeight = HLR.fft3*HLE.WORLD_HEIGHT*0.1;
 
@@ -102,16 +110,18 @@ var HLRemote = function(){
       HLE.noiseFrequency +=  (HLR.tempNoiseFreq  - HLE.noiseFrequency ) * (1/HLE.WORLD_TILES * HLE.moveSpeed/HLE.BASE_MOVE_SPEED);
       HLE.noiseFrequency2 += (HLR.tempNoiseFreq2 - HLE.noiseFrequency2) * (1/HLE.WORLD_TILES * HLE.moveSpeed/HLE.BASE_MOVE_SPEED);
 
-      HL.land.position.x += HLR.fft3;
+    //  HL.land.position.x += HLR.fft3;
       // HLE.noiseFrequency2
 
       //
       HLR.tempLandHeight = (HLR.smoothFFT1 + HLR.smoothFFT3 )
-        * HLE.WORLD_HEIGHT*0.5;
+        * HLE.WORLD_HEIGHT*1;
       if(HLE.CENTER_PATH) HLR.tempLandHeight*=3;
-      HLE.landHeight += (HLR.tempLandHeight-HLE.landHeight)*0.35;
+      HLE.landHeight += (HLR.tempLandHeight-HLE.landHeight)*0.45;
       //  HLE.landZeroPoint = - HLR.fft3 * HLE.landHeight * .5;
   //  }// end audioreactive stuff
+
+
   }
 
   return{

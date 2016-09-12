@@ -7,6 +7,7 @@ function HUD(iscanvas){
   var _HUD = {
     width:window.innerWidth,
     height:window.innerHeight,
+    canvas:null,
   };
 
   _HUD.initCanvas = function(){
@@ -85,7 +86,7 @@ function HUD(iscanvas){
 
   _HUD.resize = function(){
     _HUD.width = window.innerWidth;
-    _HUD.height=window.innerHeight;
+    _HUD.height= window.innerHeight;
 
     if(isCanvas===true){
       _HUD.canvas.width = _HUD.width;
@@ -106,6 +107,7 @@ function HUD(iscanvas){
 
   return{
     display:function(a,b,c){_HUD.display(a,b,c)},
+    resize:function(){_HUD.resize()},
     HUD:_HUD,
   }
 }

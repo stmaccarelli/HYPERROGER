@@ -235,7 +235,7 @@ var HLH = {
 
 
 	HLH.startModel = function(model,x,y,speed){
-		if(HL.dynamicModels.length >= HLE.MAX_MODELS_OUT) return
+		if(HL.dynamicModelsClones.length >= HLE.MAX_MODELS_OUT) return
 
 		speed = speed || 0;
 		x = x || 0;
@@ -249,28 +249,28 @@ var HLH = {
 			speed = 0;
 			z=-HLE.WORLD_WIDTH*0.5-HL.land.position.y;
 
-			HL.dynamicModels['m'+frameCount] = model.clone();
+			HL.dynamicModelsClones['m'+frameCount] = model.clone();
 			if(y!=0){
-				HL.dynamicModels['m'+frameCount].rotateX((Math.random()-0.5)*3);
-				HL.dynamicModels['m'+frameCount].rotateY((Math.random()-0.5)*3);
-				HL.dynamicModels['m'+frameCount].rotateZ((Math.random()-0.5)*3);
+				HL.dynamicModelsClones['m'+frameCount].rotateX((Math.random()-0.5)*3);
+				HL.dynamicModelsClones['m'+frameCount].rotateY((Math.random()-0.5)*3);
+				HL.dynamicModelsClones['m'+frameCount].rotateZ((Math.random()-0.5)*3);
 			}
 
 		}
 		else
-			HL.dynamicModels['m'+frameCount] = model.clone();
-		HL.dynamicModels['m'+frameCount].size = model.size;
-		HL.dynamicModels['m'+frameCount].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
-		HL.dynamicModels['m'+frameCount]['key']='m'+frameCount;
-		HL.scene.add(HL.dynamicModels['m'+frameCount]);
-		HL.dynamicModels.length++;
+			HL.dynamicModelsClones['m'+frameCount] = model.clone();
+		HL.dynamicModelsClones['m'+frameCount].size = model.size;
+		HL.dynamicModelsClones['m'+frameCount].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
+		HL.dynamicModelsClones['m'+frameCount]['key']='m'+frameCount;
+		HL.scene.add(HL.dynamicModelsClones['m'+frameCount]);
+		HL.dynamicModelsClones.length++;
 
 
 
-		HL.dynamicModels['m'+frameCount].position.set(x,y,z);
-		HL.dynamicModels['m'+frameCount]["speed"] = speed;
-		HL.dynamicModels['m'+frameCount]["targetY"] = y;
-		HL.dynamicModels['m'+frameCount]['moving'] = true;
+		HL.dynamicModelsClones['m'+frameCount].position.set(x,y,z);
+		HL.dynamicModelsClones['m'+frameCount]["speed"] = speed;
+		HL.dynamicModelsClones['m'+frameCount]["targetY"] = y;
+		HL.dynamicModelsClones['m'+frameCount]['moving'] = true;
 
 		z=null;
 	}
@@ -289,21 +289,21 @@ var HLH = {
 			HL.scene.remove(model);
 			model.material.dispose();
 			model.geometry.dispose();
-			delete HL.dynamicModels[model.key];
-			HL.dynamicModels.length--;
+			delete HL.dynamicModelsClones[model.key];
+			HL.dynamicModelsClones.length--;
 		}
 	}
 
 	HLH.destroyAllModels = function(){
-		for(var k in HL.dynamicModels){
+		for(var k in HL.dynamicModelsClones){
 			if(k.indexOf('length')===-1){
-				HL.scene.remove(HL.dynamicModels[k]);
-				HL.dynamicModels[k].material.dispose();
-				HL.dynamicModels[k].geometry.dispose();
-				delete HL.dynamicModels[k];
+				HL.scene.remove(HL.dynamicModelsClones[k]);
+				HL.dynamicModelsClones[k].material.dispose();
+				HL.dynamicModelsClones[k].geometry.dispose();
+				delete HL.dynamicModelsClones[k];
 			}
 		}
-		HL.dynamicModels.length = 0;
+		HL.dynamicModelsClones.length = 0;
 		k=null;
 	}
 

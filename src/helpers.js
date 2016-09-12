@@ -232,14 +232,14 @@ var HLH = function() {
 
 
 	function startModel(model,x,y,speed,rotations){
-		if(HL.dynamicModels.length >= HLE.MAX_MODELS_OUT) return
+		if(HL.dynamicModelsClones.length >= HLE.MAX_MODELS_OUT) return
 		dynModelsCounter++;
 		speed = speed || 0;
 		x = x || 0;
 		y = y || 0;
 		rotations = rotations || 'n';
 
-		HL.dynamicModels['m'+dynModelsCounter] = model.clone();
+		HL.dynamicModelsClones['m'+dynModelsCounter] = model.clone();
 
 		var z = -HLE.WORLD_WIDTH;
 		// y === true means we want models attached to landscape
@@ -251,30 +251,30 @@ var HLH = function() {
 			z=-HLE.WORLD_WIDTH*0.5-HL.land.position.y;
 
 			if(y!=0){
-				HL.dynamicModels['m'+dynModelsCounter].rotateX((Math.random()-0.5)*3);
-				HL.dynamicModels['m'+dynModelsCounter].rotateY((Math.random()-0.5)*3);
-				HL.dynamicModels['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
+				HL.dynamicModelsClones['m'+dynModelsCounter].rotateX((Math.random()-0.5)*3);
+				HL.dynamicModelsClones['m'+dynModelsCounter].rotateY((Math.random()-0.5)*3);
+				HL.dynamicModelsClones['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
 			}
 		}
 
 		if(rotations.indexOf('x')!=-1)
-			HL.dynamicModels['m'+dynModelsCounter].rotateX((Math.random()-0.5)*3);
+			HL.dynamicModelsClones['m'+dynModelsCounter].rotateX((Math.random()-0.5)*3);
 		if(rotations.indexOf('y')!=-1)
-			HL.dynamicModels['m'+dynModelsCounter].rotateY((Math.random()-0.5)*3);
+			HL.dynamicModelsClones['m'+dynModelsCounter].rotateY((Math.random()-0.5)*3);
 		if(rotations.indexOf('z')!=-1)
-			HL.dynamicModels['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
+			HL.dynamicModelsClones['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
 
-		HL.dynamicModels['m'+dynModelsCounter].size = model.size;
-		HL.dynamicModels['m'+dynModelsCounter].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
-		HL.dynamicModels['m'+dynModelsCounter]['key']='m'+dynModelsCounter;
-		HL.scene.add(HL.dynamicModels['m'+dynModelsCounter]);
-		HL.dynamicModels.length++;
+		HL.dynamicModelsClones['m'+dynModelsCounter].size = model.size;
+		HL.dynamicModelsClones['m'+dynModelsCounter].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
+		HL.dynamicModelsClones['m'+dynModelsCounter]['key']='m'+dynModelsCounter;
+		HL.scene.add(HL.dynamicModelsClones['m'+dynModelsCounter]);
+		HL.dynamicModelsClones.length++;
 
-		HL.dynamicModels['m'+dynModelsCounter].position.set(x,y,z);
-		HL.dynamicModels['m'+dynModelsCounter]["speed"] = speed;
-		HL.dynamicModels['m'+dynModelsCounter]["targetY"] = y;
-		HL.dynamicModels['m'+dynModelsCounter]['moving'] = true;
-		HL.dynamicModels['m'+dynModelsCounter]['rotations'] = rotations;
+		HL.dynamicModelsClones['m'+dynModelsCounter].position.set(x,y,z);
+		HL.dynamicModelsClones['m'+dynModelsCounter]["speed"] = speed;
+		HL.dynamicModelsClones['m'+dynModelsCounter]["targetY"] = y;
+		HL.dynamicModelsClones['m'+dynModelsCounter]['moving'] = true;
+		HL.dynamicModelsClones['m'+dynModelsCounter]['rotations'] = rotations;
 
 	}
 
@@ -296,21 +296,21 @@ var HLH = function() {
 			HL.scene.remove(model);
 			model.material.dispose();
 			model.geometry.dispose();
-			delete HL.dynamicModels[model.key];
-			HL.dynamicModels.length--;
+			delete HL.dynamicModelsClones[model.key];
+			HL.dynamicModelsClones.length--;
 		}
 	}
 
 	function destroyAllModels(){
-		for(var k in HL.dynamicModels){
+		for(var k in HL.dynamicModelsClones){
 			if(k.indexOf('length')===-1){
-				HL.scene.remove(HL.dynamicModels[k]);
-				HL.dynamicModels[k].material.dispose();
-				HL.dynamicModels[k].geometry.dispose();
-				delete HL.dynamicModels[k];
+				HL.scene.remove(HL.dynamicModelsClones[k]);
+				HL.dynamicModelsClones[k].material.dispose();
+				HL.dynamicModelsClones[k].geometry.dispose();
+				delete HL.dynamicModelsClones[k];
 			}
 		}
-		HL.dynamicModels.length = 0;
+		HL.dynamicModelsClones.length = 0;
 	}
 
 

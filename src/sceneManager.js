@@ -46,7 +46,7 @@ var HLS ={
   }
 
   HLS.scene1init = function(){
-    // if(hud!==undefined) hud.display('CHAPTER ONE.\nDEEP LIKE THE VOID',3, true);
+    if(hud!==undefined) hud.display('CHAPTER ONE.\nDEEP LIKE THE VOID',3, true);
     HL.materials.skybox.map = HL.textures.skybox;
     HL.materials.skybox.needsUpdate = true;
 
@@ -70,6 +70,8 @@ var HLS ={
     HLC.horizon.setHSL((frameCount/3600)%1,.2, (Math.sin(HLS.sceneProgress)+1)*0.25 + HLR.fft1*0.75-HLR.fft3*5.5);
 
     HL.materials.land.uniforms.color.value = HLC.land.setHSL(0,0, .1+HLR.fft3*.3);
+
+    HLE.noiseSeed = HLR.fft3*300;
   }
 
 

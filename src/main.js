@@ -33,7 +33,7 @@
       if(isVR) HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
       HL.camera.aspect = window.innerWidth / window.innerHeight;
       HL.camera.updateProjectionMatrix();
-      // hud.resize();
+      hud.resize();
     }
 
     window.addEventListener("resize", onResized);
@@ -54,17 +54,28 @@
     millis = (frameCount/60);
     delta = HL.clock.getDelta();
 
+    //CPU GPU POWER DETECTION BY CLOCK
+    if(delta>0.05){
+      HLE.WORLD_TILES = Math.round(HLE.WORLD_TILES*0.75);
+      HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_TILES,HLE.WORLD_TILES);
+      HL.land.geometry.rotateX(-Math.PI / 2);
+      HL.land.material.uniforms.worldTiles.value = HLE.WORLD_TILES;
+      HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(1,HLE.WORLD_TILES*1);
+      console.log(delta+ " reducing tiles: " + HLE.WORLD_TILES);
+    };
+
     // remote control / audioreactive
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
-   HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
-    //  HLRemote.updateHLParams(1,1,1,1,1);
+
+  //  HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
+    HLRemote.updateHLParams(.5,.5,.5,.5,.5);
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
     if(HLE.MIRROR) HLAnim.mirrorWaves();
     if(HLE.WATER) HLAnim.waterShaderBaseMotion();
-    HLAnim.land();
+    HLAnim.landGLSL();
     HLAnim.models();
 
     // Controls and camera
@@ -74,16 +85,16 @@
       HL.controls.update(delta,millis); //FPC mode
     }
     else{
-    // this function sucks spu, use just if really needed
-    //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
+      // this function sucks spu, use just if really needed
+      //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
+
     }
-    // set camera move easing according to move speed
-    if(!HLE.CENTER_PATH){
+
+    if(!HLE.CENTER_PATH && !isMobile){
       // HLE.cameraHeight = HLE.landHeight;
       HLE.smoothCameraHeight += (HLE.landHeight - HLE.smoothCameraHeight) * (HLE.moveSpeed * 0.001);
       HL.camera.position.y = 10 + HLE.smoothCameraHeight * 1.1;
     }
-
 
     // Rendering
     if(HLE.WATER)
@@ -106,9 +117,30 @@
     // guiInit();
     // init HyperLand Environment
     HLEnvironment.init();
-    // hud = new HUD(true);
+    hud = new HUD(true);
     // run is called by HLEnvironment.init() when it's all loaded
     window.addEventListener('HLEload', function(){console.log("event HLEload received"); run(); });
     window.removeEventListener('load',loadRoutine,false);
   }
   window.addEventListener('load',loadRoutine,false);
+
+
+// TODO: REMOVE! JUST FOR DEV PURPOSES
+  window.addEventListener('click', function(){
+
+  var tilen = Math.round(Math.random()*HLE.WORLD_TILES);
+
+   HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tilen,tilen);
+   HL.land.geometry.rotateX(-Math.PI / 2);
+   HL.land.material.uniforms.worldTiles.value = tilen;
+   HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(1,1+Math.round(tilen*Math.random()) );
+
+   HL.land.material.uniforms.cFactor.value = Math.random();
+   HL.land.material.uniforms.dFactor.value = Math.random()*0.3;
+   HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
+   HL.land.material.uniforms.map.value =HL.textures.water;// null;//HL.textures[Math.round(Math.random()*10)];
+
+   HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
+   HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
+
+  });

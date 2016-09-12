@@ -95,6 +95,24 @@ var HLAnim = function(){
     HL.geometries.land.verticesNeedUpdate = true;
   }
 
+
+  function landGLSL(){
+    HLE.advance += HLE.moveSpeed; // advance is a master advance rate for the entire environment
+
+    HL.materials.land.uniforms.advance.value = HLE.advance;
+    HL.materials.land.uniforms.noiseFreq.value = HLE.noiseFrequency;
+    HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;
+    HL.materials.land.uniforms.landHeight.value = HLE.landHeight * 1.3 ;
+    HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
+
+
+    if(HLR.fft1!==undefined){
+      HL.materials.land.uniforms.buildFreq.value += Math.max(0,(HLR.fft2-0.96)) * 0.25 ;
+    }
+
+  }
+
+
   // FOR CLOUDS, FLORA AND FAUNA, I'd move this in HLS sceneManager
   function particles(){
 
@@ -112,9 +130,9 @@ var HLAnim = function(){
     //     HLH.moveModel( HL.models[k], 'z' );
     //   }
     //
-    for(var k in HL.dynamicModels){
-      if(HL.dynamicModels[k] && HL.dynamicModels[k].position){
-       HLH.moveModel( HL.dynamicModels[k], 'z' );
+    for(var k in HL.dynamicModelsClones){
+      if(HL.dynamicModelsClones[k] && HL.dynamicModelsClones[k].position){
+       HLH.moveModel( HL.dynamicModelsClones[k], 'z' );
       }
     }
 
@@ -154,5 +172,6 @@ var HLAnim = function(){
     particles:particles,
     models:models,
     colors:colors,
+    landGLSL:landGLSL,
   }
 }();
