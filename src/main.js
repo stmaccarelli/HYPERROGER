@@ -54,22 +54,22 @@
     millis = (frameCount/60);
     delta = HL.clock.getDelta();
 
+    // TODO: improve detection. take account of browser cpu time, models shooting time, etc
     //CPU GPU POWER DETECTION BY CLOCK
-    if(delta>0.05){
-      HLE.WORLD_TILES = Math.round(HLE.WORLD_TILES*0.75);
-      HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_TILES,HLE.WORLD_TILES);
-      HL.land.geometry.rotateX(-Math.PI / 2);
-      HL.land.material.uniforms.worldTiles.value = HLE.WORLD_TILES;
-      HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(1,HLE.WORLD_TILES*1);
-      console.log(delta+ " reducing tiles: " + HLE.WORLD_TILES);
-    };
+    // if(delta>0.05){
+    //   HLE.WORLD_TILES = Math.round(HLE.WORLD_TILES*0.75);
+    //   HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_TILES,HLE.WORLD_TILES);
+    //   HL.land.geometry.rotateX(-Math.PI / 2);
+    //   HL.land.material.uniforms.worldTiles.value = HLE.WORLD_TILES;
+    //   HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(1,HLE.WORLD_TILES*1);
+    //   console.log(delta+ " reducing tiles: " + HLE.WORLD_TILES);
+    // };
 
     // remote control / audioreactive
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
-
-  //  HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
-    HLRemote.updateHLParams(.5,.5,.5,.5,.5);
+      HLRemote.updateHLParams(.5,.5,.5,.5,.5);
+      // HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
@@ -77,6 +77,8 @@
     if(HLE.WATER) HLAnim.waterShaderBaseMotion();
     HLAnim.landGLSL();
     HLAnim.models();
+    HLAnim.particles();
+    // HLAnim.wind();
 
     // Controls and camera
     if(isMobile || isOrbit)
@@ -126,21 +128,29 @@
 
 
 // TODO: REMOVE! JUST FOR DEV PURPOSES
-  window.addEventListener('click', function(){
+  function randomizeLand(){
 
   var tilen = Math.round(Math.random()*HLE.WORLD_TILES);
 
    HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tilen,tilen);
    HL.land.geometry.rotateX(-Math.PI / 2);
    HL.land.material.uniforms.worldTiles.value = tilen;
-   HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(1,1+Math.round(tilen*Math.random()) );
+   HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen * Math.random(), tilen * Math.random() );
 
    HL.land.material.uniforms.cFactor.value = Math.random();
    HL.land.material.uniforms.dFactor.value = Math.random()*0.3;
    HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
-   HL.land.material.uniforms.map.value =HL.textures.water;// null;//HL.textures[Math.round(Math.random()*10)];
+   HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+   HL.land.material.uniforms.natural.value = Math.random();
+   HL.land.material.uniforms.rainbow.value = Math.random();
+    //  HL.materials.clouds.map = HL.textures['land'+(1+Math.round(Math.random()*4))];
 
    HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
    HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
 
-  });
+   launchIntoFullscreen(document.documentElement); // the whole page
+
+  };
+
+  if(isMobile)  window.addEventListener('touchstart',randomizeLand);
+  else  window.addEventListener('click',randomizeLand);

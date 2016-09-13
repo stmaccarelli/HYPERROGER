@@ -116,12 +116,21 @@ var HLAnim = function(){
   // FOR CLOUDS, FLORA AND FAUNA, I'd move this in HLS sceneManager
   function particles(){
 
-  //  HLH.bufSinMotion(HL.geometries.clouds, .4, .6);
+   HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.moveSpeed*10);
 
-    HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
+    // HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
 
-      // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
+    // HLH.bufSinMotion(HL.geometries.fauna,.1,.1);
 
+  }
+
+  function wind(){
+    if(frameCount%10 == 0)
+      HLH.startModel(
+        HL.models.cube,
+        (Math.random()-.5) * HLE.WORLD_WIDTH,
+        HLE.WORLD_HEIGHT/2+Math.random()*HLE.WORLD_HEIGHT/2,
+        HLE.moveSpeed*100, false, 1,1,100,true);
   }
 
   function models(){
@@ -170,6 +179,7 @@ var HLAnim = function(){
     waterShaderBaseMotion:waterShaderBaseMotion,
     land:land,
     particles:particles,
+    wind:wind,
     models:models,
     colors:colors,
     landGLSL:landGLSL,

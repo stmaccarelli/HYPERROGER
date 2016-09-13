@@ -8,38 +8,39 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:5000,
   WORLD_HEIGHT:500,
-  WORLD_TILES:2048,
+  WORLD_TILES: isMobile?128:256,
   TILE_SIZE:null,
-  SEA_TILES:32,
+  SEA_TILES:16,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:.124,
+  PIXEL_RATIO_SCALE:.5,
 
 
-  FOG:false,
-  MIRROR:isWire===true?false: false,
-  WATER:isWire===true?false: true,
+  FOG:true,
+  MIRROR: false,
+  WATER: true,
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: 0,
-  CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
+  CENTER_PATH:true, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computed move speed
   advance:0, // for GLSL land moving
-  buildFreq:50.0, //for GLSL land shape
+  buildFreq:50.0, //for GLSL land material
 
   BASE_SEA_SPEED:2.5,
   CLOUDS_SPEED:1,
 
   MAX_MODELS_OUT:50,
+  PARTICLE_MODELS_OUT:0,
 
   reactiveSeaHeight:0, // changes programmatically - audio
 
   landZeroPoint:0, // actually not a geometry, just a float to be multiplied to compute height
   landHeight:30, // actually not a geometry, just a float to be added to compute height
   landCliffFrequency:0.5,
-  LAND_Y_SHIFT:0,
+  LAND_Y_SHIFT:1,
   LAND_IS_BUFFER:true,
 
   seaStepsCount:0,
@@ -113,7 +114,7 @@ var HL = {
     skymapcity:"img/skybox2/skymap_photo9.jpg",
     land:"img/tex_stripe3.gif",
     sea:null,
-    clouds:null,
+    clouds:"img/tex_tree_82_128x128.png",
     flora:"img/tex_tree_82_128x128.png",
     fauna:null,
     water:"img/waternormals5.png",//wn5
@@ -126,19 +127,33 @@ var HL = {
     heartbomb:"3dm/heartbomb/heartbomb_full.png",
     mercury:"3dm/mercury/mercury.png",
     tiger:"3dm/uncletiger/uncletiger_al.png",
+
+    pattern1:"img/patterns/pattern-1.png",
+    pattern2:"img/patterns/pattern-2.png",
+    pattern3:"img/patterns/pattern-3.png",
+    pattern4:"img/patterns/pattern-4.png",
+    pattern5:"img/patterns/pattern-5.png",
+
+    land1:"img/land/land_tex_1.jpg",
+    land2:"img/land/land_tex_2.jpg",
+    land3:"img/land/land_tex_3.jpg",
+    land4:"img/land/land_tex_4.jpg",
+    land5:"img/land/land_tex_5.jpg",
+    land6:"img/land/land_tex_6.jpg",
   },
   dynamicTextures:{
     stars:null,
   },
   models: {
-    whale:["3dm/BL_WHALE/BL_WHALE2.OBJ",50],
-    whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",120],
-    ducky:["3dm/ducky/ducky.obj",80],
-    airbus:["3dm/airbus/airbus_c.obj",30],
-    aurora:["3dm/aurora/aurora_c.obj",30],
-    heartbomb:["3dm/heartbomb/heartbomb_c.obj",50],
-    mercury:["3dm/mercury/mercury_c.obj",80],
-    tiger:["3dm/uncletiger/uncletiger_c.obj",50],
+    whale:["3dm/BL_WHALE/BL_WHALE2.OBJ",10],
+    whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",20],
+    ducky:["3dm/ducky/ducky.obj",10],
+    airbus:["3dm/airbus/airbus_c.obj",10],
+    aurora:["3dm/aurora/aurora_c.obj",10],
+    heartbomb:["3dm/heartbomb/heartbomb_c.obj",10],
+    mercury:["3dm/mercury/mercury_c.obj",10],
+    tiger:["3dm/uncletiger/uncletiger_c.obj",10],
+    cube:["3dm/cube.obj",10],
   },
   modelsKeys:null,
   mGroups:{
@@ -167,9 +182,11 @@ var HL = {
 var HLEnvironment = function(){
 
   var imagesCounter=0,imagesLoaded=0;
-  function imageLoaded(){
+  function imageLoaded(key){
+    HL.textures[key].wrapS = THREE.RepeatWrapping;
+    HL.textures[key].wrapT = THREE.RepeatWrapping;
     imagesLoaded++;
-    console.log("image loaded "+imagesLoaded+"/"+imagesCounter);
+    console.log("image "+key+" loaded, "+imagesLoaded+"/"+imagesCounter);
     if(imagesLoaded==imagesCounter) { console.timeEnd('images'); HL.textures['length'] = imagesLoaded; initMaterials();}
   }
   function loadTextures(){
@@ -178,7 +195,7 @@ var HLEnvironment = function(){
     for (var key in HL.textures)
       if(HL.textures[key]!=null){
         imagesCounter++;
-        HL.textures[key] = loader.load( HL.textures[key], imageLoaded , null,function(i){imagesCounter--; console.error(i)});
+        HL.textures[key] = loader.load( HL.textures[key], (function(k) { return function() { imageLoaded( k ) } })(key) , null,function(i){imagesCounter--; console.error(i)});
       }
       else delete(HL.textures[key]);
   }
@@ -192,6 +209,8 @@ var HLEnvironment = function(){
       HL.dynamicTextures[k].height = 512;
       HL.dynamicTextures[k]['c'] = HL.dynamicTextures[k].getContext('2d');
       HL.dynamicTextures[k]['texture'] = new THREE.Texture(HL.dynamicTextures[k]);
+      HL.dynamicTextures[k]['texture'].wrapS = THREE.RepeatWrapping;
+      HL.dynamicTextures[k]['texture'].wrapT = THREE.RepeatWrapping;
     }
     console.timeEnd('dyn textures');
   }
@@ -200,13 +219,13 @@ var HLEnvironment = function(){
     console.time('HL environment');
 
     initEnvironment();
-    initLights();
     initGeometries();
     initDynamicTextures();
     loadTextures();
     // loadTextures() calls initMaterials() once all images are loaded
     // initMaterials() calls initMeshes()
-    // initMeshes() is the last call, so it dispatches HLEload event
+    // initMeshes() calls initLights()
+    // initLights() is the last call, so it dispatches HLEload event
 
     // start clock;
     HL.clock.start();
@@ -218,7 +237,7 @@ var HLEnvironment = function(){
     // SET CONSTANTS
     HLE.TILE_SIZE = HLE.WORLD_WIDTH / HLE.WORLD_TILES;
     HLE.SEA_TILE_SIZE = HLE.WORLD_WIDTH / HLE.SEA_TILES;
-    HLE.LAND_Y_SHIFT = -HLE.WORLD_HEIGHT*0.1;
+    // HLE.LAND_Y_SHIFT = -HLE.WORLD_HEIGHT*0.1;
     HLE.MAX_MOVE_SPEED = Math.min(20,HLE.TILE_SIZE);
     HLE.BASE_MOVE_SPEED = HLE.WORLD_WIDTH/HLE.WORLD_TILES/2 * 2;
 
@@ -259,11 +278,9 @@ var HLEnvironment = function(){
     // RENDERER
     // TODO: The easyest method to spedup FPS on slow mobile, is to reduce resolution
     // we can do this by settind pixel ratio to fraction of devicePixelRatio
-    // for now we lock this to 1; NOTE: this will not render to retina resolutions
-    // use     HL.renderer.setPixelRatio(window.devicePixelRatio); for retina rendering
 
     if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
-      HL.renderer = new THREE.WebGLRenderer({antialias: false});
+      HL.renderer = new THREE.WebGLRenderer({antialias: true});
       HL.renderer.setSize(window.innerWidth, window.innerHeight, true);
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
       HL.renderer.domElement.style.imageRendering = 'pixelated';
@@ -271,7 +288,7 @@ var HLEnvironment = function(){
       HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
     }
     else {
-      HL.renderer = new THREE.WebGLRenderer({antialias: true});
+      HL.renderer = new THREE.WebGLRenderer({antialias: false});
       HL.renderer.setSize(window.innerWidth, window.innerHeight);
       HL.renderer.setPixelRatio(window.devicePixelRatio);
     }
@@ -327,7 +344,6 @@ var HLEnvironment = function(){
       HL.geometries.sea = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
       1,1);
       HL.geometries.sea.name = 'sea-water-geometry';
-
     }
     else{
       HL.geometries.sea = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
@@ -411,8 +427,9 @@ var HLEnvironment = function(){
       wireframe:isWire,
       // wireframeLinewidth:2,
       map:isWire?null:HL.textures.land,
-      fog:true,
-      repeatUV: new THREE.Vector2(1,HLE.WORLD_TILES),
+      fog:false,
+      repeatUV: new THREE.Vector2(1,1),
+      centerPath : HLE.CENTER_PATH
    });
 
 
@@ -467,16 +484,16 @@ var HLEnvironment = function(){
 
       // Load textures
   		HL.textures.water.wrapS = HL.textures.water.wrapT = THREE.RepeatWrapping;
-      HL.textures.water.repeat.set( 1, 3);
+      HL.textures.water.repeat.set( 1, 1);
 
   		// Create the water effect
   		HL.materials.water = new THREE.Water(HL.renderer, HL.camera, HL.scene, {
-  			textureWidth: 512,
-  			textureHeight: 512,
+  			textureWidth: 256,
+  			textureHeight: 256,
   			waterNormals: HL.textures.water,
         noiseScale: 0.25, //2.14
-  			sunDirection: HL.lights.sun.position.normalize(),
-//        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
+  			// sunDirection: HL.lights.sun.position.normalize(),
+        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
   			sunColor: 0x7f7f66,
   			// color: HLC.sea,
   			// betaVersion: 1,
@@ -492,14 +509,14 @@ var HLEnvironment = function(){
     HL.materials.clouds = new THREE.PointsMaterial({
       color: HLC.clouds,
       side: THREE.DoubleSide,
-      opacity:.5,
-      transparent: false,
+      opacity:.8,
+      transparent: true,
       size: 20,
       fog: true,
       sizeAttenuation: true,
-      //alphaTest: 0.5,
+      // alphaTest: -0.5,
       depthWrite: false,
-      map:isWire?null:HL.textures.clouds,
+      // map:isWire?null:HL.textures.clouds,
     });
     HL.materials.clouds.color = HLC.clouds; // set by reference
 
@@ -535,7 +552,7 @@ var HLEnvironment = function(){
     HL.materials.fauna.color = HLC.fauna; // set by reference
 
 
-    //create materials for each model
+    //create materials for 3d models
     for(var k in HL.models){
       HL.materials[k] = new THREE.MeshPhongMaterial({
         color: 0x000000,
@@ -543,10 +560,10 @@ var HLEnvironment = function(){
         fog:true,
         wireframe:isWire,
         wireframeLinewidth:2,
-        side:THREE.FrontSide,
+        side:THREE.DoubleSide,
       //  transparent:true,
       });
-      HL.materials[k].color=HLC.horizon;
+      HL.materials[k].color=new THREE.Color(0xffffff);
 
     }
 
@@ -604,8 +621,8 @@ var HLEnvironment = function(){
   function initLights(){
     console.time('lights');
 
-     HL.lights.ambient = new THREE.AmbientLight( 0xbbbbbb );
-     HL.scene.add( HL.lights.ambient );
+    //  HL.lights.ambient = new THREE.AmbientLight( 0xbbbbbb );
+    //  HL.scene.add( HL.lights.ambient );
   //
   //   HL.lights.directional = new THREE.DirectionalLight( 0xffffff, 10);
   //   HL.lights.directional.color = HLC.horizon;
@@ -613,20 +630,33 @@ var HLEnvironment = function(){
   // //  HL.lights.directional.castShadows = false;
   //   HL.scene.add( HL.lights.directional );
 
-     HL.lights.sun = new THREE.DirectionalLight( 0xffffff, 2);
+     HL.lights.sun = new THREE.DirectionalLight( 0xffffff, .5);
      HL.lights.sun.color = HLC.horizon;
-     HL.lights.sun.position.set(0,HLE.WORLD_HEIGHT*4, -HLE.WORLD_WIDTH*2);
+     HL.lights.sun.position.set(0,1,0);
      //  HL.lights.sun.castShadows = false;
      HL.scene.add( HL.lights.sun );
 
 
-     HL.lights['moon'] = new THREE.DirectionalLight( 0x007bff, 1.5);
-     HL.lights.moon.position.set(0,HLE.WORLD_HEIGHT*2, 100);
-     //  HL.lights.sun.castShadows = false;
-     HL.scene.add( HL.lights.moon );
+    //  HL.lights['moon'] = new THREE.DirectionalLight( 0xffffff, 1);
+    //  HL.lights.moon.position.set(0,1,0);
+    //  HL.lights.moon.color = HLC.horizon;
+    // HL.scene.add( HL.lights.moon );
+
+
+     HL.lights['hemisphere'] = new THREE.HemisphereLight( 0xffffff, HLC.land, .6 );
+     HL.lights.hemisphere.color = HLC.horizon;
+     HL.lights.hemisphere.groundColor = HLC.land;
+
+     HL.scene.add(HL.lights.hemisphere);
+
 
 
      console.timeEnd('lights');
+
+     var HLEload = new Event("HLEload");
+     console.timeEnd('HL environment');
+     window.dispatchEvent(HLEload);
+     document.body.removeChild(consoleDiv);
 
   }
 
@@ -639,7 +669,7 @@ var HLEnvironment = function(){
     HL.scene.add(HL.skybox);
 
     HL.land = new THREE.Mesh(HL.geometries.land, HL.materials.land);
-    // HL.land.position.y = -HLE.LAND_Y_SHIFT; //hardset land at lower height, so we easily see sea
+    HL.land.position.y = -HLE.LAND_Y_SHIFT; //hardset land at lower height, so we easily see sea
     HL.land.name = "land";
     // HL.land.castShadows = true;
     // HL.land.receiveShadows = true;
@@ -671,10 +701,10 @@ var HLEnvironment = function(){
     HL.clouds.frustumCulled = false;
     HL.scene.add(HL.clouds);
 
-    HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
-    HL.flora.name = "flora";
-    HL.flora.frustumCulled = false;
-    HL.scene.add(HL.flora);
+    // HL.flora = new THREE.Points(HL.geometries.flora, HL.materials.flora);
+    // HL.flora.name = "flora";
+    // HL.flora.frustumCulled = false;
+    // HL.scene.add(HL.flora);
 
     // HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
     // HL.fauna.name = "fauna";
@@ -682,9 +712,50 @@ var HLEnvironment = function(){
     console.timeEnd('meshes');
 
 
-    var HLEload = new Event("HLEload");
-    window.dispatchEvent(HLEload);
-    console.timeEnd('HL environment');
+    initLights();
   }
   return{init:init}
 }();
+
+var consoleDiv = document.createElement('div');
+consoleDiv.style.position = "absolute";
+consoleDiv.style.bottom=0;
+consoleDiv.style.left=0;
+document.body.appendChild(consoleDiv);
+
+if (typeof console  != "undefined")
+    if (typeof console.log != 'undefined'){
+      console.olog = console.log;
+      console.oTimeEnd = console.timeEnd;
+      }
+    else{
+        console.olog = function() {};
+      }
+
+console.log = function(message) {
+    console.olog(message);
+    consoleDiv.innerHTML += ('<p>' + message + '</p>');
+};
+
+console.timeEnd = function(message) {
+    console.oTimeEnd(message);
+    consoleDiv.innerHTML += ('<p>' + message +'</p>');
+};
+console.error = console.debug = console.info = console.log
+
+
+// Find the right method, call on correct element
+function launchIntoFullscreen(element) {
+  if(element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if(element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if(element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  } else if(element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  }
+}
+
+// Launch fullscreen for browsers that support it!
+launchIntoFullscreen(document.documentElement); // the whole page

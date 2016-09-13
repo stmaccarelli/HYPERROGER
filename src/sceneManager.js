@@ -183,7 +183,7 @@ var HLS ={
   HLS.shootGroup = function(g,s,r){
     HLH.startModel(HL.models[HL.mGroups[g][Math.floor(Math.random()*HL.mGroups[g].length)]],
      THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),
-     THREE.Math.randInt(HLE.WORLD_HEIGHT*0.4,HLE.WORLD_HEIGHT*3),
+     THREE.Math.randInt(HLE.WORLD_HEIGHT*0.1,HLE.WORLD_HEIGHT*2),
      s, (r?'xyz':null) );    // shoot all models from a group
   }
 
@@ -195,11 +195,11 @@ var HLS ={
   //
   HLS.modelshooting = function(k){
     if(k.keyCode==81)//q
-      HLS.shootGroup('sea',5,false);
+      HLS.shootGroup('sea',0,true);
     if(k.keyCode==87)//w
-      HLS.shootGroup('weird',5,true);
+      HLS.shootGroup('weird',0,true);
     if(k.keyCode==69)//e
-      HLS.shootGroup('space',5,true);
+      HLS.shootGroup('space',50,true);
     if(k.keyCode==65)//a
       HLS.shootEverything();
 
@@ -213,7 +213,7 @@ var HLS ={
     if(k.keyCode==67){//c
       HLE.CENTER_PATH=!HLE.CENTER_PATH;
       HLE.cameraHeight = 0;
-      // if(hud!==undefined) hud.display('HLE.CENTER_PATH= '+HLE.CENTER_PATH, 5);
+      HL.land.material.uniforms.withCenterPath.value = HLE.CENTER_PATH;
     }
 
   }

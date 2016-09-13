@@ -231,8 +231,14 @@ var HLH = function() {
 	}
 
 
-	function startModel(model,x,y,speed,rotations){
-		if(HL.dynamicModelsClones.length >= HLE.MAX_MODELS_OUT) return
+	function startModel(model,x,y,speed,rotations, sX, sY, sZ, isParticle){
+		sX = sX || 1;
+		sY = sY || 1;
+		sZ = sZ || 1;
+		isParticle = isParticle || false;
+
+		if(isParticle) HLE.PARTICLE_MODELS_OUT++;
+		if(HL.dynamicModelsClones.length >= HLE.MAX_MODELS_OUT + HLE.PARTICLE_MODELS_OUT) return
 		dynModelsCounter++;
 		speed = speed || 0;
 		x = x || 0;
@@ -240,6 +246,7 @@ var HLH = function() {
 		rotations = rotations || 'n';
 
 		HL.dynamicModelsClones['m'+dynModelsCounter] = model.clone();
+
 
 		var z = -HLE.WORLD_WIDTH;
 		// y === true means we want models attached to landscape
@@ -265,10 +272,14 @@ var HLH = function() {
 			HL.dynamicModelsClones['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
 
 		HL.dynamicModelsClones['m'+dynModelsCounter].size = model.size;
-		HL.dynamicModelsClones['m'+dynModelsCounter].scale.set(.7+Math.random()*.3, .7+Math.random()*.3, .7+Math.random()*.3);
+		HL.dynamicModelsClones['m'+dynModelsCounter].scale.set(.7+Math.random()*.3+sX, .7+Math.random()*.3+sY, .7+Math.random()*.3+sZ);
 		HL.dynamicModelsClones['m'+dynModelsCounter]['key']='m'+dynModelsCounter;
 		HL.scene.add(HL.dynamicModelsClones['m'+dynModelsCounter]);
-		HL.dynamicModelsClones.length++;
+
+		if(isParticle)
+			HL.dynamicModelsClones['m'+dynModelsCounter]['isparticle']=true;
+		else
+			HL.dynamicModelsClones.length++;
 
 		HL.dynamicModelsClones['m'+dynModelsCounter].position.set(x,y,z);
 		HL.dynamicModelsClones['m'+dynModelsCounter]["speed"] = speed;
@@ -281,15 +292,16 @@ var HLH = function() {
 
 	function moveModel(model){
 		if(model.position.z >= -HLE.WORLD_WIDTH){
-			if(model.speed!==0) model.position.z += model.speed;
-			else model.position.z+=HLE.moveSpeed;
-			model.position.y = -model.size.y + (model.targetY+model.size.y)
-				- easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)
-					*(model.targetY+model.size.y);
+			model.position.z += model.speed + HLE.moveSpeed;
 
-			if(model.rotations.indexOf('x')!=-1) model.rotateX(millis*.0000025*HLE.moveSpeed);
-			if(model.rotations.indexOf('y')!=-1) model.rotateY(millis*.0000030*HLE.moveSpeed);
-			if(model.rotations.indexOf('z')!=-1) model.rotateZ(millis*.0000035*HLE.moveSpeed);
+			if(! model.isParticle)
+				model.position.y = -model.size.y + (model.targetY+model.size.y)
+					- easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)
+						*(model.targetY+model.size.y);
+
+			if(model.rotations.indexOf('x')!=-1) model.rotateX(model.speed*0.0005);
+			if(model.rotations.indexOf('y')!=-1) model.rotateY(model.speed*0.0005);
+			if(model.rotations.indexOf('z')!=-1) model.rotateZ(model.speed*0.0005);
 		}
 		if(model.position.z>=HLE.WORLD_WIDTH*0.5+model.size.z*.5){
 			//resetModel(model);
@@ -297,7 +309,11 @@ var HLH = function() {
 			model.material.dispose();
 			model.geometry.dispose();
 			delete HL.dynamicModelsClones[model.key];
-			HL.dynamicModelsClones.length--;
+
+			if( !HL.dynamicModelsClones['m'+dynModelsCounter].isparticle)
+ 				HL.dynamicModelsClones.length--;
+			HL.dynamicModelsClones['m'+dynModelsCounter]['key']='m'+dynModelsCounter;
+
 		}
 	}
 
@@ -355,7 +371,7 @@ var HLH = function() {
 		},
 		resetModel: function(a) {resetModel(a)},
 		resetAllModels: resetAllModels,
-		startModel: function(a,b,c,d,e) {startModel(a,b,c,d,e)},
+		startModel: function(a,b,c,d,e,f,g,h,i) {startModel(a,b,c,d,e,f,g,h,i)},
 		moveModel: function(a,b) {moveModel(a,b)},
 		destroyAllModels:destroyAllModels,
 	}
