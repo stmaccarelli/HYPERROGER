@@ -8,7 +8,7 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:5000,
   WORLD_HEIGHT:500,
-  WORLD_TILES: isMobile?128:256,
+  WORLD_TILES: isMobile?256:256,
   TILE_SIZE:null,
   SEA_TILES:16,
   SEA_TILE_SIZE:null,
@@ -254,7 +254,7 @@ var HLEnvironment = function(){
     if(HLE.FOG && !isWire){
       // HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.20, HLE.WORLD_WIDTH * 0.45);
       // HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.45, HLE.WORLD_WIDTH * 0.45);
-      HL.scene.fog = new THREE.Fog(0x000000,HLE.WORLD_WIDTH * 0.15, HLE.WORLD_WIDTH * 0.6); //(HLC.horizon, HLE.WORLD_WIDTH * 0.35 , HLE.WORLD_WIDTH * 0.5);
+      HL.scene.fog = new THREE.FogExp2();//(0x000000,HLE.WORLD_WIDTH * 0.15, HLE.WORLD_WIDTH * 0.6); //)(HLC.horizon, HLE.WORLD_WIDTH * 0.35 , HLE.WORLD_WIDTH * 0.5);
       HL.scene.fog.color = HLC.horizon;
     }
 

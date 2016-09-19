@@ -63,7 +63,8 @@
     // remote control / audioreactive
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
-      HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
+    if(!isMobile)  HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
+    else  HLRemote.updateHLParams(.5,.5,.5,.5,.5);
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
@@ -110,13 +111,14 @@
 
 
 
-    ///
-    HL.land.material.uniforms.buildFreq.value = THREE.Math.clamp( HL.land.material.uniforms.buildFreq.value+THREE.Math.randFloat(-1,1)*0.001,0,100);
-    HL.land.material.uniforms.natural.value = THREE.Math.clamp( HL.land.material.uniforms.natural.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    HL.land.material.uniforms.rainbow.value = THREE.Math.clamp( HL.land.material.uniforms.rainbow.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    // HL.land.material.uniforms.squareness.value = THREE.Math.clamp( HL.land.material.uniforms.squareness.value+THREE.Math.randFloat(-1,1)*0.0005,0.01,.5);
-    HL.land.material.uniforms.bFactor.value = THREE.Math.clamp( HL.land.material.uniforms.bFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    HL.land.material.uniforms.cFactor.value = THREE.Math.clamp( HL.land.material.uniforms.cFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,.3);
+    /// auto change params test
+    //
+    // HL.land.material.uniforms.buildFreq.value = THREE.Math.clamp( HL.land.material.uniforms.buildFreq.value+THREE.Math.randFloat(-1,1)*0.001,0,100);
+    // HL.land.material.uniforms.natural.value = THREE.Math.clamp( HL.land.material.uniforms.natural.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    // HL.land.material.uniforms.rainbow.value = THREE.Math.clamp( HL.land.material.uniforms.rainbow.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    // // HL.land.material.uniforms.squareness.value = THREE.Math.clamp( HL.land.material.uniforms.squareness.value+THREE.Math.randFloat(-1,1)*0.0005,0.01,.5);
+    // HL.land.material.uniforms.bFactor.value = THREE.Math.clamp( HL.land.material.uniforms.bFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    // HL.land.material.uniforms.cFactor.value = THREE.Math.clamp( HL.land.material.uniforms.cFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,.3);
 }
 
   function loadRoutine(){
