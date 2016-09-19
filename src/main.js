@@ -110,13 +110,14 @@
 
 
 
-    ///
-    HL.land.material.uniforms.buildFreq.value = THREE.Math.clamp( HL.land.material.uniforms.buildFreq.value+THREE.Math.randFloat(-1,1)*0.001,0,100);
-    HL.land.material.uniforms.natural.value = THREE.Math.clamp( HL.land.material.uniforms.natural.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    HL.land.material.uniforms.rainbow.value = THREE.Math.clamp( HL.land.material.uniforms.rainbow.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    // HL.land.material.uniforms.squareness.value = THREE.Math.clamp( HL.land.material.uniforms.squareness.value+THREE.Math.randFloat(-1,1)*0.0005,0.01,.5);
-    HL.land.material.uniforms.bFactor.value = THREE.Math.clamp( HL.land.material.uniforms.bFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    HL.land.material.uniforms.cFactor.value = THREE.Math.clamp( HL.land.material.uniforms.cFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,.3);
+    /// auto change params test
+    //
+    // HL.land.material.uniforms.buildFreq.value = THREE.Math.clamp( HL.land.material.uniforms.buildFreq.value+THREE.Math.randFloat(-1,1)*0.001,0,100);
+    // HL.land.material.uniforms.natural.value = THREE.Math.clamp( HL.land.material.uniforms.natural.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    // HL.land.material.uniforms.rainbow.value = THREE.Math.clamp( HL.land.material.uniforms.rainbow.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    // // HL.land.material.uniforms.squareness.value = THREE.Math.clamp( HL.land.material.uniforms.squareness.value+THREE.Math.randFloat(-1,1)*0.0005,0.01,.5);
+    // HL.land.material.uniforms.bFactor.value = THREE.Math.clamp( HL.land.material.uniforms.bFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    // HL.land.material.uniforms.cFactor.value = THREE.Math.clamp( HL.land.material.uniforms.cFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,.3);
 }
 
   function loadRoutine(){
