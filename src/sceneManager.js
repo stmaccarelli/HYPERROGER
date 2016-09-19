@@ -203,12 +203,12 @@ var HLS ={
     if(k.keyCode==65)//a
       HLS.shootEverything();
 
-    if(k.keyCode==49)//1
-      {HLS.startScene('scene1');}
-    if(k.keyCode==50)//2
-      {HLS.startScene('scene2');}
-    if(k.keyCode==51)//3
-      {HLS.startScene('scene3');}
+    // if(k.keyCode==49)//1
+    //   {HLS.startScene('scene1');}
+    // if(k.keyCode==50)//2
+    //   {HLS.startScene('scene2');}
+    // if(k.keyCode==51)//3
+    //   {HLS.startScene('scene3');}
 
     if(k.keyCode==67){//c
       HLE.CENTER_PATH=!HLE.CENTER_PATH;

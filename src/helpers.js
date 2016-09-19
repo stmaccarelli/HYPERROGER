@@ -303,7 +303,24 @@ var HLH = function() {
 			if(model.rotations.indexOf('y')!=-1) model.rotateY(model.speed*0.0005);
 			if(model.rotations.indexOf('z')!=-1) model.rotateZ(model.speed*0.0005);
 		}
-		if(model.position.z>=HLE.WORLD_WIDTH*0.5+model.size.z*.5){
+
+		// TODO: shake camera when objects approach
+		//
+		// var distX = Math.abs(model.position.x)-model.size.x*3,
+		// distY = Math.abs(model.position.y)-model.size.y*3,
+		// distZ = Math.abs(model.position.z)-model.size.z*3;
+		//
+		// //  if(distX<0 && distY<0 && distZ<0){
+		// 	HL.camera.rotateX( (Math.random()*.00005-.000025) * (distX/model.size.x*3) );
+		// 	HL.camera.rotateY( (Math.random()*.00005-.000025) * (distX/model.size.y*3) );
+		// 	HL.camera.rotateZ( (Math.random()*.00005-.000025) * (distX/model.size.z*3) );
+		// //  }
+		//
+		// HL.camera.rotation.x *= 0.88;
+		// HL.camera.rotation.y *= 0.88;
+		// HL.camera.rotation.z *= 0.88;
+
+		if(model.position.z>=HLE.WORLD_WIDTH+model.size.z*.6){
 			//resetModel(model);
 			HL.scene.remove(model);
 			model.material.dispose();

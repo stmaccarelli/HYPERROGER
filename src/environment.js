@@ -110,8 +110,8 @@ var HL = {
     models:null,
   },
   textures: {
-    skybox:"img/skybox2/skydome2.jpg",
-    skymapcity:"img/skybox2/skymap_photo9.jpg",
+    skybox:"img/skybox2/skymap_photo9.jpg",
+    // skymapcity:"img/skybox2/skymap_photo9.jpg",
     land:"img/tex_stripe3.gif",
     sea:null,
     clouds:"img/tex_tree_82_128x128.png",
@@ -239,7 +239,7 @@ var HLEnvironment = function(){
     HLE.SEA_TILE_SIZE = HLE.WORLD_WIDTH / HLE.SEA_TILES;
     // HLE.LAND_Y_SHIFT = -HLE.WORLD_HEIGHT*0.1;
     HLE.MAX_MOVE_SPEED = Math.min(20,HLE.TILE_SIZE);
-    HLE.BASE_MOVE_SPEED = HLE.WORLD_WIDTH/HLE.WORLD_TILES/2 * 2;
+    HLE.BASE_MOVE_SPEED = HLE.WORLD_WIDTH/HLE.WORLD_TILES/2 ;
 
     // init clock
     HL.clock = new THREE.Clock(false);
@@ -254,7 +254,7 @@ var HLEnvironment = function(){
     if(HLE.FOG && !isWire){
       // HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.20, HLE.WORLD_WIDTH * 0.45);
       // HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.45, HLE.WORLD_WIDTH * 0.45);
-      HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * 0.35 , HLE.WORLD_WIDTH * 0.5);
+      HL.scene.fog = new THREE.Fog(0x000000,HLE.WORLD_WIDTH * 0.15, HLE.WORLD_WIDTH * 0.6); //(HLC.horizon, HLE.WORLD_WIDTH * 0.35 , HLE.WORLD_WIDTH * 0.5);
       HL.scene.fog.color = HLC.horizon;
     }
 
@@ -283,12 +283,12 @@ var HLEnvironment = function(){
       HL.renderer = new THREE.WebGLRenderer({antialias: true});
       HL.renderer.setSize(window.innerWidth, window.innerHeight, true);
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
-      HL.renderer.domElement.style.imageRendering = 'pixelated';
-      HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
-      HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
+      // HL.renderer.domElement.style.imageRendering = 'pixelated';
+      // HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
+      // HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
     }
     else {
-      HL.renderer = new THREE.WebGLRenderer({antialias: false});
+      HL.renderer = new THREE.WebGLRenderer({antialias: true});
       HL.renderer.setSize(window.innerWidth, window.innerHeight);
       HL.renderer.setPixelRatio(window.devicePixelRatio);
     }
@@ -427,7 +427,7 @@ var HLEnvironment = function(){
       wireframe:isWire,
       // wireframeLinewidth:2,
       map:isWire?null:HL.textures.land,
-      fog:false,
+      fog:true,
       repeatUV: new THREE.Vector2(1,1),
       centerPath : HLE.CENTER_PATH
    });
@@ -491,7 +491,8 @@ var HLEnvironment = function(){
   			textureWidth: 256,
   			textureHeight: 256,
   			waterNormals: HL.textures.water,
-        noiseScale: 0.25, //2.14
+        noiseScale: 0.214,
+        distortionScale:70,
   			// sunDirection: HL.lights.sun.position.normalize(),
         sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
   			sunColor: 0x7f7f66,
@@ -554,7 +555,7 @@ var HLEnvironment = function(){
 
     //create materials for 3d models
     for(var k in HL.models){
-      HL.materials[k] = new THREE.MeshPhongMaterial({
+      HL.materials[k] = new THREE.MeshLambertMaterial({
         color: 0x000000,
         map:isWire?null:(HL.textures[k]!==undefined?HL.textures[k]:null),
         fog:true,
@@ -758,4 +759,4 @@ function launchIntoFullscreen(element) {
 }
 
 // Launch fullscreen for browsers that support it!
-launchIntoFullscreen(document.documentElement); // the whole page
+if(isMobile) launchIntoFullscreen(document.documentElement); // the whole page

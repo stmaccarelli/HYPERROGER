@@ -12,7 +12,7 @@ function HUD(iscanvas){
 
   _HUD.initCanvas = function(){
     _HUD.canvas = document.createElement('canvas');
-    _HUD.canvas.setAttribute("style", "position: absolute; top:0;left:0; background:transparent; z-index:999;"); // Multiple style properties
+    _HUD.canvas.setAttribute("style", "position: absolute; top:0;left:0; background:transparent;"); // Multiple style properties
     _HUD.canvas.width = _HUD.width;
     _HUD.canvas.height = _HUD.height;
     document.body.appendChild(_HUD.canvas);

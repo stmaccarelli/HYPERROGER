@@ -39,11 +39,6 @@
     window.addEventListener("resize", onResized);
   }
 
-  function guiInit(){
-    var gui = new dat.GUI();
-    var guiTweak = gui.addFolder('manuali');
-    guiTweak.add(HLE, 'BASE_MOVE_SPEED',0,30);
-  }
 
 
   function run() {
@@ -68,8 +63,7 @@
     // remote control / audioreactive
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
-      HLRemote.updateHLParams(.5,.5,.5,.5,.5);
-      // HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
+      HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
@@ -89,7 +83,7 @@
     else{
       // this function sucks spu, use just if really needed
       //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
-
+      // HL.camera.rotateY(.001);
     }
 
     if(!HLE.CENTER_PATH && !isMobile){
@@ -112,17 +106,28 @@
       HL.renderer.render(HL.scene,HL.camera);
 
     delta = null;
-  }
+
+
+
+
+    ///
+    HL.land.material.uniforms.buildFreq.value = THREE.Math.clamp( HL.land.material.uniforms.buildFreq.value+THREE.Math.randFloat(-1,1)*0.001,0,100);
+    HL.land.material.uniforms.natural.value = THREE.Math.clamp( HL.land.material.uniforms.natural.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    HL.land.material.uniforms.rainbow.value = THREE.Math.clamp( HL.land.material.uniforms.rainbow.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    // HL.land.material.uniforms.squareness.value = THREE.Math.clamp( HL.land.material.uniforms.squareness.value+THREE.Math.randFloat(-1,1)*0.0005,0.01,.5);
+    HL.land.material.uniforms.bFactor.value = THREE.Math.clamp( HL.land.material.uniforms.bFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
+    HL.land.material.uniforms.cFactor.value = THREE.Math.clamp( HL.land.material.uniforms.cFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,.3);
+}
 
   function loadRoutine(){
     mainInit();
-    // guiInit();
     // init HyperLand Environment
     HLEnvironment.init();
     hud = new HUD(true);
     // run is called by HLEnvironment.init() when it's all loaded
-    window.addEventListener('HLEload', function(){console.log("event HLEload received"); run(); });
+    window.addEventListener('HLEload', function(){console.log("event HLEload received"); if(!isMobile) G.guiInit(); run(); });
     window.removeEventListener('load',loadRoutine,false);
+
   }
   window.addEventListener('load',loadRoutine,false);
 
@@ -137,20 +142,19 @@
    HL.land.material.uniforms.worldTiles.value = tilen;
    HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen * Math.random(), tilen * Math.random() );
 
-   HL.land.material.uniforms.cFactor.value = Math.random();
-   HL.land.material.uniforms.dFactor.value = Math.random()*0.3;
+   HL.land.material.uniforms.bFactor.value = Math.random();
+   HL.land.material.uniforms.cFactor.value = Math.random()*0.3;
    HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
    HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
    HL.land.material.uniforms.natural.value = Math.random();
    HL.land.material.uniforms.rainbow.value = Math.random();
-    //  HL.materials.clouds.map = HL.textures['land'+(1+Math.round(Math.random()*4))];
+   HL.land.material.uniforms.squareness.value = Math.random()*Math.random();
+
 
    HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
    HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
 
-   launchIntoFullscreen(document.documentElement); // the whole page
-
   };
 
   if(isMobile)  window.addEventListener('touchstart',randomizeLand);
-  else  window.addEventListener('click',randomizeLand);
+  // else  window.addEventListener('click',randomizeLand);
