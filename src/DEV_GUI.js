@@ -72,7 +72,7 @@ var G = function(){
     gui.add(buttons,'showParams');
 
 
-    var tilesController = gui.add(params, 'tiles',32,512).step(8).listen();
+    var tilesController = gui.add(params, 'tiles',32,HLE.WORLD_TILES).step(8).listen();
     tilesController.onChange(function(value) {
        HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, value,value);
        HL.land.geometry.rotateX(-Math.PI / 2);

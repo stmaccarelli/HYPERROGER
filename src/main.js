@@ -84,7 +84,7 @@
     else{
       // this function sucks spu, use just if really needed
       //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
-      // HL.camera.rotateY(.001);
+       HL.camera.rotateY(.001);
     }
 
     if(!HLE.CENTER_PATH && !isMobile){
@@ -92,6 +92,8 @@
       HLE.smoothCameraHeight += (HLE.landHeight - HLE.smoothCameraHeight) * (HLE.moveSpeed * 0.001);
       HL.camera.position.y = 10 + HLE.smoothCameraHeight * 1.1;
     }
+
+
 
     // Rendering
     if(HLE.WATER)

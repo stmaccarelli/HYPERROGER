@@ -95,7 +95,7 @@ var HLRemote = function(){
         HL.materials.mirror.material.uniforms.time.value += HLR.fft4*0.2;
       if(HLE.WATER){
         HL.materials.water.material.uniforms.time.value += HLR.fft4*0.2;
-       HL.materials.land.uniforms.buildFreq.value += Math.min(HLR.fft2-0.85, 0.00001) * 0.005;
+      //  HL.materials.land.uniforms.buildFreq.value += Math.min(HLR.fft2-0.85, 0.00001) * 0.005;
       }
       else
         HLE.reactiveSeaHeight = HLR.fft3*HLE.WORLD_HEIGHT*0.1;
