@@ -63,7 +63,8 @@
     // remote control / audioreactive
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
-      HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
+    if(!isMobile)  HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
+    else  HLRemote.updateHLParams(.5,.5,.5,.5,.5);
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
