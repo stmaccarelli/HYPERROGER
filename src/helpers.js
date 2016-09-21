@@ -310,7 +310,7 @@ var HLH = function() {
 		dist = dist/(HLE.WORLD_WIDTH);
 		dist = 1-dist;
 		dist = Math.pow(dist,10)*0.3;
-		var shaking = model.speed * 0.0035;
+		var shaking = model.speed * model.size.length() * 0.000025;
 		HL.camera.rotation.x +=(THREE.Math.randFloat(-1,1)*(dist) * shaking );
 		HL.camera.rotation.y +=(THREE.Math.randFloat(-1,1)*(dist) * shaking );
 		HL.camera.rotation.z +=(THREE.Math.randFloat(-1,1)*(dist) * shaking );
@@ -335,7 +335,7 @@ var HLH = function() {
 		// //  }
 		//
 		HL.camera.rotation.x *= 0.88;
-		// HL.camera.rotation.y *= 0.88;
+		HL.camera.rotation.y *= 0.88;
 		HL.camera.rotation.z *= 0.88;
 
 		if(model.position.z>=HLE.WORLD_WIDTH+model.size.z*.6){

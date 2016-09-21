@@ -115,13 +115,17 @@ var HLRemote = function(){
 
       //
       HLR.tempLandHeight = (HLR.smoothFFT1 + HLR.smoothFFT3 )
-        * HLE.WORLD_HEIGHT*1;
-      if(HLE.CENTER_PATH) HLR.tempLandHeight*=3;
+        * HLE.WORLD_HEIGHT*0.75;
+      // if(HLE.CENTER_PATH) HLR.tempLandHeight*=3;
       HLE.landHeight += (HLR.tempLandHeight-HLE.landHeight)*0.45;
       //  HLE.landZeroPoint = - HLR.fft3 * HLE.landHeight * .5;
   //  }// end audioreactive stuff
 
-
+      // HLC.horizon.setRGB(
+      //   HLC.tempHorizon.r,
+      //   HLC.tempHorizon.g,
+      //   HLC.tempHorizon.b
+      // );
   }
 
   return{

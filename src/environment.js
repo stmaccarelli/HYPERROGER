@@ -8,7 +8,7 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 var HLE = {
   WORLD_WIDTH:5000,
   WORLD_HEIGHT:500,
-  WORLD_TILES: isMobile?256:1024,
+  WORLD_TILES: isMobile?256:512,
   TILE_SIZE:null,
   SEA_TILES:16,
   SEA_TILE_SIZE:null,
@@ -40,7 +40,7 @@ var HLE = {
   landZeroPoint:0, // actually not a geometry, just a float to be multiplied to compute height
   landHeight:30, // actually not a geometry, just a float to be added to compute height
   landCliffFrequency:0.5,
-  LAND_Y_SHIFT:1,
+  LAND_Y_SHIFT:5,
   LAND_IS_BUFFER:true,
 
   seaStepsCount:0,
@@ -65,8 +65,10 @@ var HLE = {
 //HL Colors Library
 var HLC = {
   horizon: new THREE.Color(0x888888),
+  tempHorizon: new THREE.Color(0xff0000),
+
   land: new THREE.Color(0x116611),
-  sea: new THREE.Color(0x000611),
+  sea: new THREE.Color(0x003344),
 
   underHorizon: new THREE.Color(.0, .02, .02),
   underLand: new THREE.Color(.1, .9, .9),
@@ -254,7 +256,7 @@ var HLEnvironment = function(){
     if(HLE.FOG && !isWire){
       // HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.20, HLE.WORLD_WIDTH * 0.45);
       // HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.45, HLE.WORLD_WIDTH * 0.45);
-      HL.scene.fog = new THREE.FogExp2();//(0x000000,HLE.WORLD_WIDTH * 0.15, HLE.WORLD_WIDTH * 0.6); //)(HLC.horizon, HLE.WORLD_WIDTH * 0.35 , HLE.WORLD_WIDTH * 0.5);
+      HL.scene.fog = new THREE.FogExp2(0.19);//(0x000000,HLE.WORLD_WIDTH * 0.15, HLE.WORLD_WIDTH * 0.6); //)(HLC.horizon, HLE.WORLD_WIDTH * 0.35 , HLE.WORLD_WIDTH * 0.5);
       HL.scene.fog.color = HLC.horizon;
     }
 
@@ -431,6 +433,7 @@ var HLEnvironment = function(){
       repeatUV: new THREE.Vector2(1,1),
       centerPath : HLE.CENTER_PATH
    });
+   HL.materials.land.uniforms.worldColor.value = HLC.horizon;
 
 
   //  HL.materials.land = new THREE.LandMaterial(HLE.WORLD_WIDTH,HLE.WORLD_TILES,{
@@ -495,8 +498,8 @@ var HLEnvironment = function(){
         distortionScale:70,
   			// sunDirection: HL.lights.sun.position.normalize(),
         sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
-  			sunColor: 0x7f7f66,
-  			// color: HLC.sea,
+  			sunColor: 0x7f7f7f,
+  		  color: HLC.sea,
   			// betaVersion: 1,
         fog: true,
         side: THREE.DoubleSide,
@@ -759,4 +762,4 @@ function launchIntoFullscreen(element) {
 }
 
 // Launch fullscreen for browsers that support it!
-if(isMobile) launchIntoFullscreen(document.documentElement); // the whole page
+//if(isMobile) launchIntoFullscreen(document.documentElement); // the whole page

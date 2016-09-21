@@ -156,7 +156,7 @@
 
 
    HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
-   HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
+    HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
 
   };
 
