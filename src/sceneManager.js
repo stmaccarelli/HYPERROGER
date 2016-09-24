@@ -46,16 +46,16 @@ var HLS ={
   }
 
   HLS.scene1init = function(){
-    if(hud!==undefined) hud.display('CHAPTER ONE.\nDEEP LIKE THE VOID',3, true);
-    HL.materials.skybox.map = HL.textures.skybox;
-    HL.materials.skybox.needsUpdate = true;
-
-    HL.materials.land.wireframe=false;
-    HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25, .2, .1+HLR.fft3);
-    HL.materials.land.needsUpdate = true;
-
-    HL.materials.water.material.uniforms.alpha.value = 0.90;
-    HL.materials.water.needsUpdate = true;
+    if(hud!==undefined) hud.display('AUDIOREACTIVE SCENE',3, true);
+    // HL.materials.skybox.map = HL.textures.skybox;
+    // HL.materials.skybox.needsUpdate = true;
+    //
+    // HL.materials.land.wireframe=false;
+    // HL.materials.land.uniforms.color.value = HLC.land.setHSL((frameCount/3600)%1+.25, .2, .1+HLR.fft3);
+    // HL.materials.land.needsUpdate = true;
+    //
+    // HL.materials.water.material.uniforms.alpha.value = 0.90;
+    // HL.materials.water.needsUpdate = true;
 
     HLS.raf = window.requestAnimationFrame(HLS.scene1);
   }
@@ -67,62 +67,42 @@ var HLS ={
 
     HLS.sceneProgress=(frameCount - HLS.sceneStart)*0.001;
 
-    HLC.horizon.setHSL((frameCount/3600)%1,.2, (Math.sin(HLS.sceneProgress)+1)*0.25 + HLR.fft1*0.75-HLR.fft3*5.5);
 
-    HL.materials.land.uniforms.color.value = HLC.land.setHSL(0,0, .1+HLR.fft3*.3);
+    // HL.land.material.uniforms.color.value = HLC.land.setHSL(0,0, .1+HLR.fft3*.3);
 
     HLE.noiseSeed = HLR.fft3*300;
+
+    HL.materials.land.uniforms.buildFreq.value += Math.max(0,(HLR.fft1-0.96)) * 0.25 ;
+
+    var lumi = HLR.fft3;
+    HLC.horizon.setRGB(
+      HLC.tempHorizon.r + lumi,
+      HLC.tempHorizon.g + lumi,
+      HLC.tempHorizon.b + lumi
+    );
+
   }
 
 
   HLS.scene2init = function(){
-    // if(hud!==undefined) hud.display('CHAPTER TWO.\nFOLLOW YOUR FOLLOWERS',3,true);
-    HL.materials.skybox.map = null;
-    HL.materials.skybox.needsUpdate = true;
-    HL.materials.land.wireframe=true;
-    HL.materials.land.uniforms.color.value = HLC.land.setHSL(Math.random(),1,.5);//,.5+Math.random(),.5+Math.random());
-    // HL.materials.water
-    // HL.models.whale.material.map = HL.dynamicTextures.stars.texture;
-    // HL.models.whale.material.needsUpdate = true;
-
-    HL.materials.water.material.uniforms.color.value = HLC.land.set(0x222222);
-    HL.materials.water.needsUpdate = true;
+    if(hud!==undefined) hud.display('NON REACTIVE SCENE',3,true);
+    // HL.materials.skybox.map = null;
+    // HL.materials.skybox.needsUpdate = true;
+    // HL.materials.land.wireframe=true;
+    // HL.materials.land.uniforms.color.value = HLC.land.setHSL(Math.random(),1,.5);//,.5+Math.random(),.5+Math.random());
+    // // HL.materials.water
+    // // HL.models.whale.material.map = HL.dynamicTextures.stars.texture;
+    // // HL.models.whale.material.needsUpdate = true;
+    //
+    // HL.materials.water.material.uniforms.color.value = HLC.land.set(0x222222);
+    // HL.materials.water.needsUpdate = true;
     HLS.raf = window.requestAnimationFrame(HLS.scene2);
 
   }
 
   HLS.scene2 = function(){
     HLS.raf = window.requestAnimationFrame(HLS.scene2);
-    HLS.cameraRotation();
-
-
-
-    HLS.tempColor = HLR.fft2*HLR.fft2*HLR.fft2*.5 - HLR.fft3*3;
-
-    HLC.horizon.setRGB(HLS.tempColor+(millis*.003%.5),HLS.tempColor+(millis*.0029%.5),HLS.tempColor+(millis*.0031%.5));
-    //HLC.horizon.setRGB(.2+(colorCycle)%.8,.1+(colorCycle)%.8,(colorCycle)%.8);
-    HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, 10, 1);
-    //stars dynamicTextureAni
-    HL.dynamicTextures.stars.c.clearRect(0,0,HL.dynamicTextures.stars.width,HL.dynamicTextures.stars.height);
-    HL.dynamicTextures.stars.c.fillStyle = 'white';
-    for(var x=0; x<HL.dynamicTextures.stars.width;x+=50){
-      for(var y=0; y<HL.dynamicTextures.stars.height;y+=50){
-        HL.dynamicTextures.stars.c.fillRect(x+HLR.fft3*y*.5, y+HLR.fft2*x*.5, HLR.fft2*10,HLR.fft4*20);
-      }
-    }
-    HL.dynamicTextures.stars.texture.needsUpdate=true;
-
-    // TODO: DEBOUNCE
-    if(HLR.fft3>0.25)     HL.materials.land.wireframe=false;
-    else     HL.materials.land.wireframe=true;
-    HL.models.whale.material.needsUpdate = true;
-
-    HL.materials.water.material.uniforms.alpha.value = .85 + HLR.fft1*.5;
-//    HL.materials.water.needsUpdate = true;
-
-    if(HLR.fft3>.3) HL.materials.land.uniforms.color.value = HLC.land.setHSL(Math.random(),1,.5);//,.5+Math.random(),.5+Math.random());
-
-
+      HLS.cameraRotation();
   }
 
   HLS.scene3init = function(){
@@ -180,10 +160,10 @@ var HLS ={
      0, 'xyz');    // shoot all models from a group
   }
 
-  HLS.shootGroup = function(g,s,r){
+  HLS.shootGroup = function(g,s,r,floating){
     HLH.startModel(HL.models[HL.mGroups[g][Math.floor(Math.random()*HL.mGroups[g].length)]],
      THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),
-     THREE.Math.randInt(HLE.WORLD_HEIGHT*0.1,HLE.WORLD_HEIGHT*2),
+     floating?0:THREE.Math.randInt(HLE.WORLD_HEIGHT*0.001,HLE.WORLD_HEIGHT*2),
      s, (r?'xyz':null) );    // shoot all models from a group
   }
 
@@ -195,18 +175,18 @@ var HLS ={
   //
   HLS.modelshooting = function(k){
     if(k.keyCode==81)//q
-      HLS.shootGroup('sea',0,true);
+      HLS.shootGroup('sea',0,false);
     if(k.keyCode==87)//w
-      HLS.shootGroup('weird',0,true);
+      HLS.shootGroup('weird',1,true,true);
     if(k.keyCode==69)//e
       HLS.shootGroup('space',50,true);
     if(k.keyCode==65)//a
       HLS.shootEverything();
 
-    // if(k.keyCode==49)//1
-    //   {HLS.startScene('scene1');}
-    // if(k.keyCode==50)//2
-    //   {HLS.startScene('scene2');}
+    if(k.keyCode==49)//1
+      {HLS.startScene('scene1');}
+    if(k.keyCode==50)//2
+      {HLS.startScene('scene2');}
     // if(k.keyCode==51)//3
     //   {HLS.startScene('scene3');}
 

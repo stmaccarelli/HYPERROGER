@@ -152,7 +152,7 @@
    HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
    HL.land.material.uniforms.natural.value = Math.random();
    HL.land.material.uniforms.rainbow.value = Math.random();
-   HL.land.material.uniforms.squareness.value = Math.random()*Math.random();
+   HL.land.material.uniforms.squareness.value = Math.random()*0.25;
 
 
    HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
