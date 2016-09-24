@@ -105,11 +105,6 @@ var HLAnim = function(){
     HL.materials.land.uniforms.landHeight.value = HLE.landHeight * 1.3 ;
     HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
 
-
-    if(HLR.fft1!==undefined){
-      HL.materials.land.uniforms.buildFreq.value += Math.max(0,(HLR.fft2-0.96)) * 0.25 ;
-    }
-
   }
 
 
