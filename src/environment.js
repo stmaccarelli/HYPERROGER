@@ -14,6 +14,8 @@ var HLE = {
   SEA_TILE_SIZE:null,
 
   PIXEL_RATIO_SCALE:.5,
+  SCREEN_WIDTH_SCALE:1,
+  SCREEN_HEIGHT_SCALE:1,
 
 
   FOG:true,
@@ -68,7 +70,7 @@ var HLC = {
   tempHorizon: new THREE.Color(0xff0000),
 
   land: new THREE.Color(0x116611),
-  sea: new THREE.Color(0x003344),
+  sea: new THREE.Color(0x001112),
 
   underHorizon: new THREE.Color(.0, .02, .02),
   underLand: new THREE.Color(.1, .9, .9),
@@ -189,7 +191,11 @@ var HLEnvironment = function(){
     HL.textures[key].wrapT = THREE.RepeatWrapping;
     imagesLoaded++;
     console.log("image "+key+" loaded, "+imagesLoaded+"/"+imagesCounter);
-    if(imagesLoaded==imagesCounter) { console.timeEnd('images'); HL.textures['length'] = imagesLoaded; initMaterials();}
+    if(imagesLoaded==imagesCounter) {
+      console.timeEnd('images');
+      HL.textures['length'] = imagesLoaded;
+      initMaterials();
+    }
   }
   function loadTextures(){
     console.time('images');
@@ -197,7 +203,12 @@ var HLEnvironment = function(){
     for (var key in HL.textures)
       if(HL.textures[key]!=null){
         imagesCounter++;
-        HL.textures[key] = loader.load( HL.textures[key], (function(k) { return function() { imageLoaded( k ) } })(key) , null,function(i){imagesCounter--; console.error(i)});
+        HL.textures[key] = loader.load(
+          HL.textures[key],
+          (function(k) { return function() { imageLoaded( k ) } })(key),
+          null,
+          function(i){imagesCounter--; console.error(i)}
+        );
       }
       else delete(HL.textures[key]);
   }
@@ -254,9 +265,12 @@ var HLEnvironment = function(){
     HL.scene = new THREE.Scene();
 
     if(HLE.FOG && !isWire){
-      // HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.20, HLE.WORLD_WIDTH * 0.45);
-      // HL.scene.fog = new THREE.Fog(HLC.horizon, HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.45, HLE.WORLD_WIDTH * 0.45);
-      HL.scene.fog = new THREE.FogExp2(0.19);//(0x000000,HLE.WORLD_WIDTH * 0.15, HLE.WORLD_WIDTH * 0.6); //)(HLC.horizon, HLE.WORLD_WIDTH * 0.35 , HLE.WORLD_WIDTH * 0.5);
+      // HL.scene.fog = new THREE.Fog(
+      //   HLC.horizon,
+      //   HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.45,
+      //   HLE.WORLD_WIDTH * 0.45
+      // );
+      HL.scene.fog = new THREE.FogExp2(0.19);
       HL.scene.fog.color = HLC.horizon;
     }
 
@@ -264,10 +278,15 @@ var HLEnvironment = function(){
     // CAMERA
     if(isVR){
     HL.camera = new THREE.PerspectiveCamera(17.5, window.innerWidth / window.innerHeight, 3, HLE.WORLD_WIDTH*3);
-    HL.camera.focus = HLE.WORLD_WIDTH * 1; // USED ONLY IN StereoCamera, if any
+    HL.camera.focus = HLE.WORLD_WIDTH * .5;
     }
     else
-      HL.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.5, 3000000);
+      HL.camera = new THREE.PerspectiveCamera(
+        50,
+        (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE),
+        0.5,
+        3000000
+      );
 
     // TODO check filmGauge and filmOffset effects
     // HL.camera.filmGauge = 1;
@@ -283,7 +302,7 @@ var HLEnvironment = function(){
 
     if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
       HL.renderer = new THREE.WebGLRenderer({antialias: true});
-      HL.renderer.setSize(window.innerWidth, window.innerHeight, true);
+      HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE, true);
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
       // HL.renderer.domElement.style.imageRendering = 'pixelated';
       // HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
@@ -291,7 +310,7 @@ var HLEnvironment = function(){
     }
     else {
       HL.renderer = new THREE.WebGLRenderer({antialias: true});
-      HL.renderer.setSize(window.innerWidth, window.innerHeight);
+      HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
       HL.renderer.setPixelRatio(window.devicePixelRatio);
     }
     // HL.renderer.shadowMap.enabled = true;
@@ -491,14 +510,14 @@ var HLEnvironment = function(){
 
   		// Create the water effect
   		HL.materials.water = new THREE.Water(HL.renderer, HL.camera, HL.scene, {
-  			textureWidth: 256,
-  			textureHeight: 256,
+  			textureWidth: 512,
+  			textureHeight: 512,
   			waterNormals: HL.textures.water,
         noiseScale: 0.214,
         distortionScale:70,
   			// sunDirection: HL.lights.sun.position.normalize(),
         sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
-  			sunColor: 0x7f7f7f,
+  			sunColor: HLC.horizon,
   		  color: HLC.sea,
   			// betaVersion: 1,
         fog: true,
