@@ -29,9 +29,9 @@
     noScroll.enable();
 
     function onResized() {
-      HL.renderer.setSize(window.innerWidth, window.innerHeight);
-      if(isVR) HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
-      HL.camera.aspect = window.innerWidth / window.innerHeight;
+      HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+      if(isVR) HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+      HL.camera.aspect = (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
       HL.camera.updateProjectionMatrix();
       hud.resize();
     }
@@ -109,19 +109,7 @@
       HL.renderer.render(HL.scene,HL.camera);
 
     delta = null;
-
-
-
-
-    /// auto change params test
-    //
-    // HL.land.material.uniforms.buildFreq.value = THREE.Math.clamp( HL.land.material.uniforms.buildFreq.value+THREE.Math.randFloat(-1,1)*0.001,0,100);
-    // HL.land.material.uniforms.natural.value = THREE.Math.clamp( HL.land.material.uniforms.natural.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    // HL.land.material.uniforms.rainbow.value = THREE.Math.clamp( HL.land.material.uniforms.rainbow.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    // // HL.land.material.uniforms.squareness.value = THREE.Math.clamp( HL.land.material.uniforms.squareness.value+THREE.Math.randFloat(-1,1)*0.0005,0.01,.5);
-    // HL.land.material.uniforms.bFactor.value = THREE.Math.clamp( HL.land.material.uniforms.bFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,1);
-    // HL.land.material.uniforms.cFactor.value = THREE.Math.clamp( HL.land.material.uniforms.cFactor.value+THREE.Math.randFloat(-1,1)*0.01,0,.3);
-}
+  }
 
   function loadRoutine(){
     mainInit();
