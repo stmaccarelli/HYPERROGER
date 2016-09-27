@@ -101,6 +101,8 @@ function HUD(iscanvas){
     }
   }
 
+  window.addEventListener("resize", _HUD.resize);
+
   if(isCanvas===true)
     _HUD.initCanvas();
   else _HUD.initDiv();

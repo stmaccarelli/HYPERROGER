@@ -33,7 +33,6 @@
       if(isVR) HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
       HL.camera.aspect = (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
       HL.camera.updateProjectionMatrix();
-      hud.resize();
     }
 
     window.addEventListener("resize", onResized);
@@ -115,13 +114,20 @@
     mainInit();
     // init HyperLand Environment
     HLEnvironment.init();
-    hud = new HUD(true);
     // run is called by HLEnvironment.init() when it's all loaded
     window.addEventListener('HLEload', function(){console.log("event HLEload received"); if(!isMobile) G.guiInit(); run(); });
     window.removeEventListener('load',loadRoutine,false);
 
   }
   window.addEventListener('load',loadRoutine,false);
+
+
+
+
+
+
+
+
 
 
 // TODO: REMOVE! JUST FOR DEV PURPOSES
@@ -147,6 +153,9 @@
     HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
 
   };
+
+
+
 
 
   //TODO remove, just DEV features

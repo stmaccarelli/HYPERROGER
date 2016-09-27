@@ -11,6 +11,10 @@ var HLS ={
 
     // varie
     tempColor:0,
+
+    //hud
+    hud: new HUD(true),
+
 }
 // "speed":1,
 // "modelsGroup":'sea',
@@ -75,7 +79,7 @@ var HLS ={
       HLS.loadParams(HLS.scenesParams[sceneId]);
 
       //stard display
-      if(hud!==undefined) hud.display(HLS.scenesParams[sceneId].displayText||sceneId,3, false);
+      if(HLS.hud!==undefined) HLS.hud.display(HLS.scenesParams[sceneId].displayText||sceneId,3, false);
 
 
       // stop previous animation
@@ -115,7 +119,7 @@ var HLS ={
   }
 
   HLS.scene1init = function(){
-    // if(hud!==undefined) hud.display('MIZU',3, false);
+    // if(HLS.hud!==undefined) HLS.hud.display('MIZU',3, false);
     // HLS.loadParams(HLS.scenesParams.extra3);
     // HL.materials.skybox.map = HL.textures.skybox;
     // HL.materials.skybox.needsUpdate = true;
@@ -202,10 +206,9 @@ var HLS ={
   //
   HLS.modelshooting = function(k){
     // create keys for scenes
-    var keyCodeIndex = 65 // a on keyboard
+    var keyCodeIndex = 65 // 'a' on keyboard
     for(var key in HLS.scenesParams){
       if(k.keyCode==keyCodeIndex++){
-        console.log('key='+k.keyCode+" pressed");
         HLS.startScene(key);
       }
     }
