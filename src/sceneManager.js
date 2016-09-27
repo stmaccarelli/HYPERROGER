@@ -6,9 +6,6 @@ var HLS ={
     sceneProgress:0,
     modelsParams:null,
 
-    //temp display name
-    displayName:null,
-
     //local debouncers
     shotFlora:true,
 
@@ -33,8 +30,8 @@ var HLS ={
 
   HLS.loadParams = function(params){
 
-    if(params.speed!==undefined)
-      HLE.BASE_MOVE_SPEED = params.speed;
+    HLE.BASE_MOVE_SPEED = params.speed||1;
+
     if(params.modelsParams!==undefined)
       HLS.modelsParams=params.modelsParams;
 
@@ -70,12 +67,23 @@ var HLS ={
   }
 
   HLS.startScene = function(sceneId){
-    if(HLS[sceneId]!==undefined){
+    if(HLS.scenesParams[sceneId]!==undefined){
+      // cancel previous animation
+      window.cancelAnimationFrame(HLS.raf);
+
+      // load new scene parameters
+      HLS.loadParams(HLS.scenesParams[sceneId]);
+
+      //stard display
+      if(hud!==undefined) hud.display(HLS.scenesParams[sceneId].displayText||sceneId,3, false);
+
+
       // stop previous animation
       //destroy all running models
       HLH.destroyAllModels();
-      //reset camera
-  //    HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2));
+
+      // reset camera
+      HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/2));
 
       // reset sea position and alpha
       // HL.materials.water.material.uniforms.alpha.value = 0.9;
@@ -91,20 +99,24 @@ var HLS ={
       //   HL.models[i].material.needsUpdate = true;
       // }
 
-      window.cancelAnimationFrame(HLS.raf);
-      //init new scene
-      if(HLS[sceneId+'init']!==undefined)
-      HLS.raf =  window.requestAnimationFrame(HLS[sceneId+'init']);
+
       // supported: timer useful for timed scene switch from one to another like:
       //  if(frameCount-HLS.sceneStart>=600) HLR.startScene('scene2');
       HLS.sceneStart = frameCount;
-      //start new animation
+
+      //init new custom scene, in case any
+      if(HLS.initScenes[sceneId]!==undefined)
+        HLS.initScenes[sceneId]();
+
+      //start new scene
+      HLS.raf =  window.requestAnimationFrame( HLS.scenes[sceneId]|| HLS.scenes.standard );
+
     }
   }
 
   HLS.scene1init = function(){
-    if(hud!==undefined) hud.display('MIZU',3, false);
-    HLS.loadParams(HLS.sceneParams.extra3);
+    // if(hud!==undefined) hud.display('MIZU',3, false);
+    // HLS.loadParams(HLS.scenesParams.extra3);
     // HL.materials.skybox.map = HL.textures.skybox;
     // HL.materials.skybox.needsUpdate = true;
     //
@@ -115,7 +127,27 @@ var HLS ={
     // HL.materials.water.material.uniforms.alpha.value = 0.90;
     // HL.materials.water.needsUpdate = true;
 
-    HLS.raf = window.requestAnimationFrame(HLS.scene1);
+    // HLS.raf = window.requestAnimationFrame(HLS.scene1);
+  }
+
+  HLS.initScenes = {};
+  HLS.initScenes.standard = function(){
+
+  }
+
+  HLS.scenes = {};
+  HLS.scenes.standard = function(){
+    HLS.raf = window.requestAnimationFrame(HLS.scenes.standard);
+    // advance buildfrew
+    HL.materials.land.uniforms.buildFreq.value -= Math.max(0,(HLR.fft1-0.96)) * .25;
+
+    // thunderbolts
+    var lumi = HLR.fft3;
+    HLC.horizon.setRGB(
+      HLC.tempHorizon.r + lumi,
+      HLC.tempHorizon.g + lumi,
+      HLC.tempHorizon.b + lumi
+    );
   }
 
   HLS.scene1 = function(){
@@ -138,77 +170,6 @@ var HLS ={
       HLC.tempHorizon.g + lumi,
       HLC.tempHorizon.b + lumi
     );
-
-  }
-
-
-  HLS.scene2init = function(){
-    if(hud!==undefined) hud.display('scene2',3,true);
-    HLS.loadParams(HLS.sceneParams.solar_valley);
-
-    // HL.materials.skybox.map = null;
-    // HL.materials.skybox.needsUpdate = true;
-    // HL.materials.land.wireframe=true;
-    // HL.materials.land.uniforms.color.value = HLC.land.setHSL(Math.random(),1,.5);//,.5+Math.random(),.5+Math.random());
-    // // HL.materials.water
-    // // HL.models.whale.material.map = HL.dynamicTextures.stars.texture;
-    // // HL.models.whale.material.needsUpdate = true;
-    //
-    // HL.materials.water.material.uniforms.color.value = HLC.land.set(0x222222);
-    // HL.materials.water.needsUpdate = true;
-
-
-    HLS.raf = window.requestAnimationFrame(HLS.scene2);
-
-  }
-
-  HLS.scene2 = function(){
-    HLS.raf = window.requestAnimationFrame(HLS.scene2);
-    HL.materials.land.uniforms.buildFreq.value -= Math.max(0,(HLR.fft1-0.96)) * .25;
-
-      // HLS.cameraRotation();
-  }
-
-  HLS.scene3init = function(){
-    // if(hud!==undefined) hud.display('CHAPTER THREE.FLYING LIKE AN EAGLE IN A RIVER',3, true);
-    HL.materials.skybox.map = null;
-    HL.materials.skybox.needsUpdate = true;
-
-    HL.materials.land.uniforms.color.value = HLC.land.setRGB(.08,.05,.4);//,.5+Math.random(),.5+Math.random());
-    HL.materials.land.wireframe=false;
-    HL.materials.land.needsUpdate = true;
-
-    HL.materials.water.material.uniforms.alpha.value = 1;
-
-    HL.sea.position.y = HLE.WORLD_HEIGHT*2;
-
-    HL.models.whale.material.map = HL.dynamicTextures.stars.texture;
-    HL.models.whale.material.needsUpdate = true;
-
-    HLS.raf = window.requestAnimationFrame(HLS.scene3);
-
-  }
-
-  HLS.story = 'HYPEROCEAN NIAGARA'.split(' ');
-
-  HLS.scene3 = function(){
-    HLS.raf = window.requestAnimationFrame(HLS.scene3);
-    HLS.cameraRotation();
-
-    HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.moveSpeed*4);
-
-    HL.materials.land.uniforms.color.value = HLC.land.setRGB(HLR.fft4*.1,HLR.fft4*.1,HLR.fft4*.1);//,.5+Math.random(),.5+Math.random());
-    HLC.horizon.setRGB(0+ HLR.fft3,.3+ HLR.fft3,.6 + HLR.fft3);
-
-
-    HL.dynamicTextures.stars.c.clearRect(0,0,HL.dynamicTextures.stars.width,HL.dynamicTextures.stars.height);
-    HL.dynamicTextures.stars.c.font=(64+HLR.fft4*10)+"px Arial";
-    HL.dynamicTextures.stars.c.fillStyle = 'white';
-    HL.dynamicTextures.stars.c.fillText(HLS.story[Math.floor(frameCount/20%HLS.story.length)],10, 256);
-    HL.dynamicTextures.stars.texture.needsUpdate=true;
-
-
-
 
   }
 
@@ -240,29 +201,38 @@ var HLS ={
   //
   //
   HLS.modelshooting = function(k){
-    if(k.keyCode==81)//q
-      HLS.shootGroup('sea',0,false);
-    if(k.keyCode==87)//w
-      HLS.shootGroup('weird',1,true,true);
-    if(k.keyCode==69)//e
-      HLS.shootGroup('space',50,true);
-    if(k.keyCode==65)//a
-      HLS.shootEverything();
-    if(k.keyCode==66)//b
-      HLS.shootGroup(HLS.modelsParams);
-
-    if(k.keyCode==49)//1
-      {HLS.startScene('scene1');}
-    if(k.keyCode==50)//2
-      {HLS.startScene('scene2');}
-    // if(k.keyCode==51)//3
-    //   {HLS.startScene('scene3');}
-
-    if(k.keyCode==67){//c
-      HLE.CENTER_PATH=!HLE.CENTER_PATH;
-      HLE.cameraHeight = 0;
-      HL.land.material.uniforms.withCenterPath.value = HLE.CENTER_PATH;
+    // create keys for scenes
+    var keyCodeIndex = 65 // a on keyboard
+    for(var key in HLS.scenesParams){
+      if(k.keyCode==keyCodeIndex++){
+        console.log('key='+k.keyCode+" pressed");
+        HLS.startScene(key);
+      }
     }
+    //
+    // if(k.keyCode==81)//q
+    //   HLS.shootGroup('sea',0,false);
+    // if(k.keyCode==87)//w
+    //   HLS.shootGroup('weird',1,true,true);
+    // if(k.keyCode==69)//e
+    //   HLS.shootGroup('space',50,true);
+    // if(k.keyCode==65)//a
+    //   HLS.shootEverything();
+    // if(k.keyCode==66)//b
+    //   HLS.shootGroup(HLS.modelsParams);
+    //
+    // if(k.keyCode==49)//1
+    //   {HLS.startScene('scene1');}
+    // if(k.keyCode==50)//2
+    //   {HLS.startScene('scene2');}
+    // // if(k.keyCode==51)//3
+    // //   {HLS.startScene('scene3');}
+
+    // if(k.keyCode==67){//c
+    //   HLE.CENTER_PATH=!HLE.CENTER_PATH;
+    //   HLE.cameraHeight = 0;
+    //   HL.land.material.uniforms.withCenterPath.value = HLE.CENTER_PATH;
+    // }
 
   }
   window.addEventListener('keydown',HLS.modelshooting);

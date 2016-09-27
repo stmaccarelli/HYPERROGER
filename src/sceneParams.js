@@ -1,4 +1,4 @@
- HLS['sceneParams'] = {
+ HLS['scenesParams'] = {
    // TODO:
    // aggiungere
   //  buildFreq
@@ -6,7 +6,8 @@
   //  speedMultiplier
 
   mizu:{
-      "speed":10,
+      "displayText":'MIZU',
+      "speed":100,
       "modelsParams":['sea',1,true,true],
 
       "tiles": 32,
@@ -16,15 +17,17 @@
       "buildFreq": 50.332836415087655,
       "natural": 0.09748154523558328,
       "rainbow": 0.8787699998982024,
-      "squareness": 0.22450016948639295,
+      "squareness": 0.022450016948639295,
       "map": "land1 qw1q",
       "landRGB": 1966335,
       "horizonRGB": 0
   },
 
   solar_valley:{
-    "speed":1,
-    "modelsParams":['sea',1,true,true],
+      "displayText":'SOLAR VALLEY',
+      "speed":1,
+      "modelsParams":['sea',1,true,true],
+
       "tiles": 304,
       "repeatUV": 1,
       "bFactor": 0.7700514086699899,
@@ -39,6 +42,7 @@
   },
 
   escher_surfers:{
+      "displayText":'ESCHER SURFERS',
       "tiles": 62,
       "repeatUV": 36.694396330169866,
       "bFactor": 0.30674800052742746,
@@ -54,6 +58,7 @@
 
 
   currybox:{
+      "displayText":'CURRYBOX',
       "tiles": 301,
       "repeatUV": 1,
       "bFactor": 0.22362124000822758,
@@ -68,6 +73,7 @@
   },
 
   galaxy_glacier:{
+      "displayText":'GALAXY GLACIER',
       "tiles": 160,
       "repeatUV": 1,
       "bFactor": 0.287989180087759,
@@ -84,6 +90,7 @@
   //drift movimento corsa più lento
   //buildFreq su HLR.fft1
   drift:{
+      "displayText":'DRIFT',
       "tiles": 475,
       "repeatUV": 123,
       "bFactor": 0.05129059413652515,
@@ -105,6 +112,7 @@
 
 
   hyperocean: {
+      "displayText":'HYPEROCEAN',
       "tiles": 482,
       "repeatUV": 7,
       "bFactor": 0.8731022437271947,
@@ -112,7 +120,7 @@
       "buildFreq": 38.01100739053207,
       "natural": 0.20053590285077338,
       "rainbow": 0.08623985480612828,
-      "squareness": 0.16047922478789617,
+      "squareness": 0.016047922478789617,
       "map": "land5",
       "landRGB": 16369575,
       "horizonRGB": 7173242
@@ -121,6 +129,7 @@
   // balene
 
   twin_horizon:{
+      "displayText":'TWIN HORIZON',
       "tiles": 99,
       "repeatUV": 1,
       "bFactor": 0.20445411338494512,
@@ -137,7 +146,8 @@
   // da un certo punto random colors (quando il pezzo aumenta)
   // da stesso punto aumenta velocità
   else: {
-     "tiles": 104,
+      "displayText":'ELSE',
+      "tiles": 104,
       "repeatUV": 234,
       "bFactor": 0.09684365733091505,
       "cFactor": 0.10283514025561728,
@@ -152,6 +162,7 @@
 
   // lampi più intensi (il cielo ha colore base nero)
   roger_water:{
+      "displayText":'ROGER WATER',
       "tiles": 216,
       "repeatUV": 23,
       "bFactor": 0.09206352399562667,
@@ -166,6 +177,7 @@
   },
 
   popeye:{
+      "displayText":'POPEYE',
       "tiles": 293,
       "repeatUV": 54.349171736919395,
       "bFactor": 0.8743549159244348,
