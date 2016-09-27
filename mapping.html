@@ -110,6 +110,10 @@
       screen.geometry.verticesNeedUpdate = true;
       screen.geometry.computeBoundingBox();
       cornerPoints[i].position.copy(screen.geometry.vertices[i]);
+      // TODO: quando carico la shape dello screen,
+      // dovro anche reimpostare width/height del renderer e della camera,
+      // per ottimizzare prestazioni e visualizzazione
+      // posso basarmi su boundingBox della geometria
     }
   }
 

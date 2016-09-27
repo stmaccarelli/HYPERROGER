@@ -514,7 +514,7 @@ var HLEnvironment = function(){
   			textureHeight: 512,
   			waterNormals: HL.textures.water,
         noiseScale: 0.214,
-        distortionScale:70,
+        distortionScale:90,
   			// sunDirection: HL.lights.sun.position.normalize(),
         sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
   			sunColor: HLC.horizon,
@@ -739,46 +739,3 @@ var HLEnvironment = function(){
   }
   return{init:init}
 }();
-
-var consoleDiv = document.createElement('div');
-consoleDiv.style.position = "absolute";
-consoleDiv.style.bottom=0;
-consoleDiv.style.left=0;
-document.body.appendChild(consoleDiv);
-
-if (typeof console  != "undefined")
-    if (typeof console.log != 'undefined'){
-      console.olog = console.log;
-      console.oTimeEnd = console.timeEnd;
-      }
-    else{
-        console.olog = function() {};
-      }
-
-console.log = function(message) {
-    console.olog(message);
-    consoleDiv.innerHTML += ('<p>' + message + '</p>');
-};
-
-console.timeEnd = function(message) {
-    console.oTimeEnd(message);
-    consoleDiv.innerHTML += ('<p>' + message +'</p>');
-};
-console.error = console.debug = console.info = console.log
-
-
-// Find the right method, call on correct element
-function launchIntoFullscreen(element) {
-  if(element.requestFullscreen) {
-    element.requestFullscreen();
-  } else if(element.mozRequestFullScreen) {
-    element.mozRequestFullScreen();
-  } else if(element.webkitRequestFullscreen) {
-    element.webkitRequestFullscreen();
-  } else if(element.msRequestFullscreen) {
-    element.msRequestFullscreen();
-  }
-}
-
-// Launch fullscreen for browsers that support it!
-//if(isMobile) launchIntoFullscreen(document.documentElement); // the whole page

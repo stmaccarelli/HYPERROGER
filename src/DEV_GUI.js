@@ -42,6 +42,7 @@ var G = function(){
       randomizeColors:function(){
         HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
         HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
+        HLC.tempHorizon.set(HLC.horizon);
         params.landRGB = HLC.land.getHex();
         params.horizonRGB = HLC.horizon.getHex();
       },
@@ -56,7 +57,7 @@ var G = function(){
          HL.land.material.uniforms.map.value = HL.textures[params.map];// null;//HL.textures[Math.round(Math.random()*10)];
          HL.land.material.uniforms.natural.value = params.natural = Math.random();
          HL.land.material.uniforms.rainbow.value = params.rainbow = Math.random();
-         HL.land.material.uniforms.squareness.value = params.squareness = 0.00001 + Math.random()*Math.random()*0.49999;
+         HL.land.material.uniforms.squareness.value = params.squareness = Math.random()*0.125;
          HL.skybox.rotateY(Math.random());
       },
       showParams : function(){
@@ -84,12 +85,12 @@ var G = function(){
     repeatUVController.onChange(function(value) {
        HL.land.material.uniforms.repeatUV.value = new THREE.Vector2( value,value );
     });
-    gui.add(HL.land.material.uniforms.bFactor, 'value',0.0,1.0).name('bFactor').listen();
-    gui.add(HL.land.material.uniforms.cFactor, 'value',0.0,1.0).name('cFactor').listen();
+    gui.add(HL.land.material.uniforms.bFactor, 'value',0.0,1.01).name('bFactor').listen();
+    gui.add(HL.land.material.uniforms.cFactor, 'value',0.0,1.01).name('cFactor').listen();
     gui.add(HL.land.material.uniforms.buildFreq, 'value',0,100).name('buildFreq').listen();
     gui.add(HL.land.material.uniforms.natural, 'value',0.0,1.01).name('natural').listen();
     gui.add(HL.land.material.uniforms.rainbow, 'value',0.0,1.01).name('rainbow').listen();
-    gui.add(HL.land.material.uniforms.squareness, 'value',0.01,0.5).name('squareness').listen();
+    gui.add(HL.land.material.uniforms.squareness, 'value',0.000001,0.25).name('squareness').listen();
 
     var mapController = gui.add(params, 'map').listen();
     mapController.onChange(function(value){
@@ -97,7 +98,7 @@ var G = function(){
     });
 
     var horizonRGBController = gui.addColor(params, 'horizonRGB').listen();
-    horizonRGBController.onChange( function(value){ console.log(value); HLC.horizon.set(value); } );
+    horizonRGBController.onChange( function(value){ console.log(value); HLC.horizon.set(value); HLC.tempHorizon.set(value); } );
     var landRGBController = gui.addColor(params, 'landRGB').listen();
     landRGBController.onChange( function(value){ console.log(value); HLC.land.set(value); } );
   }

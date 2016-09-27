@@ -1,4 +1,4 @@
- HLS['scenesParams'] = {
+ HLS['sceneParams'] = {
    // TODO:
    // aggiungere
   //  buildFreq
@@ -6,6 +6,9 @@
   //  speedMultiplier
 
   mizu:{
+      "speed":10,
+      "modelsParams":['sea',1,true,true],
+
       "tiles": 32,
       "repeatUV": 512,
       "bFactor": 0.22087281339397613,
@@ -20,6 +23,8 @@
   },
 
   solar_valley:{
+    "speed":1,
+    "modelsParams":['sea',1,true,true],
       "tiles": 304,
       "repeatUV": 1,
       "bFactor": 0.7700514086699899,
@@ -218,5 +223,19 @@
       "map": "pattern1",
       "landRGB": 16777215,
       "horizonRGB": 0
+  },
+  //natural
+  extra4:{
+    "tiles": 195,
+    "repeatUV": 172.53953149784417,
+    "bFactor": 0.3722544776755994,
+    "cFactor": 0.19668421433349875,
+    "buildFreq": 58.22950247169298,
+    "natural": 0.7850066649699574,
+    "rainbow": 0.44153157788454345,
+    "squareness": 0.09631920065919009,
+    "map": "land4",
+    "landRGB": 9552294,
+    "horizonRGB": 4152953
   }
 }

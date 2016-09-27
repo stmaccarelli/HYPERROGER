@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MIDi TEST</title>
+  </head>
+  <body>
+    <script type="text/javascript">
+      window.addEventListener('load', function() {
+        navigator.requestMIDIAccess().then(
+          onMIDIInit,
+          onMIDISystemError );
+      });
+
+      function onMIDISystemError(e){
+        console.log(e);
+      }
+
+      // //MIDI output
+      // function onMIDIInit( midi ) {
+      //   for (var input of midi.outputs.values())
+      //     input.send( [0x90, 3, 32] );
+      // }
+      //
+      // //MIDI input
+      function onMIDIInit( midi ) {
+        for (var input of midi.inputs.values())
+        input.onmidimessage = midiMessageReceived;
+      }
+
+
+      function midiMessageReceived( ev ) {
+        console.log(ev);
+          var cmd = ev.data[0] >> 4;
+          console.log('cmd '+cmd);
+          var channel = ev.data[0] & 0xf;
+          console.log('channel '+channel);
+          var noteNumber = ev.data[1];
+          console.log('noteNumber '+noteNumber);
+          var velocity = 0;
+          if (ev.data.length > 2){
+            velocity = ev.data[2];
+            console.log('velocity '+velocity+"\n\n");
+          }
+
+
+          //
+          // // MIDI noteon with velocity=0 is the same as noteoff
+          // if ( cmd==8 || ((cmd==9)&&(velocity==0)) ) { // noteoff
+          //   // noteOff( noteNumber );
+          //   console.vlog('noteOff '+noteNumber);
+          // } else if (cmd == 9) { // note on
+          //   // noteOn( noteNumber, velocity);
+          //   console.vlog('noteOn '+noteNumber+" velocity "+velocity);
+          // } else if (cmd == 11) { // controller message
+          //   // controller( noteNumber, velocity);
+          //   console.vlog('controller message '+noteNumber+" velocity "+velocity);
+          // } else {
+          //   // probably sysex!
+          // }
+      }
+
+
+      var consoleDiv = document.createElement('div');
+      consoleDiv.style.position = "absolute";
+      consoleDiv.style.bottom=0;
+      consoleDiv.style.left=0;
+      document.body.appendChild(consoleDiv);
+      console.vlog = function(message){
+        consoleDiv.innerHTML += ('<p>' + message + '</p>');
+      }
+
+      // if (typeof console  != "undefined")
+      //     if (typeof console.log != 'undefined'){
+      //       console.olog = console.log;
+      //       console.oTimeEnd = console.timeEnd;
+      //       }
+      //     else{
+      //         console.olog = function() {};
+      //       }
+      //
+      // // console.log = function(message) {
+      // //     console.olog(message);
+      // //     consoleDiv.innerHTML += ('<p>' + message + '</p>');
+      // // };
+      // //
+      // // console.timeEnd = function(message) {
+      // //     console.oTimeEnd(message);
+      // //     consoleDiv.innerHTML += ('<p>' + message +'</p>');
+      // // };
+      // // console.error = console.debug = console.info = console.log
+
+
+
+    </script>
+
+<script type="text/javascript">
+</script>
+  </body>
+</html>

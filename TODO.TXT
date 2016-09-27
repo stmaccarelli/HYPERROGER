@@ -1,0 +1,23 @@
+fare sistema di loading scene da json / oggetto params
+
+aggiungere settaggio di velocità relativa alla scena
+
+fare scena "black" (schermo nero e basta)
+
+fare tasto "randomColor"
+
+rotazione camera noiseCam o altro, organico e audioreattivo
+anche quando scorriamo solo in avanti, la camera deve avere dei movimenti organici tipo di onde, in base a velocità globale
+
+
+refactor shader materials
+
+--
+
+UI (icona "please landscape) e poi VR
+
+Fullscreen su android
+
+--
+
+hyperland website temporary

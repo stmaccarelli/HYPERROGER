@@ -84,7 +84,7 @@
     else{
       // this function sucks spu, use just if really needed
       //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
-       HL.camera.rotateY(.001);
+      //  HL.camera.rotateY(.001);
     }
 
     if(!HLE.CENTER_PATH && !isMobile){
@@ -148,5 +148,51 @@
 
   };
 
+
+  //TODO remove, just DEV features
   if(isMobile)  window.addEventListener('touchstart',randomizeLand);
   // else  window.addEventListener('click',randomizeLand);
+
+
+  var consoleDiv = document.createElement('div');
+  consoleDiv.style.position = "absolute";
+  consoleDiv.style.bottom=0;
+  consoleDiv.style.left=0;
+  document.body.appendChild(consoleDiv);
+
+  if (typeof console  != "undefined")
+      if (typeof console.log != 'undefined'){
+        console.olog = console.log;
+        console.oTimeEnd = console.timeEnd;
+        }
+      else{
+          console.olog = function() {};
+        }
+
+  console.log = function(message) {
+      console.olog(message);
+      consoleDiv.innerHTML += ('<p>' + message + '</p>');
+  };
+
+  console.timeEnd = function(message) {
+      console.oTimeEnd(message);
+      consoleDiv.innerHTML += ('<p>' + message +'</p>');
+  };
+  console.error = console.debug = console.info = console.log
+
+
+  // Find the right method, call on correct element
+  function launchIntoFullscreen(element) {
+    if(element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if(element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if(element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    } else if(element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    }
+  }
+
+  // Launch fullscreen for browsers that support it!
+  //if(isMobile) launchIntoFullscreen(document.documentElement); // the whole page
