@@ -1,4 +1,4 @@
-var G = function(){
+var GUI = function(){
 
   var s = this;
   var gui;
@@ -52,7 +52,7 @@ var G = function(){
 
          HL.land.material.uniforms.bFactor.value = params.bFactor = Math.random();
          HL.land.material.uniforms.cFactor.value = params.cFactor = Math.random()*0.3;
-         HL.land.material.uniforms.buildFreq.value = params.buildFreq = Math.random()*100.0;
+        //  HL.land.material.uniforms.buildFreq.value = params.buildFreq = Math.random()*100.0;
          params.map = (Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4));
          HL.land.material.uniforms.map.value = HL.textures[params.map];// null;//HL.textures[Math.round(Math.random()*10)];
          HL.land.material.uniforms.natural.value = params.natural = Math.random();
@@ -73,34 +73,55 @@ var G = function(){
     gui.add(buttons,'showParams');
 
 
-    var tilesController = gui.add(params, 'tiles',32,HLE.WORLD_TILES).step(8).listen();
+
+    var tilesController = gui.add(HL.land.material.uniforms.worldTiles, 'value',1,HLE.WORLD_TILES).step(1).name('tiles').listen();
     tilesController.onChange(function(value) {
        HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, value,value);
        HL.land.geometry.rotateX(-Math.PI / 2);
        HL.land.material.uniforms.worldTiles.value = value;
-      //  HL.land.material.uniforms.repeatUV.value = new THREE.Vector2( * Math.random(), value * Math.random() );
+       params.tiles = value;
     });
 
     var repeatUVController = gui.add(params, 'repeatUV',1,params.tiles).step(1).listen();
     repeatUVController.onChange(function(value) {
        HL.land.material.uniforms.repeatUV.value = new THREE.Vector2( value,value );
+       params.repeatUV = value;
     });
-    gui.add(HL.land.material.uniforms.bFactor, 'value',0.0,1.01).name('bFactor').listen();
-    gui.add(HL.land.material.uniforms.cFactor, 'value',0.0,1.01).name('cFactor').listen();
-    gui.add(HL.land.material.uniforms.buildFreq, 'value',0,100).name('buildFreq').listen();
-    gui.add(HL.land.material.uniforms.natural, 'value',0.0,1.01).name('natural').listen();
-    gui.add(HL.land.material.uniforms.rainbow, 'value',0.0,1.01).name('rainbow').listen();
-    gui.add(HL.land.material.uniforms.squareness, 'value',0.000001,0.25).name('squareness').listen();
+
+    var bFactor = gui.add(HL.land.material.uniforms.bFactor, 'value',0.0,1.001).name('bFactor').listen();
+    bFactor.onChange(function(v){params.bFactor = v;});
+
+    var cFactor = gui.add(HL.land.material.uniforms.cFactor, 'value',0.0,1.001).name('cFactor').listen();
+    cFactor.onChange(function(v){params.cFactor = v;});
+
+    var buildFreq = gui.add(HL.land.material.uniforms.buildFreq, 'value',0.0,100.1).name('buildFreq').listen();
+    buildFreq.onChange(function(v){params.buildFreq = v;});
+
+    var natural = gui.add(HL.land.material.uniforms.natural, 'value',0.0,1.001).name('natural').listen();
+    natural.onChange(function(v){params.natural = v;});
+
+    var rainbow = gui.add(HL.land.material.uniforms.rainbow, 'value',0.0,1.001).name('rainbow').listen();
+    rainbow.onChange(function(v){params.rainbow = v;});
+
+    var squareness = gui.add(HL.land.material.uniforms.squareness, 'value',0.00001,0.2501).name('squareness').listen();
+    squareness.onChange(function(v){params.squareness = v;});
 
     var mapController = gui.add(params, 'map').listen();
     mapController.onChange(function(value){
       HL.land.material.uniforms.map.value = HL.textures[value];// null;//HL.textures[Math.round(Math.random()*10)];
+      params.map = value;
     });
 
     var horizonRGBController = gui.addColor(params, 'horizonRGB').listen();
-    horizonRGBController.onChange( function(value){ console.log(value); HLC.horizon.set(value); HLC.tempHorizon.set(value); } );
+    horizonRGBController.onChange( function(value){
+      HLC.horizon.set(value); HLC.tempHorizon.set(value);
+      params.horizonRGB=HLC.horizon.getHex();
+    } );
     var landRGBController = gui.addColor(params, 'landRGB').listen();
-    landRGBController.onChange( function(value){ console.log(value); HLC.land.set(value); } );
+    landRGBController.onChange( function(value){
+      HLC.land.set(value);
+      params.landRGB = HLC.land.getHex();
+    });
   }
 
 
@@ -109,5 +130,6 @@ var G = function(){
 return{
   guiInit:guiInit,
   params:params,
+  gui:gui,
 }
-}();
+};

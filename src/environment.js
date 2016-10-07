@@ -7,15 +7,15 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 // HL Environment constants and parameters
 var HLE = {
   WORLD_WIDTH:5000,
-  WORLD_HEIGHT:500,
-  WORLD_TILES: isMobile?256:512,
+  WORLD_HEIGHT:1000,
+  WORLD_TILES: isMobile?128:512,
   TILE_SIZE:null,
   SEA_TILES:16,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:.5,
+  PIXEL_RATIO_SCALE:1,
   SCREEN_WIDTH_SCALE:1,
-  SCREEN_HEIGHT_SCALE:1,
+  SCREEN_HEIGHT_SCALE:!isMobile?1:.7,
 
 
   FOG:true,
@@ -24,26 +24,26 @@ var HLE = {
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: 0,
-  CENTER_PATH:true, // true if you don't want terrain in the middle of the scene
+  CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computed move speed
-  advance:0, // for GLSL land moving
+  advance:0, // for GLSL land moving, build up with time
   buildFreq:50.0, //for GLSL land material
 
   BASE_SEA_SPEED:2.5,
   CLOUDS_SPEED:1,
 
-  MAX_MODELS_OUT:50,
-  PARTICLE_MODELS_OUT:0,
+  MAX_MODELS_OUT:100,
+  PARTICLE_MODELS_OUT:1,
 
   reactiveSeaHeight:0, // changes programmatically - audio
 
-  landZeroPoint:0, // actually not a geometry, just a float to be multiplied to compute height
-  landHeight:30, // actually not a geometry, just a float to be added to compute height
+  landZeroPoint:-20, //shift up or down the landscape
+  landHeight:300,
   landCliffFrequency:0.5,
-  LAND_Y_SHIFT:5,
   LAND_IS_BUFFER:true,
+  // LAND_Y_SHIFT:6,
 
   seaStepsCount:0,
   landStepsCount:0,
@@ -95,7 +95,7 @@ var HL = {
   noise:null,
 
   geometries: {
-    skybox:null,
+    sky:null,
     land:null,
     sea:null,
     seaHeights:null, // actually not a geometry, just an array of heights per row to be added to a sine motion
@@ -103,7 +103,7 @@ var HL = {
     fauna: null,
   },
   materials: {
-    skybox:null,
+    sky:null,
     land:null,
     sea:null,
     water:null,
@@ -114,16 +114,21 @@ var HL = {
     models:null,
   },
   textures: {
-    skybox:"img/skybox2/skymap_photo9.jpg",
-    // skymapcity:"img/skybox2/skymap_photo9.jpg",
-    land:"img/tex_stripe3.gif",
+    sky1:"img/skybox2/skymap_photo9.jpg",
+    sky2:"img/skybox2/skydome3.jpg",
+    sky3:"img/skybox2/sky_pattern_4.png",
+
+    land:"img/landHeights.jpg",
     sea:null,
-    clouds:"img/tex_tree_82_128x128.png",
     flora:"img/tex_tree_82_128x128.png",
     fauna:null,
     water:"img/waternormals5.png",//wn5
-    //for models
 
+    cloud1:'img/cloud1.png',
+    cloud2:"img/tex_tree_82_128x128.png",
+
+
+    //for models
     whale:"3dm/BL_WHALE/BL_WHALE.jpg",
     ducky:"3dm/ducky/ducky.png",
     airbus:"3dm/airbus/airbus_a.png",
@@ -144,31 +149,42 @@ var HL = {
     land4:"img/land/land_tex_4.jpg",
     land5:"img/land/land_tex_5.jpg",
     land6:"img/land/land_tex_6.jpg",
+
+    white:"img/white2x2.gif",
   },
   dynamicTextures:{
     stars:null,
+    textbox:null,
   },
   models: {
     whale:["3dm/BL_WHALE/BL_WHALE2.OBJ",10],
-    whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",20],
-    ducky:["3dm/ducky/ducky.obj",10],
-    airbus:["3dm/airbus/airbus_c.obj",10],
-    aurora:["3dm/aurora/aurora_c.obj",10],
-    heartbomb:["3dm/heartbomb/heartbomb_c.obj",10],
-    mercury:["3dm/mercury/mercury_c.obj",10],
-    tiger:["3dm/uncletiger/uncletiger_c.obj",10],
-    cube:["3dm/cube.obj",10],
+    whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",5],
+    ducky:["3dm/ducky/ducky.obj",5],
+    airbus:["3dm/airbus/airbus_c.obj",5],
+    aurora:["3dm/aurora/aurora_c.obj",5],
+    heartbomb:["3dm/heartbomb/heartbomb_c.obj",5],
+    mercury:["3dm/mercury/mercury_c.obj",5],
+    tiger:["3dm/uncletiger/uncletiger_c.obj",5],
+    cube:["3dm/cube.obj",2.5],
+    logo:["3dm/hyperland_logo.obj",5],
+    maker:["3dm/makerfaire.obj",5],
+    data:["3dm/roma_data.obj",5],
+
+    stone1:["3dm/stones/stone1.obj",10],
+    stone2:["3dm/stones/stone2.obj",10],
+    stone3:["3dm/stones/stone3.obj",10],
   },
   modelsKeys:null,
   mGroups:{
     weird:['ducky','tiger','mercury','ducky'],
     space:['mercury','aurora','airbus','heartbomb'],
     sea:['whale','whale2'],
+    stones:['stone1','stone2','stone3']
   },
   // object containing models dynamically cloned from originals, for animation.
   dynamicModelsClones:{length:0},
   // meshes
-  skybox:null,
+  sky:null,
   land:null,
   sea:null,
   clouds:true,
@@ -224,6 +240,7 @@ var HLEnvironment = function(){
       HL.dynamicTextures[k]['texture'] = new THREE.Texture(HL.dynamicTextures[k]);
       HL.dynamicTextures[k]['texture'].wrapS = THREE.RepeatWrapping;
       HL.dynamicTextures[k]['texture'].wrapT = THREE.RepeatWrapping;
+      HL.dynamicTextures[k]['texture'].name = k;
     }
     console.timeEnd('dyn textures');
   }
@@ -270,13 +287,14 @@ var HLEnvironment = function(){
       //   HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.45,
       //   HLE.WORLD_WIDTH * 0.45
       // );
-      HL.scene.fog = new THREE.FogExp2(0.19);
+      HL.scene.fog = new THREE.FogExp2();
+      HL.scene.fog.density = 0.00025;
       HL.scene.fog.color = HLC.horizon;
     }
 
 
     // CAMERA
-    if(isVR){
+    if(isCardboard){
     HL.camera = new THREE.PerspectiveCamera(17.5, window.innerWidth / window.innerHeight, 3, HLE.WORLD_WIDTH*3);
     HL.camera.focus = HLE.WORLD_WIDTH * .5;
     }
@@ -291,9 +309,17 @@ var HLEnvironment = function(){
     // TODO check filmGauge and filmOffset effects
     // HL.camera.filmGauge = 1;
     // HL.camera.filmOffset = 100;
-    HL.camera.position.y = 40;
     HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
 
+    HL.cameraGroup = new THREE.Object3D();
+    HL.cameraCompanion = new THREE.Mesh(new THREE.PlaneBufferGeometry(128,128,1,1),new THREE.MeshBasicMaterial({color:0xff0000,transparent:true,side:THREE.DoubleSide}));
+    HL.cameraCompanion.position.z = -500;
+    HL.cameraCompanion.visible = false;
+    // c.geometry.rotateX(Math.PI/2);
+    HL.cameraGroup.add(HL.camera);
+    HL.cameraGroup.add(HL.cameraCompanion);
+    HL.cameraGroup.position.y = 50;
+    HL.scene.add(HL.cameraGroup);
 
 
     // RENDERER
@@ -315,28 +341,41 @@ var HLEnvironment = function(){
     }
     // HL.renderer.shadowMap.enabled = true;
     //HL.renderer.sortObjects = false;
+
     document.body.appendChild(HL.renderer.domElement);
 
 
     // EFFECT AND CONTROLS
-    if(isVR){
+    if(isCardboard){
+
       HL.stereoEffect = new THREE.StereoEffect(HL.renderer);
+      HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
+
+      HL.camera.fov = 75;
+      HL.camera.focus = HLE.WORLD_WIDTH;
+      HL.camera.updateProjectionMatrix ();
+    }
+    else if(isVR){
+      HL.stereoEffect = new THREE.VREffect( HL.renderer );
       HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
     }
 
-    if (isMobile){
-      HL.controls = new THREE.DeviceOrientationControls(HL.camera);
+    if(isVR){
+      HL.controls = new THREE.VRControls( HL.cameraGroup );
+    }
+    else if (isMobile){
+      HL.controls = new THREE.DeviceOrientationControls(HL.cameraGroup);
     }
     else if(isFPC){
-      HL.controls = new THREE.FirstPersonControls(HL.camera);
+      HL.controls = new THREE.FirstPersonControls(HL.cameraGroup);
 		  HL.controls.movementSpeed = 10;
 		  HL.controls.lookSpeed = 0.1;
     }
     else if(isNoiseCam){
-      HL.controls = new THREE.NoiseCameraMove(HL.camera);
+      HL.controls = new THREE.NoiseCameraMove(HL.cameraGroup);
     }
     else if(isOrbit){
-      HL.controls = new THREE.OrbitControls(HL.camera);
+      HL.controls = new THREE.OrbitControls(HL.cameraGroup);
     }
 
     console.timeEnd('environment');
@@ -346,9 +385,9 @@ var HLEnvironment = function(){
   function initGeometries(){
     console.time('geometries');
 
-  //  HL.geometries.skybox = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
-  //  HL.geometries.skybox.translate(0,0, HLE.TILE_SIZE*0.5);
-    HL.geometries.skybox = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*3-10,10,10);
+  //  HL.geometries.sky = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
+  //  HL.geometries.sky.translate(0,0, HLE.TILE_SIZE*0.5);
+    HL.geometries.sky = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*3-10,64,64);
     // SphereBufferGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
 
     if(HLE.LAND_IS_BUFFER)
@@ -399,18 +438,17 @@ var HLEnvironment = function(){
   function initMaterials(){
     console.time('materials');
 
-    HL.materials.skybox = new THREE.MeshBasicMaterial({
+    HL.materials.sky = new THREE.MeshBasicMaterial({
       color: HLC.horizon,
       fog: false,
       side: THREE.BackSide,
       wireframe: false,//isWire,
       wireframeLinewidth: 2,
-      map:isWire?null:HL.textures.skybox,
+      map:isWire?null:HL.textures.sky2,
     });
-    HL.materials.skybox.color = HLC.horizon; // set by reference
-    // HL.textures.skybox.wrapS = HL.textures.skybox.wrapT = THREE.RepeatWrapping;
-    // HL.textures.skybox.repeat.set( 3, 1);
-    //  HL.materials.skybox = new THREE.SkyboxMaterial('img/skybox1/','.jpg').material;
+    HL.materials.sky.color = HLC.horizon; // set by reference
+    // HL.textures.sky1.wrapS = HL.textures.sky1.wrapT = THREE.RepeatWrapping;
+    // HL.textures.sky1.repeat.set( 3, 1);
 
 
     // HL.materials.land = new THREE.MeshBasicMaterial({
@@ -450,10 +488,18 @@ var HLEnvironment = function(){
       map:isWire?null:HL.textures.land,
       fog:true,
       repeatUV: new THREE.Vector2(1,1),
-      centerPath : HLE.CENTER_PATH
+      centerPath : HLE.CENTER_PATH,
+      side:THREE.DoubleSide,
+      heightMap: HL.textures.land,
+
    });
    HL.materials.land.uniforms.worldColor.value = HLC.horizon;
 
+   HL.materials.land.uniforms.advance.value = HLE.advance;
+   HL.materials.land.uniforms.noiseFreq.value = HLE.noiseFrequency;
+   HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;
+   HL.materials.land.uniforms.landHeight.value = HLE.landHeight * 1.3 ;
+   HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
 
   //  HL.materials.land = new THREE.LandMaterial(HLE.WORLD_WIDTH,HLE.WORLD_TILES,{
   //    wireframe:false,
@@ -510,10 +556,10 @@ var HLEnvironment = function(){
 
   		// Create the water effect
   		HL.materials.water = new THREE.Water(HL.renderer, HL.camera, HL.scene, {
-  			textureWidth: 512,
-  			textureHeight: 512,
+  			textureWidth: isCardboard?200:512 ,
+  			textureHeight: isCardboard?200:512,
   			waterNormals: HL.textures.water,
-        noiseScale: 0.214,
+        noiseScale: .65,
         distortionScale:90,
   			// sunDirection: HL.lights.sun.position.normalize(),
         sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
@@ -532,14 +578,14 @@ var HLEnvironment = function(){
     HL.materials.clouds = new THREE.PointsMaterial({
       color: HLC.clouds,
       side: THREE.DoubleSide,
-      opacity:.8,
-      transparent: true,
-      size: 20,
+      opacity:1,
+      transparent: false,
+      size: 15,
       fog: true,
       sizeAttenuation: true,
       // alphaTest: -0.5,
       depthWrite: false,
-      // map:isWire?null:HL.textures.clouds,
+      // map:isWire?null:HL.textures.cloud1,
     });
     HL.materials.clouds.color = HLC.clouds; // set by reference
 
@@ -586,7 +632,7 @@ var HLEnvironment = function(){
         side:THREE.DoubleSide,
       //  transparent:true,
       });
-      HL.materials[k].color=new THREE.Color(0xffffff);
+      HL.materials[k].color = new THREE.Color(0xffffff);
 
     }
 
@@ -687,12 +733,12 @@ var HLEnvironment = function(){
   function initMeshes(){
     console.time('meshes');
 
-    HL.skybox = new THREE.Mesh(HL.geometries.skybox, HL.materials.skybox);
-    HL.skybox.name = "skybox";
-    HL.scene.add(HL.skybox);
+    HL.sky = new THREE.Mesh(HL.geometries.sky, HL.materials.sky);
+    HL.sky.name = "sky";
+    HL.scene.add(HL.sky);
 
     HL.land = new THREE.Mesh(HL.geometries.land, HL.materials.land);
-    HL.land.position.y = -HLE.LAND_Y_SHIFT; //hardset land at lower height, so we easily see sea
+    // HL.land.position.y = -HLE.LAND_Y_SHIFT; //hardset land at lower height, so we easily see sea
     HL.land.name = "land";
     // HL.land.castShadows = true;
     // HL.land.receiveShadows = true;

@@ -1,6 +1,7 @@
 
   // global vars
   var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
+  var isCardboard = window.location.href.indexOf('?card')>-1;
   var isVR = window.location.href.indexOf('?vr')>-1;
   var isDebug = window.location.href.indexOf('?debug')>-1;
   var isFPC = window.location.href.indexOf('?fpc')>-1;
@@ -8,6 +9,8 @@
   var isNoiseCam = window.location.href.indexOf('?noisecam')>-1;
   var isWire = window.location.href.indexOf('?wire')>-1;
   var hasShadows = false;
+  var noSocket = window.location.href.indexOf('?nosocket')>-1;
+  var hasGUI = window.location.href.indexOf('?gui')>-1;
 
   var frameCount = 0;
   var millis = 0;
@@ -30,18 +33,22 @@
 
     function onResized() {
       HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-      if(isVR) HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+      if(isCardboard) HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
       HL.camera.aspect = (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
       HL.camera.updateProjectionMatrix();
     }
 
     window.addEventListener("resize", onResized);
+
+    if(noSocket){ AA = AudioAnalyzer(); AA.initGetUserMedia();}
+
   }
 
 
 
   function run() {
-    window.requestAnimationFrame(run);
+    if(isVR) HL.stereoEffect.requestAnimationFrame(run);
+    else window.requestAnimationFrame(run);
 
     // Environment and animation
     frameCount++;
@@ -62,35 +69,33 @@
     // remote control / audioreactive
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
-    if(!isMobile)  HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
-    else  HLRemote.updateHLParams(.5,.5,.5,.5,.5);
+
+    if(noSocket && !isMobile)
+      HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
+    else if(noSocket)
+      HLRemote.updateHLParams(.5,.5,.5,.5,.5);
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
     if(HLE.MIRROR) HLAnim.mirrorWaves();
-    if(HLE.WATER) HLAnim.waterShaderBaseMotion();
-    HLAnim.landGLSL();
+    if(HLE.WATER) HLAnim.seaGLSL(); //just updates uniforms
+    HLAnim.landGLSL(); //just updates uniforms
     HLAnim.models();
     HLAnim.particles();
     // HLAnim.wind();
 
-    // Controls and camera
-    if(isMobile || isOrbit)
+
+
+    // camera controls
+    if(isMobile || isOrbit || isVR )
       HL.controls.update(); //DeviceOrientationControls  mode
     else if(isFPC || isNoiseCam){
       HL.controls.update(delta,millis); //FPC mode
     }
     else{
-      // this function sucks spu, use just if really needed
-      //  HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
-      //  HL.camera.rotateY(.001);
     }
 
-    if(!HLE.CENTER_PATH && !isMobile){
-      // HLE.cameraHeight = HLE.landHeight;
-      HLE.smoothCameraHeight += (HLE.landHeight - HLE.smoothCameraHeight) * (HLE.moveSpeed * 0.001);
-      HL.camera.position.y = 10 + HLE.smoothCameraHeight * 1.1;
-    }
+
 
 
 
@@ -99,9 +104,9 @@
       HL.materials.water.render();
     if(HLE.MIRROR)
       HL.materials.mirror.render();
-    if(isVR){
+    if(isCardboard || isVR){
       if(HLE.MIRROR || HLE.WATER)
-      HL.renderer.setRenderTarget( null );
+        HL.renderer.setRenderTarget( null );
       HL.stereoEffect.render(HL.scene,HL.camera);
     }
     else
@@ -114,9 +119,21 @@
     mainInit();
     // init HyperLand Environment
     HLEnvironment.init();
-    // run is called by HLEnvironment.init() when it's all loaded
-    window.addEventListener('HLEload', function(){console.log("event HLEload received"); if(!isMobile) G.guiInit(); run(); });
-    window.removeEventListener('load',loadRoutine,false);
+    // run is called when it's all loaded
+    window.addEventListener('HLEload', function(){
+        console.log("event HLEload received");
+        run();
+        // DEV
+        if(hasGUI) { G = GUI(); G.guiInit();}
+        if(!noSocket) socketVisual.init();
+      }
+    );
+
+    if ( isVR && WEBVR.isAvailable() === true ) {
+      document.body.appendChild( WEBVR.getButton( HL.stereoEffect ) );
+    }
+    
+    window.removeEventListener('load',loadRoutine);
 
   }
   window.addEventListener('load',loadRoutine,false);
@@ -190,6 +207,7 @@
   console.error = console.debug = console.info = console.log
 
 
+  //fullscreen API TODO
   // Find the right method, call on correct element
   function launchIntoFullscreen(element) {
     if(element.requestFullscreen) {

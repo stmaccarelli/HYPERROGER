@@ -35,8 +35,8 @@ var HLAnim = function(){
 //      HL.materials.mirror.material.uniforms.step.value = HLE.landStepsCount;
   }
 
-  function waterShaderBaseMotion(){
-    HL.materials.water.material.uniforms.time.value += 0.01 + HLE.moveSpeed * .01;
+  function seaGLSL(){
+    HL.materials.water.material.uniforms.advance.value += 0.01 + HLE.moveSpeed * .01;
   }
 
   function land(){
@@ -101,8 +101,8 @@ var HLAnim = function(){
 
     HL.materials.land.uniforms.advance.value = HLE.advance;
     HL.materials.land.uniforms.noiseFreq.value = HLE.noiseFrequency;
-    HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;
-    HL.materials.land.uniforms.landHeight.value = HLE.landHeight * 1.3 ;
+    // HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;
+    HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
     HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
 
   }
@@ -111,7 +111,7 @@ var HLAnim = function(){
   // FOR CLOUDS, FLORA AND FAUNA, I'd move this in HLS sceneManager
   function particles(){
 
-   HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.moveSpeed*10);
+   HLH.loopParticles(HL.geometries.clouds, HLE.WORLD_WIDTH, HLE.moveSpeed*2);
 
     // HLH.moveParticles(HL.geometries.flora, HLE.WORLD_WIDTH, HLE.moveSpeed);
 
@@ -136,7 +136,7 @@ var HLAnim = function(){
     //
     for(var k in HL.dynamicModelsClones){
       if(HL.dynamicModelsClones[k] && HL.dynamicModelsClones[k].position){
-       HLH.moveModel( HL.dynamicModelsClones[k], 'z' );
+       HLH.moveModel( HL.dynamicModelsClones[k] );
       }
     }
 
@@ -171,7 +171,7 @@ var HLAnim = function(){
   return{
     sea:sea,
     mirrorWaves:mirrorWaves,
-    waterShaderBaseMotion:waterShaderBaseMotion,
+    seaGLSL:seaGLSL,
     land:land,
     particles:particles,
     wind:wind,

@@ -1,10 +1,7 @@
-fare sistema di loading scene da json / oggetto params
-
-aggiungere settaggio di velocità relativa alla scena
 
 fare scena "black" (schermo nero e basta)
 
-fare tasto "randomColor"
+fare tasto / socket message "randomColor" per cellulari
 
 rotazione camera noiseCam o altro, organico e audioreattivo
 anche quando scorriamo solo in avanti, la camera deve avere dei movimenti organici tipo di onde, in base a velocità globale
@@ -18,6 +15,22 @@ UI (icona "please landscape) e poi VR
 
 Fullscreen su android
 
+VIBRATION API (oggetti)
+
+DISABLE CAMERA VIBRATION FROM VR and CARD modes
+
 --
 
 hyperland website temporary
+--
+
+REMOTE
+master speed ?
+
+
+testare su android
+albertosarullo.com/demos/accelerometer/
+
+
+
+TODO socket

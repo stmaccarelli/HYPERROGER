@@ -38,11 +38,11 @@ function HUD(iscanvas){
       _HUD.duration = duration;
       _HUD.bg = background;
 
-      if(isCanvas===true){
+      if(isCanvas){
         _HUD.text = text;
         _HUD.raf = window.requestAnimationFrame(_HUD.showTextCanvas);
       }
-      else if(isCanvas===false){
+      else{
         _HUD.div.innerHTML = text;
         _HUD.raf = window.requestAnimationFrame(_HUD.showTextDiv);
       }
