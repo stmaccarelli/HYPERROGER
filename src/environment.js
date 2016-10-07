@@ -13,7 +13,8 @@ var HLE = {
   SEA_TILES:16,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:1,
+  PIXEL_RATIO_SCALE:.5,
+  
   SCREEN_WIDTH_SCALE:1,
   SCREEN_HEIGHT_SCALE:!isMobile?1:.7,
 
@@ -24,7 +25,7 @@ var HLE = {
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: 0,
-  CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
+  CENTER_PATH:true, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computed move speed
@@ -284,11 +285,11 @@ var HLEnvironment = function(){
     if(HLE.FOG && !isWire){
       // HL.scene.fog = new THREE.Fog(
       //   HLC.horizon,
-      //   HLE.WORLD_WIDTH * HLE.CENTER_PATH?0.25:0.45,
+      //   HLE.WORLD_WIDTH * 0.3,
       //   HLE.WORLD_WIDTH * 0.45
       // );
       HL.scene.fog = new THREE.FogExp2();
-      HL.scene.fog.density = 0.00025;
+      HL.scene.fog.density = 0.001;//0.00025;
       HL.scene.fog.color = HLC.horizon;
     }
 
@@ -309,9 +310,11 @@ var HLEnvironment = function(){
     // TODO check filmGauge and filmOffset effects
     // HL.camera.filmGauge = 1;
     // HL.camera.filmOffset = 100;
-    HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
+    // HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
 
     HL.cameraGroup = new THREE.Object3D();
+    HL.cameraGroup.rotation.y = (Math.PI);
+
     HL.cameraCompanion = new THREE.Mesh(new THREE.PlaneBufferGeometry(128,128,1,1),new THREE.MeshBasicMaterial({color:0xff0000,transparent:true,side:THREE.DoubleSide}));
     HL.cameraCompanion.position.z = -500;
     HL.cameraCompanion.visible = false;
@@ -494,6 +497,7 @@ var HLEnvironment = function(){
 
    });
    HL.materials.land.uniforms.worldColor.value = HLC.horizon;
+   HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
 
    HL.materials.land.uniforms.advance.value = HLE.advance;
    HL.materials.land.uniforms.noiseFreq.value = HLE.noiseFrequency;
@@ -580,7 +584,7 @@ var HLEnvironment = function(){
       side: THREE.DoubleSide,
       opacity:1,
       transparent: false,
-      size: 15,
+      size: isCardboard||isVR?10:25,
       fog: true,
       sizeAttenuation: true,
       // alphaTest: -0.5,

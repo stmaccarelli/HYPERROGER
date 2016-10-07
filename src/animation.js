@@ -101,7 +101,7 @@ var HLAnim = function(){
 
     HL.materials.land.uniforms.advance.value = HLE.advance;
     HL.materials.land.uniforms.noiseFreq.value = HLE.noiseFrequency;
-    // HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;
+    HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;
     HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
     HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
 

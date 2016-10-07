@@ -28,7 +28,7 @@ HLS.scenesAddons = {};
 
 HLS.loadParams = function(params) {
 
-    HLE.BASE_MOVE_SPEED = isVR?params.speed*0.01:params.speed || 1;
+    HLE.BASE_MOVE_SPEED = (isVR||isCardboard)?params.speed*0.01:params.speed || 1;
 
     if (params.cameraPositionY !== undefined)
         HL.cameraGroup.position.y = params.cameraPositionY;
@@ -79,6 +79,12 @@ HLS.loadParams = function(params) {
     }
     if (params.skyMap !== undefined)
         HL.materials.sky.map = HL.textures[params.skyMap];
+
+    if (params.centerPath !== undefined){
+        HL.materials.land.uniforms.withCenterPath.value =
+        HLE.CENTER_PATH =
+        params.centerPath;
+    }
 }
 
 HLS.startScene = function(sceneId) {
@@ -92,37 +98,18 @@ HLS.startScene = function(sceneId) {
     //destroy all running models
     HLH.destroyAllModels();
 
-    // reset camera
-    HL.cameraGroup.rotation.x = (-Math.PI / 24);
-    HL.cameraGroup.rotation.y = 0;
-    HL.cameraGroup.rotation.z = 0;
-    HL.cameraCompanion.visible = false;
-    HL.camera.rotation.x = 0;
-    HL.camera.rotation.y = 0;
-    HL.camera.rotation.z = 0;
-    // reset sea position and alpha
-    // HL.materials.water.material.uniforms.alpha.value = 0.9;
-    // HL.sea.position.y = 0;
-
-    //reset materials maps
-    // HL.materials.skybox.map = HL.textures.skybox;
-    // HL.materials.skybox.needsUpdate = true;
-
-    // reset models maps
-    // for(var i in HL.models){
-    //   HL.models[i].material.map = (HL.textures[i]!==undefined?HL.textures[i]:null);
-    //   HL.models[i].material.needsUpdate = true;
-    // }
-
-
-
-
     //load scene parameters
     if (HLSP.scenesParams[sceneId] !== undefined) {
         HLS.loadParams(HLSP.scenesParams[sceneId]);
         //start hud display
         if (HLS.hud !== undefined) HLS.hud.display(HLSP.scenesParams[sceneId].displayText || sceneId, 3, false);
     }
+
+    // reset camera rotations etc
+    // HL.cameraGroup.rotation.x = 0;
+    // HL.cameraGroup.rotation.y = 0;
+    // HL.cameraGroup.rotation.z = 0;
+    HL.cameraCompanion.visible = false;
 
     //init custom scene, in case any
     // TODO try to remove and parametrize everything in scenesParams
@@ -135,7 +122,7 @@ HLS.startScene = function(sceneId) {
 
     //start new sceneI
     if(isVR) HLS.raf = HL.stereoEffect.requestAnimationFrame(HLS.scenes[sceneId] || HLS.scenes.standard);
-    else window.requestAnimationFrame(HLS.scenes[sceneId] || HLS.scenes.standard);
+    else HLS.raf = window.requestAnimationFrame(HLS.scenes[sceneId] || HLS.scenes.standard);
 }
 
 
@@ -150,18 +137,20 @@ HLS.scenes.standard = function() {
     // HLS.raf = window.requestAnimationFrame(HLS.scenes.standard);
 
     // advance buildFreq
-    // HL.materials.land.uniforms.buildFreq.value -= Math.max(0, (HLR.fft1 - 0.96)) * 3;
-     HL.materials.land.uniforms.buildFreq.value += Math.max(0, HLR.fft1 - 0.95) * .5;
+    HL.materials.land.uniforms.buildFreq.value -= Math.max(0, (HLR.fft1 - 0.96)) * 2.5;
 
-    // compute move speed
-    HLE.reactiveMoveSpeed = 1 + (HLR.fft1 + HLR.fft2 + HLR.fft3) * 0.75 * HLE.BASE_MOVE_SPEED;
-    // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.15;
+    // // compute move speed
+    HLE.reactiveMoveSpeed = 1 + (HLR.fft1 + HLR.fft2 + HLR.fft3) * 0.3 * HLE.BASE_MOVE_SPEED;
+    // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.25;
     HLE.moveSpeed = HLE.reactiveMoveSpeed;
+    HLE.moveSpeed *= 0.98;
 
     // compute noiseFrequency (used in land for rainbow etc)
-    HLR.tempNoiseFreq = 7 - (HLR.smoothFFT2 - HLR.smoothFFT3) * 3;
-    HLE.noiseFrequency += (HLR.tempNoiseFreq - HLE.noiseFrequency) * 0.3;
+    HLR.tempNoiseFreq = 7 - (HLR.fft3) * 3;
+    // HLE.noiseFrequency += (HLR.tempNoiseFreq - HLE.noiseFrequency) * 0.3;
+    HLE.noiseFrequency = HLR.tempNoiseFreq;
 
+    HLE.noiseFrequency2 += (HLR.fft2 - HLR.fft3) * .003;
 
     // compute land heiught
     HLR.tempLandHeight = (HLR.smoothFFT1 + HLR.smoothFFT3) *
@@ -241,7 +230,7 @@ HLS.scenesAddons.drift = function() {
 // HL.cameraGroup.children[1].material.needsUpdate = true;
 
 HLS.scenesAddons.escher_surfers = function() {
-    HL.cameraGroup.rotation.x = Math.sin(HLE.advance * 0.00004) * Math.PI / 32;
+    // HL.cameraGroup.rotation.x = Math.sin(HLE.advance * 0.00004) * Math.PI / 32;
 }
 
 HLS.scenesAddons.else = function() {
@@ -271,22 +260,6 @@ HLS.scenesAddons.twin_horizon = function() {
 
 HLS.scenesAddons.hyperocean = function() {}
 
-HLS.cameraMotion = function() {
-    HL.cameraGroup.rotation.x = -Math.sin(HLE.advance * 0.000062) * Math.PI / 32 +
-        Math.sin(HL.cameraGroup.rotation.y) * Math.PI / 18 + HL.cameraGroup.position.y / HLE.WORLD_HEIGHT * Math.PI / 8;
-    HL.cameraGroup.rotation.y = Math.PI - Math.cos(HLE.advance * 0.00005) * Math.PI;
-    HL.cameraGroup.rotation.z = -Math.sin(HLE.advance * 0.00004) * Math.PI / 32;
-
-    // HL.cameraGroup.rotation.x += Math.cos(HLR.fft1*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
-    // HL.cameraGroup.rotation.y += Math.sin(HLR.fft2*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
-    // HL.cameraGroup.rotation.z += Math.cos(HLR.fft3*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
-
-    // HL.cameraCompanion.rotation.x = Math.sin(HLE.advance*0.00062)*Math.PI/64;
-    // HL.cameraCompanion.rotation.y = -Math.cos(HLE.advance*0.0005)*Math.PI/12;
-    // HL.cameraCompanion.rotation.z = Math.sin(HLE.advance*0.0004)*Math.PI/64;
-
-
-}
 
 
 HLS.scenesAddons.roger_water = function(){
@@ -313,6 +286,41 @@ HLS.scenesAddons.popeye = function(){
   );
 }
 
+
+/*
+* COMMON HELPERS
+*
+*/
+
+
+HLS.cameraMotion = function() {
+
+  var b = Math.PI + Math.sin(HLE.advance  * 0.0001 ) * Math.PI;
+  var r = HLE.WORLD_WIDTH*0.25;
+
+
+  HL.cameraGroup.lookAt(
+     new THREE.Vector3(
+      Math.sin(b) * r,
+      HL.cameraGroup.position.y*2,
+      Math.cos(b) * r
+    )
+    );
+
+    // HL.cameraGroup.rotation.x = -Math.sin(HLE.advance * 0.000062) * Math.PI / 32;
+    // HL.cameraGroup.rotation.y = Math.PI - Math.cos(HLE.advance * 0.00005) * Math.PI;
+    // HL.cameraGroup.rotation.z = -Math.sin(HLE.advance * 0.00004) * Math.PI / 32;
+
+    // HL.cameraGroup.rotation.x += Math.cos(HLR.fft1*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
+    // HL.cameraGroup.rotation.y += Math.sin(HLR.fft2*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
+    // HL.cameraGroup.rotation.z += Math.cos(HLR.fft3*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
+
+    // HL.cameraCompanion.rotation.x = Math.sin(HLE.advance*0.00062)*Math.PI/64;
+    // HL.cameraCompanion.rotation.y = -Math.cos(HLE.advance*0.0005)*Math.PI/12;
+    // HL.cameraCompanion.rotation.z = Math.sin(HLE.advance*0.0004)*Math.PI/64;
+
+
+}
 
 HLS.randomizeLand = function(){
 
@@ -355,6 +363,7 @@ HLS.logoChange = function(model) {
 }
 
 HLS.modelshooting = function(k) {
+  console.log(k);
     // create keys for scenes
     var keyCodeIndex = 65 // 'a' on keyboard
     for (var key in HLSP.scenesParams) {
@@ -383,8 +392,14 @@ HLS.modelshooting = function(k) {
         HLS.logoChange('maker');
     if (k.keyCode == 56) //8
         HLS.logoChange('cube');
-    if (k.keyCode == 48)
+    if (k.keyCode == 48)//0
         HL.cameraCompanion.visible = !HL.cameraCompanion.visible;
+
+
+    if(k.keyCode == 57){ //9
+      HLE.CENTER_PATH=!HLE.CENTER_PATH;
+      HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
+    }
     //
     // if(k.keyCode==49)//1
     //   {HLS.startScene('scene1');}

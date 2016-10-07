@@ -2,7 +2,7 @@
  HLSP['scenesParams'] = {
      // intensità colore land audioreattivab più bassa
      mizu: {
-         "cameraPositionY": 3,
+         "cameraPositionY": 10,
          "seaLevel": 0,
 
          "displayText": 'MIZU',
@@ -26,7 +26,7 @@
      // fft1 più speedup moveSpeed
      solar_valley: {
          "cameraPositionY": -350,
-         "seaLevel": -550,
+         "seaLevel": -450,
          "fogDensity": 0.00054,
 
          "displayText": 'SOLAR VALLEY',
@@ -74,7 +74,7 @@
      // sea level più basso
      // modelli: cubid
      currybox: {
-         "cameraPositionY": 50,
+         "cameraPositionY": 500,//HLE.WORLD_HEIGHT*.5,
          "seaLevel": -100,
 
          "displayText": 'CURRYBOX',
@@ -82,14 +82,14 @@
          "modelsParams": ['sea', 1, true, true],
 
          "tiles": 145,
-         "repeatUV": 112,
+         "repeatUV": 1,
          "bFactor": 0.10849113862588011,
          "cFactor": 0.054245569312940056,
          "buildFreq": 10,
-         "natural": 0.0976420247632921,
-         "rainbow": 0.11934025248846812,
-         "squareness": 0.08945796327125173,
-         "map": "land1",
+         "natural": 0.176420247632921,
+         "rainbow": 0.21934025248846812,
+         "squareness": 0.01,
+         "map": "white",
          "landRGB": 13766158,
          "horizonRGB": 2665099,
 
@@ -160,15 +160,15 @@
          "modelsParams": ['sea', 6, false, false],
 
          "tiles": 320,
-         "repeatUV": 8,
-         "bFactor": 0.5731022437271947,
-         "cFactor": 0.5509935600264457,
-         "buildFreq": 38.01100739053207,
-         "natural": 0.5,
-         "rainbow": 0.208623985480612828,
+         "repeatUV": 12,
+         "bFactor": 1.001,
+         "cFactor": 0.21934025248846812,
+         "buildFreq": 15.188759407623216,
+         "natural": 0.7051924010682208,
+         "rainbow": 0.1952840495265842,
          "squareness": 0.005,
          "map": "land5",
-         "landRGB": 16369575,
+         "landRGB": 14798516,
          "horizonRGB": 7173242,
          "skyMap": "sky2",
      },

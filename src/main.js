@@ -132,7 +132,7 @@
     if ( isVR && WEBVR.isAvailable() === true ) {
       document.body.appendChild( WEBVR.getButton( HL.stereoEffect ) );
     }
-    
+
     window.removeEventListener('load',loadRoutine);
 
   }
