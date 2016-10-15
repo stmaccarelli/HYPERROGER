@@ -126,7 +126,7 @@ var HL = {
     sea:"img/white2x2.gif",
     flora:"img/white2x2.gif",
     fauna:"img/white2x2.gif",
-    water:"img/waternormals5.png",//wn5
+    water:"img/waternormals5.jpg",//wn5
 
     //for models
     whale:"3dm/BL_WHALE/BL_WHALE.jpg",
