@@ -192,13 +192,7 @@
   // else  window.addEventListener('click',randomizeLand);
 
 
-  var loadingDiv = document.createElement('div');
-  loadingDiv.style.position = "absolute";
-  loadingDiv.style.bottom=0;
-  loadingDiv.style.left=0;
-  loadingDiv.innerHTML += ('<p> LOADING </p>');
-
-  document.body.appendChild(loadingDiv);
+  var loadingDiv = document.getElementById('loadingDiv');
 
   if (typeof console  != "undefined")
       if (typeof console.log != 'undefined'){

@@ -359,7 +359,7 @@ var HLH = function() {
 	}
 
 	shootGroup = function(group, scale, speed,rotation,floating, midpoint){
-		if(speed==undefined && rotation==undefined && floating==undefined && midpoint==undefined)
+		if(group.length)
 			var scale=(typeof group[1] === "function")?group[1]():group[1],
 			 speed=group[2],rotation=group[3],floating=group[4], midpoint = group[5] || 0,
 			 group = group[0];

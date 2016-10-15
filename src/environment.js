@@ -131,10 +131,10 @@ var HL = {
     //for models
     whale:"3dm/BL_WHALE/BL_WHALE.jpg",
     ducky:"3dm/ducky/ducky.png",
-    airbus:"3dm/airbus/airbus_d2.jpg",
+    airbus:"3dm/airbus/airbus_d2.png",
     helicopter:"3dm/aurora/aurora.png",
     aurora:"3dm/aurora/aurora.png",
-    heartbomb:"3dm/heartbomb/heartbomb_full.png",
+    heartbomb:"3dm/heartbomb/heartbomb_full_l.png",
     // mercury:"3dm/mercury/mercury.png",
 
     pattern1:"img/patterns/pattern-1.png",
@@ -232,7 +232,10 @@ var HLEnvironment = function(){
             HL.textures[k].wrapT = THREE.RepeatWrapping;
             imageLoaded() } })(key),
           (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
-          function(i){loadableImagesCounter--; console.error(i); imageLoaded() }
+          function(i){loadableImagesCounter--; console.error(i);
+            loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR ON IMAGE '+key+' PLEASE RELOAD</p>');
+            //imageLoaded()
+          }
         );
       }
       else delete(HL.textures[key]);
@@ -705,7 +708,7 @@ var HLEnvironment = function(){
           (function(k){ return function(e){
               loadableModelsCounter--;
               console.error(e);
-              loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR ON MODEL'+k+' </p>');
+              loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR ON MODEL'+k+' PLEASE RELOAD</p>');
               //modelLoaded();
             }
           })(key)

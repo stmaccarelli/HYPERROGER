@@ -92,7 +92,8 @@
 	<script src="lib/NoScroll.js"></script>
 
 	<!-- NODE SOCKET.IO -->
-	<script src="http://pixelsmasher.io:1502/socket.io/socket.io.js" type="text/javascript"></script>
+	<script src="http://13.95.147.55:1502/socket.io/socket.io.js" type="text/javascript"></script>
+	<!-- <script src="http://pixelsmasher.io:1502/socket.io/socket.io.js" type="text/javascript"></script> -->
 
 	<!-- DEV audio lib -->
 	<script src="lib/dev/AudioAnalyzerDev.js"></script>
@@ -110,7 +111,7 @@
 		var scenesListDom = document.getElementById("scenesList");
 
 		function init() {
-			var socket = io('http://pixelsmasher.io:1502');
+			var socket = io('http://13.95.147.55:1502');
 			socket.emit('ack', { whoami: 'mxr' });
 
 			// TODO: webworker per emit messaggi FFT
@@ -122,9 +123,9 @@
 					socket.emit('mxr_push_fft', {
 						a: audioAnalyzer.getFreq(2),
 						b: audioAnalyzer.getFreq(0),
-						c: audioAnalyzer.getFreq(400),
-						d: audioAnalyzer.getFreq(64),
-						e: audioAnalyzer.getFreq(200)
+						c: audioAnalyzer.getFreq(400)
+						//d: audioAnalyzer.getFreq(64),
+						//e: audioAnalyzer.getFreq(200)
 					});
 				}
 			}

@@ -1,5 +1,5 @@
 var socketVisual = function(){
-  var socket = io('http://pixelsmasher.io:1502');
+  var socket = io('http://13.95.147.55:1502');
 
   function init(){
     //chech if previously got a ID
@@ -9,6 +9,7 @@ var socketVisual = function(){
     if(isMobile) socket.emit('ack',{whoami:'mobi',mobi_id:local_mobi_id}); //TODO
     else socket.emit('ack',{whoami:'visual'});
 
+    // hmmm
     socket.on('youare', function(e){console.log(e); window.localStorage.setItem('mobile_id',e.mobi_id);});
 
     console.log('sent ack');
@@ -28,12 +29,12 @@ var socketVisual = function(){
 
     function handleVisibilityChange() {
         socket.emit('hidden',{hidden:document.hidden});
-        console.log(document.hidden);
+        // console.log(document.hidden);
     }
 
     // Warn if the browser doesn't support addEventListener or the Page Visibility API
     if (typeof document.addEventListener === "undefined" || typeof document[hidden] === "undefined") {
-      console.log("This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.");
+      console.log("Your browser does not support the Page Visibility API.");
     } else {
       // Handle page visibility change
       document.addEventListener(visibilityChange, handleVisibilityChange, false);
@@ -54,9 +55,7 @@ var socketVisual = function(){
       HLRemote.updateHLParams(
       d.msg.a,
       d.msg.b,
-      d.msg.c,
-      d.msg.d,
-      d.msg.e
+      d.msg.c
     );
     });
 
@@ -94,7 +93,11 @@ var socketVisual = function(){
 
 
 
-    socket.on('cur_scene', function(d){HLS.startScene(d.curscene); console.log('cur_scene '+d.curscene); } );
+    socket.on('cur_scene', function(d){
+      HLS.startScene(d.curscene)
+      //  console.log('cur_scene '+d.curscene);
+     }
+    );
 
 
 

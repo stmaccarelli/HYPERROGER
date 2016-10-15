@@ -67,7 +67,7 @@
   <script src="lib/NoScroll.js"></script>
 
 	<!-- NODE SOCKET.IO -->
-	<script src="http://pixelsmasher.io:1502/socket.io/socket.io.js" type="text/javascript"></script>
+	<script src="http://13.95.147.55:1502/socket.io/socket.io.js" type="text/javascript"></script>
 
 	<!-- DEV audio lib -->
 	<script src="lib/dev/AudioAnalyzerDev.js"></script>
@@ -78,7 +78,7 @@
 	var connectedMobiles=document.getElementById("connectedMobiles");
 
 	function init(){
-		var socket = io('http://pixelsmasher.io:1502');
+		var socket = io('http://13.95.147.55:1502');
 		socket.emit('ack',{whoami:'mixer'});
 
 		// TODO: webworker per emit messaggi FFT

@@ -233,7 +233,7 @@ HLS.scenesAddons.mizu = function() {
 
 HLS.scenesAddons.solar_valley = function() {
     // thunderbolts
-    HLS.lumi = HLR.fft5 * HLR.fft5 * 4;
+    HLS.lumi = HLR.fft3 * HLR.fft3 * 4;
     HLC.land.setRGB(HLS.lumi, HLS.lumi, HLS.lumi);
 }
 
