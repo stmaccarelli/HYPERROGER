@@ -156,12 +156,12 @@ var HL = {
     textbox:null,
   },
   models: {
-    whale:["3dm/BL_WHALE/BL_WHALE.OBJ",1],
-    ducky:["3dm/ducky/ducky.obj",5],
-    airbus:["3dm/airbus/airbus_d2.obj",5],
-    aurora:["3dm/aurora/aurora_c.obj",5],
+    whale:["3dm/BL_WHALE/whale_m.obj",1],
+    ducky:["3dm/ducky/ducky_m.obj",5],
+    airbus:["3dm/airbus/airbus_m.obj",5],
+    aurora:["3dm/aurora/aurora_m.obj",5],
     helicopter:["3dm/lo_helicopter2.obj",5],
-    heartbomb:["3dm/heartbomb/heartbomb_c.obj",5],
+    heartbomb:["3dm/heartbomb/heartbomb_m.obj",5],
     // mercury:["3dm/mercury/mercury_c.obj",5],
     // tiger:["3dm/uncletiger/uncletiger_c.obj",5],
     cube:["3dm/cube.obj",2.5],
@@ -204,30 +204,35 @@ var HL = {
 
 var HLEnvironment = function(){
 
-  var imagesCounter=0,imagesLoaded=0;
-  function imageLoaded(key){
-    HL.textures[key].wrapS = THREE.RepeatWrapping;
-    HL.textures[key].wrapT = THREE.RepeatWrapping;
+  var loadableImagesCounter=0,imagesLoaded=0;
 
-    imagesLoaded++;
-    console.log("image "+key+" loaded, "+imagesLoaded+"/"+imagesCounter);
-    if(imagesLoaded==imagesCounter) {
+  function imageLoaded(){
+    if(imagesLoaded==loadableImagesCounter) {
       console.timeEnd('images');
       HL.textures['length'] = imagesLoaded;
       initMaterials();
     }
   }
+
   function loadTextures(){
     console.time('images');
     var loader = new THREE.TextureLoader();
     for (var key in HL.textures)
       if(HL.textures[key]!=null){
-        imagesCounter++;
+        console.log('loading image '+key);
+        loadableImagesCounter++;
         HL.textures[key] = loader.load(
           HL.textures[key],
-          (function(k) { return function() { imageLoaded( k ) } })(key),
-          null,
-          function(i){imagesCounter--; console.error(i)}
+          (function(k) { return function() {
+            // increment loaded Counter
+            imagesLoaded++;
+            console.log("image "+k+" loaded, "+imagesLoaded+"/"+loadableImagesCounter);
+              //set texture wrapping
+            HL.textures[k].wrapS = THREE.RepeatWrapping;
+            HL.textures[k].wrapT = THREE.RepeatWrapping;
+            imageLoaded() } })(key),
+          (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
+          function(i){loadableImagesCounter--; console.error(i); imageLoaded() }
         );
       }
       else delete(HL.textures[key]);
@@ -636,7 +641,6 @@ var HLEnvironment = function(){
         wireframe:isWire,
         wireframeLinewidth:2,
         side:THREE.FrontSide,
-        shading: THREE.SmoothShading,
         transparent:true,
       });
       HL.materials[k].color = new THREE.Color(0xffffff);
@@ -650,15 +654,26 @@ var HLEnvironment = function(){
 
   }
 
+  var loadableModelsCounter=0, modelsLoaded=0;
+
+  function modelLoaded(){
+    if(modelsLoaded==loadableModelsCounter) {
+      console.timeEnd('models');
+      initMeshes();
+    }
+  }
+
+
 
   function initModels(){
     console.time('models');
-    var loader = new THREE.OBJLoader(), modelPath, modelScale, goodModelsCounter=0, loadedModelsCounter=0;
+    var loader = new THREE.OBJLoader(), modelPath, modelScale;
     var keys = {};
     // load a resource
     for (var key in HL.models){
       if(HL.models[key]!==null){
-        console.log("goodModelsCounter:"+ (++goodModelsCounter) );
+        console.log("loading model :"+ key );
+        console.log("loadableModelsCounter:"+ (++loadableModelsCounter) );
         modelPath = HL.models[key][0];
         modelScale = HL.models[key][1];
         loader.load(
@@ -680,14 +695,21 @@ var HLEnvironment = function(){
 
               HL.scene.add( HL.models[nK] );
               HLH.resetModel(HL.models[nK] );
-              loadedModelsCounter++;
-              if(loadedModelsCounter==goodModelsCounter){
-                console.timeEnd('models');
-                initMeshes();
-              }
+
+              modelsLoaded++;
+              console.log("model "+nK+" loaded, "+modelsLoaded+"/"+loadableModelsCounter);
+              modelLoaded();
             }
-          })(key, modelScale)
-        );
+          })(key, modelScale),
+          (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
+          (function(k){ return function(e){
+              loadableModelsCounter--;
+              console.error(e);
+              loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR ON MODEL'+k+' </p>');
+              //modelLoaded();
+            }
+          })(key)
+        )
       }
     }
     HL.modelsKeys = Object.keys(HL.models);
@@ -732,8 +754,6 @@ var HLEnvironment = function(){
      var HLEload = new Event("HLEload");
      console.timeEnd('HL environment');
      window.dispatchEvent(HLEload);
-     document.body.removeChild(consoleDiv);
-
   }
 
 

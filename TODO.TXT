@@ -39,6 +39,6 @@ TODO socket
 
 
 android loading
-onerror
-
+onerror models √
+HUD in THREE.JS canvas, non esterno.
 refactor FFT (eliminare fft4 e 5 da oggetto)

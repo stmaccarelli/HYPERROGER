@@ -132,6 +132,10 @@
         if(hasGUI) { G = GUI(); G.guiInit();}
         if(!noSocket) socketVisual.init();
 
+        //remove loadingDiv
+        document.body.removeChild(loadingDiv);
+
+
         //let's rock
         run();
       }
@@ -188,11 +192,13 @@
   // else  window.addEventListener('click',randomizeLand);
 
 
-  var consoleDiv = document.createElement('div');
-  consoleDiv.style.position = "absolute";
-  consoleDiv.style.bottom=0;
-  consoleDiv.style.left=0;
-  document.body.appendChild(consoleDiv);
+  var loadingDiv = document.createElement('div');
+  loadingDiv.style.position = "absolute";
+  loadingDiv.style.bottom=0;
+  loadingDiv.style.left=0;
+  loadingDiv.innerHTML += ('<p> LOADING </p>');
+
+  document.body.appendChild(loadingDiv);
 
   if (typeof console  != "undefined")
       if (typeof console.log != 'undefined'){
@@ -205,12 +211,12 @@
 
   console.log = function(message) {
       console.olog(message);
-      consoleDiv.innerHTML += ('<p>' + message + '</p>');
+      loadingDiv.innerHTML += ('<p>' + message + '</p>');
   };
 
   console.timeEnd = function(message) {
       console.oTimeEnd(message);
-      consoleDiv.innerHTML += ('<p>' + message +'</p>');
+      loadingDiv.innerHTML += ('<p>' + message +'</p>');
   };
   console.error = console.debug = console.info = console.log
 

@@ -8,6 +8,7 @@ function HUD(iscanvas){
     width:window.innerWidth,
     height:window.innerHeight,
     canvas:null,
+    div:null,
   };
 
   _HUD.initCanvas = function(){
@@ -40,10 +41,12 @@ function HUD(iscanvas){
       _HUD.bg = background;
 
       if(isCanvas){
+        _HUD.canvas.style.zIndex = 999;
         _HUD.text = text;
         _HUD.raf = window.requestAnimationFrame(_HUD.showTextCanvas);
       }
       else{
+        _HUD.div.style.zIndex = 999;
         _HUD.div.innerHTML = text;
         _HUD.raf = window.requestAnimationFrame(_HUD.showTextDiv);
       }
@@ -64,6 +67,7 @@ function HUD(iscanvas){
     }
 
     if(millis-_HUD.timer>_HUD.duration){
+      _HUD.canvas.style.zIndex = -9;
       window.cancelAnimationFrame(_HUD.raf);
       _HUD.raf=null;
       _HUD.timer=null;
@@ -79,6 +83,7 @@ function HUD(iscanvas){
     }
 
     if(millis-_HUD.timer>_HUD.duration){
+      _HUD.div.style.zIndex = -9;
       window.cancelAnimationFrame(_HUD.raf);
       _HUD.raf=null;
       _HUD.timer=null;
