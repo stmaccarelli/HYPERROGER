@@ -313,7 +313,7 @@ var HLH = function() {
 			//normalized
 			model.dist = Math.min(model.dist/(HLE.WORLD_WIDTH),1);
 			model.dist =  Math.pow(1-model.dist,10);
-			model.dist = model.speed * model.dist * 0.0015 * Math.min(model.size.length()*0.003,1);
+			model.dist = model.speed * model.dist * 0.0010 * Math.min(model.size.length()*0.003,1);
 			HL.camera.rotation.x +=(THREE.Math.randFloat(-1,1) * model.dist );
 			HL.camera.rotation.y +=(THREE.Math.randFloat(-1,1) * model.dist );
 			HL.camera.rotation.z +=(THREE.Math.randFloat(-1,1) * model.dist );
@@ -358,15 +358,19 @@ var HLH = function() {
 		 0, 'xyz');    // shoot all models from a group
 	}
 
-	shootGroup = function(group,speed,rotation,floating, midpoint){
+	shootGroup = function(group, scale, speed,rotation,floating, midpoint){
 		if(speed==undefined && rotation==undefined && floating==undefined && midpoint==undefined)
-			var speed=group[1],rotation=group[2],floating=group[3], midpoint=group[4], group = group[0];
-		if(midpoint==undefined)midpoint=0;
+			var scale=(typeof group[1] === "function")?group[1]():group[1],
+			 speed=group[2],rotation=group[3],floating=group[4], midpoint = group[5] || 0,
+			 group = group[0];
 
-		HLH.startModel(HL.models[HL.mGroups[group][Math.floor(Math.random()*HL.mGroups[group].length)]],
+		// if(midpoint===undefined) midpoint=0;
+		group = (typeof group==="object")?group:HL.mGroups[group];
+
+		HLH.startModel(HL.models[ group[Math.floor(Math.random()*group.length)]],
 		 THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),
-		 floating?0:THREE.Math.randInt(-HLE.WORLD_HEIGHT*0.01,HLE.WORLD_HEIGHT*1.1)+midpoint,
-		 speed, (rotation?'xyz':null) );    // shoot all models from a group
+		 floating?midpoint:THREE.Math.randInt(-HLE.WORLD_HEIGHT*0.01,HLE.WORLD_HEIGHT*1.1)+midpoint,
+		 speed, (rotation?'xyz':null), scale );    // shoot all models from a group
 	}
 
 

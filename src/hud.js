@@ -26,7 +26,8 @@ function HUD(iscanvas){
     _HUD.div = document.createElement('div');
     _HUD.div.setAttribute("style", "position: absolute; top:0;left:0;"+
     "width: "+_HUD.width+"px; "+"height: "+_HUD.height+"px; "+
-    "background:transparent; z-index:999; font-size:"+(_HUD.height*0.05)+"px;");
+    "background:transparent;  font-size:"+(_HUD.height*0.05)+"px; line-height:"+(_HUD.height*0.07)+"px;"+
+    " padding:50px; font-family:Serif;");
     document.body.appendChild(_HUD.div);
   }
 

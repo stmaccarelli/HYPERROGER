@@ -34,3 +34,11 @@ albertosarullo.com/demos/accelerometer/
 
 
 TODO socket
+
+
+
+
+android loading
+onerror
+
+refactor FFT (eliminare fft4 e 5 da oggetto)

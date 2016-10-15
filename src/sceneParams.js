@@ -5,33 +5,33 @@
          "cameraPositionY": 10,
          "seaLevel": 0,
 
-         "displayText": 'MIZU',
+         "displayText": "<b>CHAPTER ONE, MIZU</b><br/><i>TO BE TRAPPED INTO THE MORNING UNDERTOW</i>",
          "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
+         "modelsParams": ['stones', function(){return 1+Math.random()*40}, 3, true, true, 0],
 
-         "tiles": 32,
-         "repeatUV": 512,
-         "bFactor": 0.22087281339397613,
-         "cFactor": 0.01543734109853323,
-         "buildFreq": 50.332836415087655,
-         "natural": 0.49748154523558328,
-         "rainbow": 0.8787699998982024,
+         "tiles": 62,
+        "repeatUV": 1,
+        "bFactor": 0.5,
+        "cFactor": 0.07594379703811609,
+        "buildFreq": 10,
+        "natural": 0.6834941733430447,
+        "rainbow": 0.5641539208545766,
          "squareness": 0.022450016948639295,
          "map": "white",
          "landRGB": 1966335,
          "horizonRGB": 0,
-         "skyMap": "white",
+         "skyMap": "sky4",
      },
 
      // fft1 più speedup moveSpeed
      solar_valley: {
-         "cameraPositionY": -350,
+         "cameraPositionY": -180,
          "seaLevel": -450,
          "fogDensity": 0.00054,
 
-         "displayText": 'SOLAR VALLEY',
+         "displayText": '<b>CHAPTER TWO, SOLAR VALLEY</b><br><i>FIRE EXECUTION STOPPED BY CLOUDS</i>',
          "speed": 10,
-         "modelsParams": ['stones', 40, true, false, -750],
+         "modelsParams": ['stones', function(){return 1+Math.random()*5}, 40, true, false, -750],
 
          "tiles": 200,
          "repeatUV": 7,
@@ -44,7 +44,7 @@
          "map": "land3",
          "landRGB": 9675935,
          "horizonRGB": 3231404,
-         "skyMap": "sky1",
+         "skyMap": "sky4",
      },
 
      // camera underwater
@@ -52,9 +52,9 @@
          "cameraPositionY": 40,
          "seaLevel": 50,
 
-         "displayText": 'ESCHER SURFERS',
-         "speed": 20,
-         "modelsParams": ['sea', 1, true, true],
+         "displayText": '<b>CHAPTER THREE, ESCHER SURFERS</b><br><i>TAKING REST ON K 11</i>',
+         "speed": 15,
+         "modelsParams": ['cube', 3, 1, true, true, 0 ],
 
          "tiles": 73,
          "repeatUV": 112,
@@ -74,16 +74,16 @@
      // sea level più basso
      // modelli: cubid
      currybox: {
-         "cameraPositionY": 500,//HLE.WORLD_HEIGHT*.5,
+         "cameraPositionY": 100,//HLE.WORLD_HEIGHT*.5,
          "seaLevel": -100,
 
-         "displayText": 'CURRYBOX',
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
+         "displayText": '<b>CHAPTER FOUR, CURRYBOX</b><br><i>A FLAKE ON THE ROAD AND A KING AND HIS BONES</i>',
+         "speed": 5,
+         "modelsParams": [['cube'], function(){return 1+Math.random()*5}, 1, true, false,-100],
 
          "tiles": 145,
          "repeatUV": 1,
-         "bFactor": 0.10849113862588011,
+         "bFactor": 0.751,
          "cFactor": 0.054245569312940056,
          "buildFreq": 10,
          "natural": 0.176420247632921,
@@ -101,9 +101,9 @@
          "cameraPositionY": 50,
          "seaLevel": -100,
 
-         "displayText": 'GALAXY GLACIER',
+         "displayText": '<b>CHAPTER FIVE, GALAXY GLACIER</b><br><i>HITTING ICEBERGS BLAMES</i>',
          "speed": 2,
-         "modelsParams": ['sea', 1, true, true],
+         "modelsParams": [null, 1, true, true],
 
          "tiles": 160,
          "repeatUV": 1,
@@ -119,6 +119,27 @@
          "skyMap": "sky1",
      },
 
+     firefly: {
+         "cameraPositionY": 50,
+         "displayText": '<b>CHAPTER SIX, FIREFLY</b>',
+
+         "speed": 10,
+         "modelsParams": ['sea', 1, true, true],
+
+         "tiles": 100,
+         "repeatUV": 1,
+         "bFactor": 1,
+         "cFactor": 1,
+         "buildFreq": 1,
+         "natural": 1,
+         "rainbow": 0,
+         "squareness": 0,
+         "map": "white",
+         "landRGB": 2763306,
+         "horizonRGB": 0,
+         "skyMap": "sky1",
+     },
+
 
      //camera position.y -400
      // partire sopra acqua, e poi gradualmente finire sott'acqua
@@ -127,9 +148,9 @@
          "cameraPositionY": -450,
          "seaLevel": 0,
 
-         "displayText": 'DRIFT',
+         "displayText": '<b>CHAPTER SEVEN, DRIFT<b><br><i>LEAVING THE BOAT</i>',
          "speed": 3,
-         "modelsParams": ['sea', 1, true, true],
+         "modelsParams": [['ducky'], function(){return 1+Math.random()*2}, 2, true, true, 0],
 
          "tiles": 128,
          "repeatUV": 0,
@@ -147,26 +168,21 @@
      },
 
 
-     // scorrimento veloce
-     // cielo con meno lampi
-     // buildFreq: fft2
-     // aerei
-
      hyperocean: {
          "cameraPositionY": 50,
 
-         "displayText": 'HYPEROCEAN',
-         "speed": 18,
-         "modelsParams": ['sea', 6, false, false],
+         "displayText": '<b>CHAPTER EIGHT, HYPEROCEAN</b><br><i>CRAVING FOR LOVE LASTS FOR LIFE</i>',
+         "speed": 8,//18,
+         "modelsParams": ['space', 2, 40, true, false, 200],
 
-         "tiles": 320,
+         "tiles": 200,
          "repeatUV": 12,
          "bFactor": 1.001,
          "cFactor": 0.21934025248846812,
          "buildFreq": 15.188759407623216,
          "natural": 0.7051924010682208,
          "rainbow": 0.1952840495265842,
-         "squareness": 0.005,
+         "squareness": 0.00001,
          "map": "land5",
          "landRGB": 14798516,
          "horizonRGB": 7173242,
@@ -179,9 +195,9 @@
      twin_horizon: {
          "cameraPositionY": 100,
 
-         "displayText": 'TWIN HORIZON',
+         "displayText": '<b>CHAPTER NINE, TWIN HORIZON</b><br><i>ON THE RIGHT VISION TO THE RIGHT SEASON</i>',
          "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
+         "modelsParams": ['sea', function(){return 20+Math.random()*20}, 20, false, false, 550],
 
          "tiles": 99,
          "repeatUV": 1,
@@ -206,9 +222,9 @@
      else: {
          "cameraPositionY": 50,
 
-         "displayText": 'ELSE',
+         "displayText": '<b>CHAPTER TEN, ELSE</b><br><i>DIE LIKE AN ELECTRIC MACHINE</i>',
          "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
+         "modelsParams": [['ducky'], function(){return 2+Math.random()*20}, 3, true, true, 0],
 
          "tiles": 104,
          "repeatUV": 128,
@@ -231,9 +247,9 @@
      roger_water: {
          "cameraPositionY": 50,
 
-         "displayText": 'ROGER WATER',
+         "displayText": '<b>CHAPTER ELEVEN, ROGER WATER</b><br><i>PROTECT WATER</i>',
          "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
+         "modelsParams": ['stones', function(){return 1+Math.random()*40}, 3, true, true, 0],
 
          "tiles": 80,
          "repeatUV": 1,
@@ -249,35 +265,13 @@
          "skyMap": "sky1",
      },
 
-     //seaLevel basso
-
-     popeye: {
-         "cameraPositionY": 50,
-
-         "displayText": 'POPEYE',
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
-
-         "tiles": 293,
-         "repeatUV": 54.349171736919395,
-         "bFactor": 0.8743549159244348,
-         "cFactor": 0.2755886532412846,
-         "buildFreq": 95.57195980997615,
-         "natural": 0.45637631140860924,
-         "rainbow": 0.896952206289563,
-         "squareness": 0.000683205327040215,
-         "map": "land2",
-         "landRGB": 16288161,
-         "horizonRGB": 4334933,
-         "skyMap": "sky1",
-     },
 
      alpha_11: {
          "cameraPositionY": 50,
 
-         "displayText": 'ALPHA 11',
+         "displayText": '<b>CHAPTER TWELVE, ALPHA 11</b><br><i>A MASSIVE WAVE IS DRIVING ME HOME</i>',
          "speed": 1,
-         "modelsParams": ['sea', 1, true, true],
+         "modelsParams": ['stones', function(){return 1+Math.random()*40}, 3, true, true, 0],
 
          "tiles": 6,
          "repeatUV": 1,
@@ -294,168 +288,48 @@
 
      },
 
-     //extras
-     extra1: {
-         "cameraPositionY": 50,
 
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
 
-         "tiles": 192,
-         "repeatUV": 1,
-         "bFactor": 0.693165412563634,
-         "cFactor": 0.19953982057571704,
-         "buildFreq": 10.113094716996041,
-         "natural": 0.3039475909118414,
-         "rainbow": 0.39132778953353453,
-         "squareness": 0.01737942804281068,
-         "map": "pattern4",
-         "landRGB": 16238264,
-         "horizonRGB": 4472153,
-         "skyMap": "sky1",
-     },
 
-     //extrarainbow
-     extra2: {
-         "cameraPositionY": 50,
-
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
-
-         "tiles": 208,
-         "repeatUV": 1,
-         "bFactor": 0.693165412563634,
-         "cFactor": 0.19953982057571704,
-         "buildFreq": 10.113094716996041,
-         "natural": 0.3039475909118414,
-         "rainbow": 0.39132778953353453,
-         "squareness": 0.01737942804281068,
-         "map": "pattern1",
-         "landRGB": 16777215,
-         "horizonRGB": 0,
-         "skyMap": "sky1",
-     },
-
-     //extra3
-     extra3: {
-         "cameraPositionY": 50,
-
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
-
-         "tiles": 268,
-         "repeatUV": 8.090002933527465,
-         "bFactor": 0.6875942559401627,
-         "cFactor": 0.013916406159565419,
-         "buildFreq": 81.46100634271541,
-         "natural": 0.1884444463154662,
-         "rainbow": 0.6364309276708011,
-         "squareness": 0.010534527021420541,
-         "map": "pattern1",
-         "landRGB": 16777215,
-         "horizonRGB": 0,
-         "skyMap": "sky1",
-     },
-     //natural
-     extra4: {
-         "cameraPositionY": 50,
-
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
-
-         "tiles": 195,
-         "repeatUV": 172.53953149784417,
-         "bFactor": 0.3722544776755994,
-         "cFactor": 0.19668421433349875,
-         "buildFreq": 58.22950247169298,
-         "natural": 0.7850066649699574,
-         "rainbow": 0.44153157788454345,
-         "squareness": 0.009631920065919009,
-         "map": "land4",
-         "landRGB": 9552294,
-         "horizonRGB": 4152953,
-         "skyMap": "sky1",
-     },
-     static: {
-         "cameraPositionY": 150,
-
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
-
-         "tiles": 100,
-         "repeatUV": 1,
-         "bFactor": 1,
-         "cFactor": 1,
-         "buildFreq": 1,
-         "natural": 1,
-         "rainbow": 0,
-         "squareness": 0,
-         "map": "white",
-         "landRGB": 2763306,
-         "horizonRGB": 0,
-         "skyMap": "sky1",
-     },
-     solar_valley_2: {
-         "cameraPositionY": -200,
-         "seaLevel": -550,
-
-         "displayText": 'SOLAR VALLEY 2',
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
-
-         "tiles": 102,
-         "repeatUV": 13.02569701137036,
-         "bFactor": 0.767643282574842,
-         "cFactor": 0.13761933657937025,
-         "buildFreq": 29.107351842026375,
-         "natural": 0,
-         "rainbow": 0.054245569312940056,
-         "squareness": 0.01898381039087158,
-         "map": "land1",
-         "landRGB": 13169344,
-         "horizonRGB": 5452576,
-         "skyMap": "sky1",
-     },
-
-     intro: {
-
-         "displayText": 'SOLAR VALLEY 2',
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
-
-         "cameraPositionY": 150,
-         "seaLevel": 10,
-
-         "speed": 4,
-         "modelsParams": ['sea', 1, true, true],
-
-         "tiles": 100,
-         "repeatUV": 1,
-         "bFactor": 1,
-         "cFactor": 1,
-         "buildFreq": 1,
-         "natural": 1,
-         "rainbow": 0,
-         "squareness": 0,
-         "map": "white",
-         "landRGB": 2763306,
-         "horizonRGB": 0,
-         "skyMap": "sky1",
-     },
+    //  intro: {
+     //
+    //     //  "displayText": 'SOLAR VALLEY 2',
+    //      "speed": 10,
+    //      "modelsParams": ['sea', 1, true, true],
+     //
+    //      "cameraPositionY": 150,
+    //      "seaLevel": 10,
+     //
+    //      "speed": 4,
+    //      "modelsParams": ['sea', 1, true, true],
+     //
+    //      "tiles": 100,
+    //      "repeatUV": 1,
+    //      "bFactor": 1,
+    //      "cFactor": 1,
+    //      "buildFreq": 1,
+    //      "natural": 1,
+    //      "rainbow": 0,
+    //      "squareness": 0,
+    //      "map": "white",
+    //      "landRGB": 2763306,
+    //      "horizonRGB": 0,
+    //      "skyMap": "sky1",
+    //  },
 
      blackpool: {
 
          "displayText": 'BLACKPOOL',
-         "speed": 10,
-         "modelsParams": ['sea', 1, true, true],
+         "speed": -10,
+         "modelsParams": ['space', 2, 400, true, false, 200],
 
-         "cameraPositionY": 150,
+         "cameraPositionY": 110,
          "seaLevel": 10,
 
          "speed": 4,
          "modelsParams": ['sea', 1, true, true],
 
-         "tiles": 181,
+         "tiles": 182,
          "repeatUV": 16.555478741450983,
          "bFactor": 0.6048772396441062,
          "cFactor": 0.016358953883098624,
@@ -468,7 +342,28 @@
          "horizonRGB": 2571781,
 
          "skyMap": "sky1",
-     }
+     },
+
+    //  mizu2:{
+    //    "cameraPositionY": 10,
+    //    "seaLevel": 0,
+     //
+    //    "displayText": "<b>CHAPTER ONE, MIZU</b><br/><i>TO BE TRAPPED INTO THE MORNING UNDERTOW</i>",
+    //    "speed": 10,
+    //    "modelsParams": ['sea', 1, true, true],
+     //
+    //    "tiles": 180,
+    //     "repeatUV": 2,
+    //     "bFactor": 0.49905923767904853,
+    //     "cFactor": 0.2820769604272883,
+    //     "buildFreq": 10,
+    //     "natural": 0.5967012624423407,
+    //     "rainbow": 0.26037873270211226,
+    //     "squareness": 0.00001,
+    //     "map": "land2",
+    //     "landRGB": 19199,
+    //     "horizonRGB": 524
+    //  }
 
 
  }

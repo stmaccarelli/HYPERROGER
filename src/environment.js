@@ -14,9 +14,9 @@ var HLE = {
   SEA_TILE_SIZE:null,
 
   PIXEL_RATIO_SCALE:.5,
-  
+
   SCREEN_WIDTH_SCALE:1,
-  SCREEN_HEIGHT_SCALE:!isMobile?1:.7,
+  SCREEN_HEIGHT_SCALE:isMobile?1:1,
 
 
   FOG:true,
@@ -91,6 +91,7 @@ var HL = {
   renderer:null,
   camera:null,
   stereoEffect:null,
+  VREffect:null,
   controls:null,
   clock:null,
   noise:null,
@@ -115,28 +116,26 @@ var HL = {
     models:null,
   },
   textures: {
-    sky1:"img/skybox2/skymap_photo9.jpg",
+    sky1:"img/skybox2/_sky_1.jpg",
     sky2:"img/skybox2/skydome3.jpg",
-    sky3:"img/skybox2/sky_pattern_4.png",
+    sky3:"img/skybox2/sky_invert.jpg",
+    sky4:"img/skybox2/skymap_photo9.jpg",
+    sky5:"img/skybox2/sky_stars_2.jpg",
 
-    land:"img/landHeights.jpg",
-    sea:null,
-    flora:"img/tex_tree_82_128x128.png",
-    fauna:null,
+    land:"img/white2x2.gif",
+    sea:"img/white2x2.gif",
+    flora:"img/white2x2.gif",
+    fauna:"img/white2x2.gif",
     water:"img/waternormals5.png",//wn5
-
-    cloud1:'img/cloud1.png',
-    cloud2:"img/tex_tree_82_128x128.png",
-
 
     //for models
     whale:"3dm/BL_WHALE/BL_WHALE.jpg",
     ducky:"3dm/ducky/ducky.png",
-    airbus:"3dm/airbus/airbus_a.png",
+    airbus:"3dm/airbus/airbus_d2.jpg",
+    helicopter:"3dm/aurora/aurora.png",
     aurora:"3dm/aurora/aurora.png",
     heartbomb:"3dm/heartbomb/heartbomb_full.png",
-    mercury:"3dm/mercury/mercury.png",
-    tiger:"3dm/uncletiger/uncletiger_al.png",
+    // mercury:"3dm/mercury/mercury.png",
 
     pattern1:"img/patterns/pattern-1.png",
     pattern2:"img/patterns/pattern-2.png",
@@ -149,7 +148,6 @@ var HL = {
     land3:"img/land/land_tex_3.jpg",
     land4:"img/land/land_tex_4.jpg",
     land5:"img/land/land_tex_5.jpg",
-    land6:"img/land/land_tex_6.jpg",
 
     white:"img/white2x2.gif",
   },
@@ -158,18 +156,21 @@ var HL = {
     textbox:null,
   },
   models: {
-    whale:["3dm/BL_WHALE/BL_WHALE2.OBJ",10],
-    whale2:["3dm/BL_WHALE/BL_WHALE2.OBJ",5],
+    whale:["3dm/BL_WHALE/BL_WHALE.OBJ",1],
     ducky:["3dm/ducky/ducky.obj",5],
-    airbus:["3dm/airbus/airbus_c.obj",5],
+    airbus:["3dm/airbus/airbus_d2.obj",5],
     aurora:["3dm/aurora/aurora_c.obj",5],
+    helicopter:["3dm/lo_helicopter2.obj",5],
     heartbomb:["3dm/heartbomb/heartbomb_c.obj",5],
-    mercury:["3dm/mercury/mercury_c.obj",5],
-    tiger:["3dm/uncletiger/uncletiger_c.obj",5],
+    // mercury:["3dm/mercury/mercury_c.obj",5],
+    // tiger:["3dm/uncletiger/uncletiger_c.obj",5],
     cube:["3dm/cube.obj",2.5],
     logo:["3dm/hyperland_logo.obj",5],
-    maker:["3dm/makerfaire.obj",5],
-    data:["3dm/roma_data.obj",5],
+    // maker:["3dm/makerfaire.obj",5],
+    // data:["3dm/roma_data.obj",5],
+
+    // whale:["3dm/lowpoly/lo_whale.obj",10],
+    // airbus2:["3dm/lowpoly/lo_airbus.obj",10],
 
     stone1:["3dm/stones/stone1.obj",10],
     stone2:["3dm/stones/stone2.obj",10],
@@ -177,10 +178,11 @@ var HL = {
   },
   modelsKeys:null,
   mGroups:{
-    weird:['ducky','tiger','mercury','ducky'],
-    space:['mercury','aurora','airbus','heartbomb'],
-    sea:['whale','whale2'],
-    stones:['stone1','stone2','stone3']
+    space:['aurora','airbus', 'helicopter', 'heartbomb'],
+    sea:['whale'],
+    ducks:['ducky'],
+    stones:['stone1','stone2','stone3'],
+    cube:['cube']
   },
   // object containing models dynamically cloned from originals, for animation.
   dynamicModelsClones:{length:0},
@@ -206,6 +208,7 @@ var HLEnvironment = function(){
   function imageLoaded(key){
     HL.textures[key].wrapS = THREE.RepeatWrapping;
     HL.textures[key].wrapT = THREE.RepeatWrapping;
+
     imagesLoaded++;
     console.log("image "+key+" loaded, "+imagesLoaded+"/"+imagesCounter);
     if(imagesLoaded==imagesCounter) {
@@ -289,15 +292,14 @@ var HLEnvironment = function(){
       //   HLE.WORLD_WIDTH * 0.45
       // );
       HL.scene.fog = new THREE.FogExp2();
-      HL.scene.fog.density = 0.001;//0.00025;
+      HL.scene.fog.density = 0.00025;//0.00025;
       HL.scene.fog.color = HLC.horizon;
     }
 
 
     // CAMERA
     if(isCardboard){
-    HL.camera = new THREE.PerspectiveCamera(17.5, window.innerWidth / window.innerHeight, 3, HLE.WORLD_WIDTH*3);
-    HL.camera.focus = HLE.WORLD_WIDTH * .5;
+    HL.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, HLE.WORLD_WIDTH*100);
     }
     else
       HL.camera = new THREE.PerspectiveCamera(
@@ -313,7 +315,6 @@ var HLEnvironment = function(){
     // HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
 
     HL.cameraGroup = new THREE.Object3D();
-    HL.cameraGroup.rotation.y = (Math.PI);
 
     HL.cameraCompanion = new THREE.Mesh(new THREE.PlaneBufferGeometry(128,128,1,1),new THREE.MeshBasicMaterial({color:0xff0000,transparent:true,side:THREE.DoubleSide}));
     HL.cameraCompanion.position.z = -500;
@@ -354,13 +355,13 @@ var HLEnvironment = function(){
       HL.stereoEffect = new THREE.StereoEffect(HL.renderer);
       HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
 
-      HL.camera.fov = 75;
-      HL.camera.focus = HLE.WORLD_WIDTH;
+      HL.camera.fov = 70;
+      HL.camera.focus = HLE.WORLD_WIDTH*0.5;
       HL.camera.updateProjectionMatrix ();
     }
     else if(isVR){
-      HL.stereoEffect = new THREE.VREffect( HL.renderer );
-      HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
+      HL.VREffect = new THREE.VREffect( HL.renderer );
+      HL.VREffect.setSize(window.innerWidth, window.innerHeight);
     }
 
     if(isVR){
@@ -566,9 +567,10 @@ var HLEnvironment = function(){
         noiseScale: .65,
         distortionScale:90,
   			// sunDirection: HL.lights.sun.position.normalize(),
-        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.25).normalize(),
+        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.35).normalize(),
   			sunColor: HLC.horizon,
   		  color: HLC.sea,
+        opacity: 0.82,
   			// betaVersion: 1,
         fog: true,
         side: THREE.DoubleSide,
@@ -594,35 +596,35 @@ var HLEnvironment = function(){
     HL.materials.clouds.color = HLC.clouds; // set by reference
 
 
-    HL.materials.flora = new THREE.PointsMaterial({
-      color: HLC.flora,
-      side: THREE.DoubleSide,
-      opacity: 0.5,
-      transparent: true,
-      size: 100,
-      fog: true,
-      //blending:THREE.AdditiveBlending,
-      sizeAttenuation: true,
-      alphaTest: 0.1,
-      map:isWire?null:HL.textures.flora,
-      //depthTest:false,
-    });
-    HL.materials.flora.color = HLC.flora; // set by reference
+    // HL.materials.flora = new THREE.PointsMaterial({
+    //   color: HLC.flora,
+    //   side: THREE.DoubleSide,
+    //   opacity: 0.5,
+    //   transparent: true,
+    //   size: 100,
+    //   fog: true,
+    //   //blending:THREE.AdditiveBlending,
+    //   sizeAttenuation: true,
+    //   alphaTest: 0.1,
+    //   map:isWire?null:HL.textures.flora,
+    //   //depthTest:false,
+    // });
+    // HL.materials.flora.color = HLC.flora; // set by reference
 
 
-    HL.materials.fauna = new THREE.PointsMaterial({
-      color: HLC.fauna,
-      // side: THREE.DoubleSide,
-      opacity: .6,
-      transparent: false,
-      size: 10,
-      fog: true,
-      sizeAttenuation: true,
-      map:isWire?null:HL.textures.fauna,
-      alphaTest: 0.5,
-      //blending: THREE.AdditiveBlending,
-    });
-    HL.materials.fauna.color = HLC.fauna; // set by reference
+    // HL.materials.fauna = new THREE.PointsMaterial({
+    //   color: HLC.fauna,
+    //   // side: THREE.DoubleSide,
+    //   opacity: .6,
+    //   transparent: false,
+    //   size: 10,
+    //   fog: true,
+    //   sizeAttenuation: true,
+    //   map:isWire?null:HL.textures.fauna,
+    //   alphaTest: 0.5,
+    //   //blending: THREE.AdditiveBlending,
+    // });
+    // HL.materials.fauna.color = HLC.fauna; // set by reference
 
 
     //create materials for 3d models
@@ -633,8 +635,9 @@ var HLEnvironment = function(){
         fog:true,
         wireframe:isWire,
         wireframeLinewidth:2,
-        side:THREE.DoubleSide,
-      //  transparent:true,
+        side:THREE.FrontSide,
+        shading: THREE.SmoothShading,
+        transparent:true,
       });
       HL.materials[k].color = new THREE.Color(0xffffff);
 
@@ -672,7 +675,7 @@ var HLEnvironment = function(){
   //            HL.models[key].geometry.rotateX(Math.PI*0.5);
               HL.models[nK].geometry.computeBoundingBox();
               HL.models[nK]['size']=HL.models[nK].geometry.boundingBox.size();
-              HL.models[nK].material = HL.materials[nK];
+              HL.models[nK].material = HL.materials[nK].clone();
             //  HL.models[nK].material.color = HLC.horizon; // set by reference
 
               HL.scene.add( HL.models[nK] );

@@ -1,7 +1,7 @@
 
   // global vars
   var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
-  var isCardboard = window.location.href.indexOf('?card')>-1;
+  var isCardboard = window.location.href.indexOf('?cardboard')>-1;
   var isVR = window.location.href.indexOf('?vr')>-1;
   var isDebug = window.location.href.indexOf('?debug')>-1;
   var isFPC = window.location.href.indexOf('?fpc')>-1;
@@ -10,6 +10,7 @@
   var isWire = window.location.href.indexOf('?wire')>-1;
   var hasShadows = false;
   var noSocket = window.location.href.indexOf('?nosocket')>-1;
+  var partSocket = window.location.href.indexOf('?partsocket')>-1;
   var hasGUI = window.location.href.indexOf('?gui')>-1;
 
   var frameCount = 0;
@@ -22,10 +23,12 @@
     function noSleepEnable(){
       noSleep.enable();
       window.removeEventListener('click', noSleepEnable, false);
+      window.removeEventListener('resize', noSleepEnable, false);
       console.log('noSleep enabled');
     }
-    window.addEventListener('click', noSleepEnable, false);
-    noSleepEnable();
+    // window.addEventListener('click', noSleepEnable, false);
+    // window.addEventListener('resize', noSleepEnable, false);
+    // noSleepEnable();
 
     // init noScroll
     var noScroll = new NoScroll();
@@ -40,14 +43,14 @@
 
     window.addEventListener("resize", onResized);
 
-    if(noSocket){ AA = AudioAnalyzer(); AA.initGetUserMedia();}
+    if(noSocket || partSocket){ AA = AudioAnalyzer(); AA.initGetUserMedia();}
 
   }
 
 
 
   function run() {
-    if(isVR) HL.stereoEffect.requestAnimationFrame(run);
+    if(isVR) HL.VREffect.requestAnimationFrame(run);
     else window.requestAnimationFrame(run);
 
     // Environment and animation
@@ -70,10 +73,10 @@
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
 
-    if(noSocket && !isMobile)
+    if( (noSocket || partSocket) && !isMobile)
       HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
-    else if(noSocket)
-      HLRemote.updateHLParams(.5,.5,.5,.5,.5);
+    // else if(noSocket)
+    //   HLRemote.updateHLParams(.5,.5,.5,.5,.5);
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
@@ -107,7 +110,10 @@
     if(isCardboard || isVR){
       if(HLE.MIRROR || HLE.WATER)
         HL.renderer.setRenderTarget( null );
-      HL.stereoEffect.render(HL.scene,HL.camera);
+      if(isCardboard)
+        HL.stereoEffect.render(HL.scene,HL.camera);
+      if(isVR)
+       HL.VREffect.render(HL.scene,HL.camera);
     }
     else
       HL.renderer.render(HL.scene,HL.camera);
@@ -122,15 +128,17 @@
     // run is called when it's all loaded
     window.addEventListener('HLEload', function(){
         console.log("event HLEload received");
-        run();
         // DEV
         if(hasGUI) { G = GUI(); G.guiInit();}
         if(!noSocket) socketVisual.init();
+
+        //let's rock
+        run();
       }
     );
 
     if ( isVR && WEBVR.isAvailable() === true ) {
-      document.body.appendChild( WEBVR.getButton( HL.stereoEffect ) );
+      document.body.appendChild( WEBVR.getButton( HL.VREffect ) );
     }
 
     window.removeEventListener('load',loadRoutine);
@@ -143,40 +151,40 @@
 
 
 
-
-
-
-
-// TODO: REMOVE! JUST FOR DEV PURPOSES
-  function randomizeLand(){
-
-  var tilen = Math.round(Math.random()*HLE.WORLD_TILES);
-
-   HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tilen,tilen);
-   HL.land.geometry.rotateX(-Math.PI / 2);
-   HL.land.material.uniforms.worldTiles.value = tilen;
-   HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen * Math.random(), tilen * Math.random() );
-
-   HL.land.material.uniforms.bFactor.value = Math.random();
-   HL.land.material.uniforms.cFactor.value = Math.random()*0.3;
-   HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
-   HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
-   HL.land.material.uniforms.natural.value = Math.random();
-   HL.land.material.uniforms.rainbow.value = Math.random();
-   HL.land.material.uniforms.squareness.value = Math.random()*0.25;
-
-
-   HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
-    HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
-
-  };
+//
+//
+//
+//
+// // TODO: REMOVE! JUST FOR DEV PURPOSES
+//   function randomizeLand(){
+//
+//   var tilen = Math.round(Math.random()*HLE.WORLD_TILES);
+//
+//    HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tilen,tilen);
+//    HL.land.geometry.rotateX(-Math.PI / 2);
+//    HL.land.material.uniforms.worldTiles.value = tilen;
+//    HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen * Math.random(), tilen * Math.random() );
+//
+//    HL.land.material.uniforms.bFactor.value = Math.random();
+//    HL.land.material.uniforms.cFactor.value = Math.random()*0.3;
+//    HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
+//    HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+//    HL.land.material.uniforms.natural.value = Math.random();
+//    HL.land.material.uniforms.rainbow.value = Math.random();
+//    HL.land.material.uniforms.squareness.value = Math.random()*0.25;
+//
+//
+//    HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
+//     HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
+//
+//   };
 
 
 
 
 
   //TODO remove, just DEV features
-  if(isMobile)  window.addEventListener('touchstart',randomizeLand);
+  //if(isMobile)  window.addEventListener('touchstart',randomizeLand);
   // else  window.addEventListener('click',randomizeLand);
 
 

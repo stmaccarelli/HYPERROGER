@@ -26,6 +26,8 @@
 			/* Non-prefixed version, currently not supported by any browser */
 			font-size: 20px;
 			color: white;
+			cursor:default;
+
 		}
 
 		.buttons {
@@ -47,8 +49,11 @@
 		.display span {
 			color: yellow;
 		}
+		#scenesList{
+			float:right;
+		}
 
-		;
+
 	</style>
 
 </head>
@@ -59,6 +64,8 @@
 	<span class="buttons" id="showUseful">SHOW/HIDE USED FREQS</span>
 	<span class="buttons" id="socketOn">TRANSMIT FFT</span>
 	<br>
+	<p class="list" id='scenesList'>scenes List</p>
+
 	<p class="display">connected mobiles: <span id="connectedMobiles">0</span></p>
 	<p class="display">current scene: <span id="curScene">-----</span></p>
 	<!--
@@ -100,12 +107,11 @@
 		var socketOn = false;
 		var connectedMobilesDom = document.getElementById("connectedMobiles");
 		var curSceneDom = document.getElementById("curScene");
+		var scenesListDom = document.getElementById("scenesList");
 
 		function init() {
 			var socket = io('http://pixelsmasher.io:1502');
-			socket.emit('ack', {
-				whoami: 'mxr'
-			});
+			socket.emit('ack', { whoami: 'mxr' });
 
 			// TODO: webworker per emit messaggi FFT
 			function socketSendFFT() {
@@ -137,18 +143,25 @@
 				for (var key in HLSP.scenesParams) {
 					if (e.keyCode == keyCodeIndex++) {
 						socket.emit('mxr_set_scene', key);
-						curSceneDom.innerHTML = key + " (" + keyCodeIndex + ")";
+						curSceneDom.innerHTML = " ( " + String.fromCharCode(keyCodeIndex-1) + " ) " + key;
 					}
 				}
 
 			}
 
 			socket.on('mobi_count', function(e) {
-				connectedMobilesDom.innerHTML = e.msg.a;
+				connectedMobilesDom.innerHTML = e.clients;
+				console.log(e);
 			});
 			socket.on('cur_scene', function(d) {
 				curSceneDom.innerHTML = d.curscene;
 			});
+
+
+			keyCodeIndex = 65 // 'a' on keyboard
+			for (var key in HLSP.scenesParams) {
+					scenesListDom.innerHTML += "<br> ( " + String.fromCharCode(keyCodeIndex++) + " ) " + key;
+			}
 
 			console.log("socket init ok");
 		}
