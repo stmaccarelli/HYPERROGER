@@ -25,11 +25,14 @@
       window.removeEventListener('touchstart', noSleepEnable);
       window.removeEventListener('resize', noSleepEnable);
       window.removeEventListener('click', noSleepEnable);
+      window.removeEventListener('orientationchange', noSleepEnable);
+
       console.log('noSleep enabled');
     }
     window.addEventListener('touchstart', noSleepEnable);
     window.addEventListener('click', noSleepEnable);
     window.addEventListener('resize', noSleepEnable);
+    window.addEventListener('orientationchange', noSleepEnable);
     noSleepEnable();
 
     // init noScroll
@@ -234,9 +237,11 @@
 
   function androFullscreenLandscape(){
     launchIntoFullscreen(document.documentElement);
-    // window.removeEventListener("orientationchange", androFullscreenLandscape);
+    window.removeEventListener("orientationchange", androFullscreenLandscape);
+    window.removeEventListener("resize", androFullscreenLandscape);
   }
 
   // Launch fullscreen for browsers that support it!
   //if(isMobile) launchIntoFullscreen(document.documentElement); // the whole page
   window.addEventListener("orientationchange", androFullscreenLandscape); //test resize too
+  window.addEventListener("resize", androFullscreenLandscape); //test resize too
