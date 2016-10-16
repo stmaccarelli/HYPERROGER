@@ -87,6 +87,8 @@ var HLC = {
 
 // HL scene library
 var HL = {
+  loadingManager:null,
+
   scene:null,
   renderer:null,
   camera:null,
@@ -208,41 +210,44 @@ var HLEnvironment = function(){
 
   function imageLoaded(){
     if(imagesLoaded==loadableImagesCounter) {
-      console.timeEnd('images');
+      //console.timeEnd('images');
       HL.textures['length'] = imagesLoaded;
       initMaterials();
     }
   }
 
   function loadTextures(){
-    console.time('images');
-    var loader = new THREE.TextureLoader();
+    //console.time('images');
+    var loader = new THREE.TextureLoader(HL.loadingManager);
     for (var key in HL.textures)
       if(HL.textures[key]!=null){
-        console.log('loading image '+key);
+        // console.log('loading image '+key);
         loadableImagesCounter++;
         HL.textures[key] = loader.load(
           HL.textures[key],
           (function(k) { return function() {
             // increment loaded Counter
             imagesLoaded++;
-            console.log("image "+k+" loaded, "+imagesLoaded+"/"+loadableImagesCounter);
+            // console.log("image "+k+" loaded, "+imagesLoaded+"/"+loadableImagesCounter);
               //set texture wrapping
             HL.textures[k].wrapS = THREE.RepeatWrapping;
             HL.textures[k].wrapT = THREE.RepeatWrapping;
-            imageLoaded() } })(key),
-          (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
-          function(i){loadableImagesCounter--; console.error(i);
-            loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR ON IMAGE '+key+' PLEASE RELOAD</p>');
-            //imageLoaded()
-          }
+            imageLoaded() } })(key)
+          //   function(e){console.log(e.loaded+"/"+e.total)},
+          // // (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
+          // function(i){
+          //   loadableImagesCounter--;
+          //   console.error(i);
+          //   loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR ON IMAGE '+key+' PLEASE RELOAD</p>');
+          //   //imageLoaded()
+          // }
         );
       }
       else delete(HL.textures[key]);
   }
 
   function initDynamicTextures(){
-    console.time('dyn textures');
+    //console.time('dyn textures');
 
     for(var k in HL.dynamicTextures){
       HL.dynamicTextures[k] = document.createElement('canvas');
@@ -254,11 +259,27 @@ var HLEnvironment = function(){
       HL.dynamicTextures[k]['texture'].wrapT = THREE.RepeatWrapping;
       HL.dynamicTextures[k]['texture'].name = k;
     }
-    console.timeEnd('dyn textures');
+    //console.timeEnd('dyn textures');
   }
 
   function init(){
-    console.time('HL environment');
+
+    HL.loadingManager = new THREE.LoadingManager();
+    HL.loadingManager.onProgress = function ( item, loaded, total ) {
+
+	     console.log( item +" "+ loaded +" "+ total );
+
+    };
+    HL.loadingManager.onLoad = function () {
+      console.log('all items loaded');
+    };
+    HL.loadingManager.onError = function () {
+      console.log('there has been an error');
+      loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR, PLEASE RELOAD</p>');
+    };
+
+
+    //console.time('HL environment');
 
     initEnvironment();
     initGeometries();
@@ -274,7 +295,7 @@ var HLEnvironment = function(){
   }
 
   function initEnvironment(){
-    console.time('environment');
+    //console.time('environment');
 
     // SET CONSTANTS
     HLE.TILE_SIZE = HLE.WORLD_WIDTH / HLE.WORLD_TILES;
@@ -390,12 +411,12 @@ var HLEnvironment = function(){
       HL.controls = new THREE.OrbitControls(HL.cameraGroup);
     }
 
-    console.timeEnd('environment');
+    //console.timeEnd('environment');
   }
 
 
   function initGeometries(){
-    console.time('geometries');
+    //console.time('geometries');
 
   //  HL.geometries.sky = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
   //  HL.geometries.sky.translate(0,0, HLE.TILE_SIZE*0.5);
@@ -443,12 +464,12 @@ var HLEnvironment = function(){
     HL.geometries.fauna.name = 'fauna-geometry';
     HLH.initBufParticleSystem(HL.geometries.fauna , HLE.WORLD_WIDTH, HLE.WORLD_HEIGHT*0.5, HLE.MAX_FAUNA, true, true);
 
-    console.timeEnd('geometries');
+    //console.timeEnd('geometries');
   }
 
 
   function initMaterials(){
-    console.time('materials');
+    //console.time('materials');
 
     HL.materials.sky = new THREE.MeshBasicMaterial({
       color: HLC.horizon,
@@ -651,7 +672,7 @@ var HLEnvironment = function(){
     }
 
 
-    console.timeEnd('materials');
+    //console.timeEnd('materials');
 
     initModels();
 
@@ -661,7 +682,7 @@ var HLEnvironment = function(){
 
   function modelLoaded(){
     if(modelsLoaded==loadableModelsCounter) {
-      console.timeEnd('models');
+      //console.timeEnd('models');
       initMeshes();
     }
   }
@@ -669,14 +690,15 @@ var HLEnvironment = function(){
 
 
   function initModels(){
-    console.time('models');
-    var loader = new THREE.OBJLoader(), modelPath, modelScale;
+    //console.time('models');
+    var loader = new THREE.OBJLoader(HL.loadingManager), modelPath, modelScale;
     var keys = {};
     // load a resource
     for (var key in HL.models){
       if(HL.models[key]!==null){
-        console.log("loading model :"+ key );
-        console.log("loadableModelsCounter:"+ (++loadableModelsCounter) );
+        loadableModelsCounter++;
+        // console.log("loading model :"+ key );
+        // console.log("loadableModelsCounter:"+ (loadableModelsCounter) );
         modelPath = HL.models[key][0];
         modelScale = HL.models[key][1];
         loader.load(
@@ -700,18 +722,18 @@ var HLEnvironment = function(){
               HLH.resetModel(HL.models[nK] );
 
               modelsLoaded++;
-              console.log("model "+nK+" loaded, "+modelsLoaded+"/"+loadableModelsCounter);
+              // console.log("model "+nK+" loaded, "+modelsLoaded+"/"+loadableModelsCounter);
               modelLoaded();
             }
-          })(key, modelScale),
-          (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
-          (function(k){ return function(e){
-              loadableModelsCounter--;
-              console.error(e);
-              loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR ON MODEL'+k+' PLEASE RELOAD</p>');
-              //modelLoaded();
-            }
-          })(key)
+          })(key, modelScale)
+          // (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
+          // (function(k){ return function(e){
+          //     loadableModelsCounter--;
+          //     console.error(e);
+          //     loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR ON MODEL'+k+' PLEASE RELOAD</p>');
+          //     //modelLoaded();
+          //   }
+          // })(key)
         )
       }
     }
@@ -720,7 +742,7 @@ var HLEnvironment = function(){
 
 
   function initLights(){
-    console.time('lights');
+    //console.time('lights');
 
     //  HL.lights.ambient = new THREE.AmbientLight( 0xbbbbbb );
     //  HL.scene.add( HL.lights.ambient );
@@ -752,16 +774,16 @@ var HLEnvironment = function(){
 
 
 
-     console.timeEnd('lights');
+     //console.timeEnd('lights');
 
      var HLEload = new Event("HLEload");
-     console.timeEnd('HL environment');
+     //console.timeEnd('HL environment');
      window.dispatchEvent(HLEload);
   }
 
 
   function initMeshes(){
-    console.time('meshes');
+    //console.time('meshes');
 
     HL.sky = new THREE.Mesh(HL.geometries.sky, HL.materials.sky);
     HL.sky.name = "sky";
@@ -808,7 +830,7 @@ var HLEnvironment = function(){
     // HL.fauna = new THREE.Points(HL.geometries.fauna, HL.materials.fauna);
     // HL.fauna.name = "fauna";
     // HL.scene.add(HL.fauna);
-    console.timeEnd('meshes');
+    //console.timeEnd('meshes');
 
 
     initLights();

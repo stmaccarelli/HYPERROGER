@@ -22,13 +22,15 @@
     var noSleep = new NoSleep();
     function noSleepEnable(){
       noSleep.enable();
-      window.removeEventListener('click', noSleepEnable, false);
-      window.removeEventListener('resize', noSleepEnable, false);
+      window.removeEventListener('touchstart', noSleepEnable);
+      window.removeEventListener('resize', noSleepEnable);
+      window.removeEventListener('click', noSleepEnable);
       console.log('noSleep enabled');
     }
-    // window.addEventListener('click', noSleepEnable, false);
-    // window.addEventListener('resize', noSleepEnable, false);
-    // noSleepEnable();
+    window.addEventListener('touchstart', noSleepEnable);
+    window.addEventListener('click', noSleepEnable);
+    window.addEventListener('resize', noSleepEnable);
+    noSleepEnable();
 
     // init noScroll
     var noScroll = new NoScroll();
@@ -229,5 +231,12 @@
     }
   }
 
+
+  function androFullscreenLandscape(){
+    launchIntoFullscreen(document.documentElement);
+    // window.removeEventListener("orientationchange", androFullscreenLandscape);
+  }
+
   // Launch fullscreen for browsers that support it!
   //if(isMobile) launchIntoFullscreen(document.documentElement); // the whole page
+  window.addEventListener("orientationchange", androFullscreenLandscape); //test resize too
