@@ -366,7 +366,7 @@ var HLEnvironment = function(){
       HL.renderer = new THREE.WebGLRenderer({antialias: true});
       HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE, true);
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
-      
+
       // HL.renderer.domElement.style.imageRendering = 'pixelated';
       // HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
       // HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
@@ -721,7 +721,7 @@ var HLEnvironment = function(){
               HL.models[nK].geometry.scale(modelScale,modelScale,modelScale);
   //            HL.models[key].geometry.rotateX(Math.PI*0.5);
               HL.models[nK].geometry.computeBoundingBox();
-              HL.models[nK]['size']=HL.models[nK].geometry.boundingBox.size();
+              HL.models[nK]['size']=HL.models[nK].geometry.boundingBox.getSize();
               HL.models[nK].material = HL.materials[nK].clone();
             //  HL.models[nK].material.color = HLC.horizon; // set by reference
 

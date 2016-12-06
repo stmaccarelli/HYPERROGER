@@ -410,7 +410,7 @@ HLS.logoChange = function(model) {
 
 
 HLS.MIDIcontrols = function(){
-console.log('hlsmidicontrols init');
+console.log('HLS.MIDIcontrols init');
   navigator.requestMIDIAccess().then(
     onMIDIInit,
     onMIDISystemError );
