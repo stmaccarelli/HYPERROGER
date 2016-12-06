@@ -35,10 +35,26 @@ albertosarullo.com/demos/accelerometer/
 
 TODO socket
 
-
-
+fare una mappa di codici per le varie azioni, ed usarla su socket, midi e tastiera.
 
 android loading
 onerror models √
 HUD in THREE.JS canvas, non esterno.
 refactor FFT (eliminare fft4 e 5 da oggetto)
+
+
+FULLSCREEN va solo su ios Safari
+
+
+
+
+
+
+---- DA TOMAT
+
+- superficie proiezione mappabile
+- intro con link pre concerto da proiettare fatto bene
+- scena da lasciare quando non si suona ( mare piatto e/o scritta Hyperland)
+- scena tutta nera da usare fra un pezzo e l'altro
+- render facce mie e di gas da lanciare ( se ti va)
+- bigliettini da distribuire con link

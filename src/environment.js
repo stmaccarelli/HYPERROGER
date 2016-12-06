@@ -13,7 +13,7 @@ var HLE = {
   SEA_TILES:16,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:.5,
+  PIXEL_RATIO_SCALE:.49,
 
   SCREEN_WIDTH_SCALE:1,
   SCREEN_HEIGHT_SCALE:isMobile?1:1,
@@ -343,15 +343,18 @@ var HLEnvironment = function(){
     // HL.camera.filmOffset = 100;
     // HL.camera.lookAt(new THREE.Vector3(0,0,-HLE.WORLD_WIDTH/6)); // camera looks at center point on horizon
 
-    HL.cameraGroup = new THREE.Object3D();
+    HL.cameraGroup = new THREE.Group();
+
 
     HL.cameraCompanion = new THREE.Mesh(new THREE.PlaneBufferGeometry(128,128,1,1),new THREE.MeshBasicMaterial({color:0xff0000,transparent:true,side:THREE.DoubleSide}));
     HL.cameraCompanion.position.z = -500;
     HL.cameraCompanion.visible = false;
+
     // c.geometry.rotateX(Math.PI/2);
     HL.cameraGroup.add(HL.camera);
     HL.cameraGroup.add(HL.cameraCompanion);
     HL.cameraGroup.position.y = 50;
+
     HL.scene.add(HL.cameraGroup);
 
 
@@ -363,6 +366,7 @@ var HLEnvironment = function(){
       HL.renderer = new THREE.WebGLRenderer({antialias: true});
       HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE, true);
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
+      
       // HL.renderer.domElement.style.imageRendering = 'pixelated';
       // HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
       // HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
@@ -380,13 +384,13 @@ var HLEnvironment = function(){
 
     // EFFECT AND CONTROLS
     if(isCardboard){
+      HL.camera.fov = 50;//70;
+      HL.camera.focus = HLE.WORLD_WIDTH*0.5;
+      HL.camera.updateProjectionMatrix ();
 
       HL.stereoEffect = new THREE.StereoEffect(HL.renderer);
       HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
 
-      HL.camera.fov = 70;
-      HL.camera.focus = HLE.WORLD_WIDTH*0.5;
-      HL.camera.updateProjectionMatrix ();
     }
     else if(isVR){
       HL.VREffect = new THREE.VREffect( HL.renderer );
@@ -401,6 +405,7 @@ var HLEnvironment = function(){
     }
     else if(isFPC){
       HL.controls = new THREE.FirstPersonControls(HL.cameraGroup);
+      HL.controls.invertY = true;
 		  HL.controls.movementSpeed = 10;
 		  HL.controls.lookSpeed = 0.1;
     }
@@ -596,16 +601,18 @@ var HLEnvironment = function(){
         noiseScale: .65,
         distortionScale:90,
   			// sunDirection: HL.lights.sun.position.normalize(),
-        sunDirection: new THREE.Vector3(0,HLE.WORLD_HEIGHT, -HLE.WORLD_WIDTH*0.35).normalize(),
-  			sunColor: HLC.horizon,
+        sunDirection: new THREE.Vector3(0,100, -1000).normalize(),
   		  color: HLC.sea,
-        opacity: 0.82,
+        opacity: 0.88,
   			// betaVersion: 1,
         fog: true,
         side: THREE.DoubleSide,
+        blur:false,
         wireframe:isWire,
         wireframeLinewidth:2,
   		});
+
+      HL.materials.water.sunColor = HLC.horizon;
     }
 
 

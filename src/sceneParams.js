@@ -144,11 +144,12 @@
      //camera position.y -400
      // partire sopra acqua, e poi gradualmente finire sott'acqua
 
+//G
      drift: {
          "cameraPositionY": -450,
          "seaLevel": 0,
 
-         "displayText": '<b>CHAPTER SEVEN, DRIFT<b><br><i>LEAVING THE BOAT</i>',
+         "displayText": '<b>CHAPTER SEVEN, DRIFT</b><br><i>LEAVING THE BOAT</i>',
          "speed": 3,
          "modelsParams": [['ducky'], function(){return 1+Math.random()*2}, 2, true, true, 0],
 
@@ -167,7 +168,7 @@
          "skyMap": "sky2",
      },
 
-
+//H
      hyperocean: {
          "cameraPositionY": 50,
 
@@ -191,7 +192,7 @@
 
      // balene
      // capovolgere di conseguenza modelli balene
-
+//I
      twin_horizon: {
          "cameraPositionY": 100,
 
@@ -218,7 +219,7 @@
      // da stesso punto aumenta velocità
      // sea level basso
      // modelli elettrodomestici / elettronica
-
+//J
      else: {
          "cameraPositionY": 50,
 
@@ -244,6 +245,7 @@
      // odissea nello spazio
      // cielo stellato (via lattea)
 
+//K
      roger_water: {
          "cameraPositionY": 50,
 
@@ -265,7 +267,7 @@
          "skyMap": "sky1",
      },
 
-
+//L
      alpha_11: {
          "cameraPositionY": 50,
 
@@ -316,7 +318,8 @@
     //      "horizonRGB": 0,
     //      "skyMap": "sky1",
     //  },
-
+    
+//M
      blackpool: {
 
          "displayText": 'BLACKPOOL',

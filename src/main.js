@@ -12,6 +12,7 @@
   var noSocket = window.location.href.indexOf('?nosocket')>-1;
   var partSocket = window.location.href.indexOf('?partsocket')>-1;
   var hasGUI = window.location.href.indexOf('?gui')>-1;
+  var midiIn = window.location.href.indexOf('?midiin')>-1;
 
   var frameCount = 0;
   var millis = 0;
@@ -35,7 +36,7 @@
     window.addEventListener('orientationchange', noSleepEnable);
     noSleepEnable();
 
-    // init noScroll
+    // init noScroll TODO do it according to broswer / os
     var noScroll = new NoScroll();
     noScroll.enable();
 
@@ -79,9 +80,11 @@
     // so we should not call it here.
 
     if( (noSocket || partSocket) && !isMobile)
-      HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(400), AA.getFreq(64), AA.getFreq(200));
-    // else if(noSocket)
-    //   HLRemote.updateHLParams(.5,.5,.5,.5,.5);
+      HLRemote.updateHLParams(AA.getFreq(2/*2*/), AA.getFreq(0), AA.getFreq(200/*400*/));//), AA.getFreq(64), AA.getFreq(200));
+
+
+
+      // HLRemote.updateHLParams(.5,.5,.5,.5,.5);
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
@@ -98,7 +101,7 @@
     if(isMobile || isOrbit || isVR )
       HL.controls.update(); //DeviceOrientationControls  mode
     else if(isFPC || isNoiseCam){
-      HL.controls.update(delta,millis); //FPC mode
+      HL.controls.update(delta); //FPC mode
     }
     else{
     }
@@ -199,14 +202,13 @@
 
   var loadingDiv = document.getElementById('loadingDiv');
 
-  if (typeof console  != "undefined")
-      if (typeof console.log != 'undefined'){
-        console.olog = console.log;
-        console.oTimeEnd = console.timeEnd;
-        }
-      else{
-          console.olog = function() {};
-        }
+  if (typeof console.log != 'undefined'){
+    console.olog = console.log;
+    console.oTimeEnd = console.timeEnd;
+    }
+  else{
+      console.olog = function() {};
+    }
 
   console.log = function(message) {
       console.olog(message);
@@ -220,28 +222,62 @@
   console.error = console.debug = console.info = console.log
 
 
+
+
+
+
+
+
+
+
   //fullscreen API TODO
   // Find the right method, call on correct element
-  function launchIntoFullscreen(element) {
-    if(element.requestFullscreen) {
-      element.requestFullscreen();
-    } else if(element.mozRequestFullScreen) {
-      element.mozRequestFullScreen();
-    } else if(element.webkitRequestFullscreen) {
-      element.webkitRequestFullscreen();
-    } else if(element.msRequestFullscreen) {
-      element.msRequestFullscreen();
-    }
-  }
-
-
-  function androFullscreenLandscape(){
-    launchIntoFullscreen(document.documentElement);
-    window.removeEventListener("orientationchange", androFullscreenLandscape);
-    window.removeEventListener("resize", androFullscreenLandscape);
-  }
+  // function launchIntoFullscreen(element) {
+  //   screen.orientation.lock ('landscape');
+  //
+  //   if(element.requestFullscreen) {
+  //     element.requestFullscreen();
+  //   } else if(element.mozRequestFullScreen) {
+  //     element.mozRequestFullScreen();
+  //   } else if(element.webkitRequestFullscreen) {
+  //     element.webkitRequestFullscreen();
+  //   } else if(element.msRequestFullscreen) {
+  //     element.msRequestFullscreen();
+  //   }
+  //
+  // }
+  //
+  //
+  // function androFullscreenLandscape(){
+  //   launchIntoFullscreen(document.documentElement);
+  //   window.removeEventListener("orientationchange", androFullscreenLandscape);
+  // }
 
   // Launch fullscreen for browsers that support it!
   //if(isMobile) launchIntoFullscreen(document.documentElement); // the whole page
-  window.addEventListener("orientationchange", androFullscreenLandscape); //test resize too
-  window.addEventListener("resize", androFullscreenLandscape); //test resize too
+//  window.addEventListener("orientationchange", androFullscreenLandscape); //test resize too
+
+// alert('eh');
+// screen.orientation.lock ('landscape');
+// window.scrollTo(0, 0);
+
+  // android stock
+  // window.addEventListener('load', function() {
+  //   screen.lockOrientation('landscape-primary');
+  //   window.scrollTo(0, -10);
+  //   alert("chrome is fullscreen");
+  // });
+//  document.addEventListener("touchmove", function(e) { e.preventDefault() });
+
+  // //chrome (android)
+  // var body = document.documentElement;
+  // screen.orientation.lock ('landscape');
+  // if (body.requestFullscreen) {
+  //   body.requestFullscreen();
+  // } else if (body.webkitrequestFullscreen) {
+  //   body.webkitrequestFullscreen();
+  // } else if (body.mozrequestFullscreen) {
+  //   body.mozrequestFullscreen();
+  // } else if (body.msrequestFullscreen) {
+  //   body.msrequestFullscreen();
+  // }

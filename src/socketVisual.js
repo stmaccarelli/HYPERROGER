@@ -1,5 +1,5 @@
 var socketVisual = function(){
-  var socket = io('http://13.95.147.55:1502');
+  var socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
 
   function init(){
     //chech if previously got a ID
@@ -62,18 +62,6 @@ var socketVisual = function(){
 
     socket.on('mxr_push_to_cli_key', function(d){
 
-      // console.log("mxr_push_to_cli_key ",d.msg.a);
-      //
-      // if (Number(d.msg.a) == 49) //1
-      //     HLH.shootGroup('sea', 8, false, false);
-      // if (Number(d.msg.a) == 50) //2
-      //     HLH.shootGroup('weird', 0, true, true);
-      // if (Number(d.msg.a) == 51) //3
-      //     HLH.shootGroup('space', 50, true, false);
-      // if (Number(d.msg.a) == 52) //4
-      //     HLH.startModel(HL.models['whale'],
-      //     THREE.Math.randInt(-1000, 1000),
-      //     THREE.Math.randInt(-HLE.WORLD_HEIGHT * 0.01, HLE.WORLD_HEIGHT * 1.1), 2.5, null, 10); //TODO
       if (Number(d.msg.a) == 53) //5
           HLH.shootGroup(HLS.modelsParams);
 

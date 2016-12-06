@@ -68,6 +68,8 @@
 
 	<p class="display">connected mobiles: <span id="connectedMobiles">0</span></p>
 	<p class="display">current scene: <span id="curScene">-----</span></p>
+	<textarea id="consoleArea">JS console viewer</textarea>
+
 	<!--
 	<div id="splash">
 		<div id ="prompt">
@@ -92,7 +94,8 @@
 	<script src="lib/NoScroll.js"></script>
 
 	<!-- NODE SOCKET.IO -->
-	<script src="http://13.95.147.55:1502/socket.io/socket.io.js" type="text/javascript"></script>
+	<script src="lib/socket.io-1.4.5.js" type="text/javascript"></script>
+	<!-- <script src="http://13.95.147.55:1502/socket.io/socket.io.js" type="text/javascript"></script> -->
 	<!-- <script src="http://pixelsmasher.io:1502/socket.io/socket.io.js" type="text/javascript"></script> -->
 
 	<!-- DEV audio lib -->
@@ -111,25 +114,24 @@
 		var scenesListDom = document.getElementById("scenesList");
 
 		function init() {
-			var socket = io('http://13.95.147.55:1502');
+			var socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
 			socket.emit('ack', { whoami: 'mxr' });
 
 			// TODO: webworker per emit messaggi FFT
 			function socketSendFFT() {
 				window.setTimeout(function() {
 					window.requestAnimationFrame(socketSendFFT)
-				}, 1000 / 20);
+				}, 1000 / 40);
 				if (socketOn) {
 					socket.emit('mxr_push_fft', {
 						a: audioAnalyzer.getFreq(2),
 						b: audioAnalyzer.getFreq(0),
-						c: audioAnalyzer.getFreq(400)
+						c: audioAnalyzer.getFreq(200)
 						//d: audioAnalyzer.getFreq(64),
 						//e: audioAnalyzer.getFreq(200)
 					});
 				}
 			}
-
 
 			socketSendFFT();
 
@@ -147,7 +149,11 @@
 						curSceneDom.innerHTML = " ( " + String.fromCharCode(keyCodeIndex-1) + " ) " + key;
 					}
 				}
+			}
 
+			keyCodeIndex = 65 // 'a' on keyboard
+			for (var key in HLSP.scenesParams) {
+					scenesListDom.innerHTML += "<br> ( " + String.fromCharCode(keyCodeIndex++) + " ) " + key;
 			}
 
 			socket.on('mobi_count', function(e) {
@@ -159,14 +165,89 @@
 			});
 
 
-			keyCodeIndex = 65 // 'a' on keyboard
-			for (var key in HLSP.scenesParams) {
-					scenesListDom.innerHTML += "<br> ( " + String.fromCharCode(keyCodeIndex++) + " ) " + key;
+
+
+			var midiBase = null, outputs = [];
+
+      //MIDI input
+      function onMIDIInit( midi ) {
+        console.log(midi);
+        listInputsAndOutputs(midi);
+
+        var index = 0;
+        for (var entry of midi.outputs) {
+          var id = entry[1].id;
+          outputs[index++] = midi.outputs.get(id);
+        }
+
+
+        for (var input of midi.inputs.values())
+          input.onmidimessage = midiMessageReceived;
+
+        // function sendMiddleC(k) {
+        //   console.log(k.keyCode);
+        //   var noteOnMessage = [0x80,k.keyCode-49, 0x00];    // 7fmax note on, middle C, full velocity
+        //   for(var output of outputs)
+        //     output.send( noteOnMessage );  //omitting the timestamp means send immediately.
+        // }
+      }
+
+
+			var outputs = [];
+
+			  navigator.requestMIDIAccess().then(
+			    onMIDIInit,
+			    onMIDISystemError );
+
+			  function onMIDISystemError(e){
+			    console.log(e);
+			  }
+
+			  function onMIDIInit( midi ) {
+			    // sys_midi = midi;
+			    for (var input of midi.inputs.values())
+			      input.onmidimessage = midiMessageReceived;
+
+					var index = 0;
+					for (var entry of midi.outputs) {
+						var id = entry[1].id;
+						outputs[index++] = midi.outputs.get(id);
+					}
+
+			  }
+
+			  function midiMessageReceived( ev ) {
+					var midiInputIndex = 144 // channel in DJ mode without hex calculations
+					// var keyCodeIndex = 65 // 'a' on keyboard
+
+					for (var key in HLSP.scenesParams) {
+						if (ev.data[2]>0 && ev.data[1]==103 && ev.data[0] == midiInputIndex++ ) { //mapping mini in to old keyCodes
+							socket.emit('mxr_set_scene', key);
+							curSceneDom.innerHTML = " ( " + String.fromCharCode(midiInputIndex-1-79) + " ) " + key;
+						}
+					}
+
+					if (ev.data[2]>0 && ev.data[1]==0) //5
+						socket.emit('mxr_push_key', {
+							a: 53 // mapped ti 5-key to shoot models
+						});
+					if (ev.data[0]==156 && ev.data[2]>0 && ev.data[1]==1) { //9
+						socket.emit('mxr_push_key', {
+							a: 57 // mapped ti 9-key to shoot models
+						});
+			  }
 			}
+
+
+
 
 			console.log("socket init ok");
 		}
 	</script>
+
+
+	<!-- visualizer -->
+
 
 	<script type="text/javascript">
 		function FFTDraw() {
@@ -250,6 +331,38 @@
 		window.addEventListener('AAload', init, true);
 		window.addEventListener('AAload', FFTDraw, true);
 		// start audioanalyzer
+	</script>
+
+
+
+
+	<!-- CONSOLE VIEWER -->
+	<script type="text/javascript">
+	var consoleArea = document.getElementById('consoleArea');
+
+	if (typeof console.log != 'undefined'){
+		console.olog = console.log;
+		console.oerror = console.error;
+		console.owarn = console.warn;
+		}
+	else{
+			console.olog = function() {};
+		}
+
+	console.log = function(message) {
+			console.olog(message);
+			consoleArea.innerHTML += (message + '\n');
+	};
+	console.error = function(message) {
+			console.oerror(message);
+			consoleArea.innerHTML += (message + '\n');
+	};
+	console.warn = function(message) {
+			console.owarn(message);
+			consoleArea.innerHTML += (message + '\n');
+	};
+
+
 	</script>
 
 </body>

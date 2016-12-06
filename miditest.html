@@ -16,20 +16,67 @@
         console.log(e);
       }
 
+
       // //MIDI output
       // function onMIDIInit( midi ) {
-      //   for (var input of midi.outputs.values())
-      //     input.send( [0x90, 3, 32] );
+      //   console.log(midi.output.values());
+      //   for (var output of midi.outputs.values())
+      //     input.send( [0x90, 3, 127] );
       // }
-      //
-      // //MIDI input
+
+      var midiBase = null, outputs = [];
+
+      //MIDI input
       function onMIDIInit( midi ) {
+        console.log(midi);
+        listInputsAndOutputs(midi);
+
+        var index = 0;
+        for (var entry of midi.outputs) {
+          var id = entry[1].id;
+          outputs[index++] = midi.outputs.get(id);
+        }
+
+
         for (var input of midi.inputs.values())
-        input.onmidimessage = midiMessageReceived;
+          input.onmidimessage = midiMessageReceived;
+
+          window.addEventListener('keyup',sendMess);
+          function sendMess(k){
+            sendMiddleC(k);
+
+          }
+
+          function sendMiddleC(k) {
+            console.log(k.keyCode);
+            var noteOnMessage = [0x80,k.keyCode-49, 0x00];    // 7fmax note on, middle C, full velocity
+            for(var output of outputs)
+              output.send( noteOnMessage );  //omitting the timestamp means send immediately.
+                                                                      // release velocity = 64, timestamp = now + 1000ms.
+          }
+      }
+
+
+
+      function listInputsAndOutputs( midiAccess ) {
+        for (var entry of midiAccess.inputs) {
+          var input = entry[1];
+          console.log( "Input port [type:'" + input.type + "'] id:'" + input.id +
+            "' manufacturer:'" + input.manufacturer + "' name:'" + input.name +
+            "' version:'" + input.version + "'" );
+        }
+
+        for (var entry of midiAccess.outputs) {
+          var output = entry[1];
+          console.log( "Output port [type:'" + output.type + "'] id:'" + output.id +
+            "' manufacturer:'" + output.manufacturer + "' name:'" + output.name +
+            "' version:'" + output.version + "'" );
+        }
       }
 
 
       function midiMessageReceived( ev ) {
+        console.log(ev.data);
         console.log(ev);
           var cmd = ev.data[0] >> 4;
           console.log('cmd '+cmd);
@@ -42,6 +89,7 @@
             velocity = ev.data[2];
             console.log('velocity '+velocity+"\n\n");
           }
+          console.log(ev.data[0].toString(16));
 
 
           //
@@ -58,39 +106,9 @@
           // } else {
           //   // probably sysex!
           // }
+
+
       }
-
-
-      var consoleDiv = document.createElement('div');
-      consoleDiv.style.position = "absolute";
-      consoleDiv.style.bottom=0;
-      consoleDiv.style.left=0;
-      document.body.appendChild(consoleDiv);
-      console.vlog = function(message){
-        consoleDiv.innerHTML += ('<p>' + message + '</p>');
-      }
-
-      // if (typeof console  != "undefined")
-      //     if (typeof console.log != 'undefined'){
-      //       console.olog = console.log;
-      //       console.oTimeEnd = console.timeEnd;
-      //       }
-      //     else{
-      //         console.olog = function() {};
-      //       }
-      //
-      // // console.log = function(message) {
-      // //     console.olog(message);
-      // //     consoleDiv.innerHTML += ('<p>' + message + '</p>');
-      // // };
-      // //
-      // // console.timeEnd = function(message) {
-      // //     console.oTimeEnd(message);
-      // //     consoleDiv.innerHTML += ('<p>' + message +'</p>');
-      // // };
-      // // console.error = console.debug = console.info = console.log
-
-
 
     </script>
 

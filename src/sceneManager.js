@@ -121,7 +121,7 @@ HLS.startScene = function(sceneId) {
     if (HLSP.scenesParams[sceneId] !== undefined) {
         HLS.loadParams(HLSP.scenesParams[sceneId]);
         //start hud display
-        if (HLS.hud !== undefined) HLS.hud.display((isMobile||isVR)?'':(HLSP.scenesParams[sceneId].displayText || sceneId), 6, false);
+        if (HLS.hud !== undefined) HLS.hud.display((isMobile||isVR)?'':((HLSP.scenesParams[sceneId].displayText || sceneId)+'<br><br>mobile interactive experience: http://hyland.xyz<br>mobile cardboard experience: http://hyland.xyz/?cardboard'), 4, false);
     }
 
     // reset camera rotations etc
@@ -235,6 +235,10 @@ HLS.scenesAddons.solar_valley = function() {
     // thunderbolts
     HLS.lumi = HLR.fft3 * HLR.fft3 * 4;
     HLC.land.setRGB(HLS.lumi, HLS.lumi, HLS.lumi);
+}
+
+HLS.scenesAddons.escher_surfers = function(){
+  HL.materials.land.uniforms.buildFreq.value += Math.max(0, (HLR.fft1 - 0.9)) * 2.6;
 }
 
 
@@ -404,6 +408,45 @@ HLS.logoChange = function(model) {
 
 }
 
+
+HLS.MIDIcontrols = function(){
+console.log('hlsmidicontrols init');
+  navigator.requestMIDIAccess().then(
+    onMIDIInit,
+    onMIDISystemError );
+
+  function onMIDISystemError(e){
+    console.log(e);
+  }
+
+  function onMIDIInit( midi ) {
+    // sys_midi = midi;
+    for (var input of midi.inputs.values())
+      input.onmidimessage = midiMessageReceived;
+  }
+
+  function midiMessageReceived( ev ) {
+
+    var midiInputIndex = 144 // channel in DJ mode without hex calculations
+
+    for (var key in HLSP.scenesParams) {
+        if (ev.data[2]>0 && ev.data[1]==103 && ev.data[0]== midiInputIndex++) {
+          HLS.startScene(key);
+        }
+    }
+
+
+    if (ev.data[2]>0 && ev.data[1]==0) //5
+        HLH.shootGroup(HLS.modelsParams);
+    if (ev.data[0]==156 && ev.data[2]>0 && ev.data[1]==1) { //9
+      HLE.CENTER_PATH=!HLE.CENTER_PATH;
+      HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
+    }
+
+  }
+}
+
+
 HLS.modelshooting = function(k) {
   // console.log(k);
     // create keys for scenes
@@ -457,5 +500,8 @@ HLS.modelshooting = function(k) {
     // }
 
 }
-if(noSocket) window.addEventListener('keydown', HLS.modelshooting);
+if(noSocket){
+  if(midiIn) window.addEventListener('HLEload', HLS.MIDIcontrols);
+  else window.addEventListener('keydown', HLS.modelshooting);
+}
 window.addEventListener('HLEload', HLS.scenes.intro);
