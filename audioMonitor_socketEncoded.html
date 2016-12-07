@@ -117,6 +117,8 @@
 			var socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
 			socket.emit('ack', { whoami: 'mxr' });
 
+			var encoded = '';
+
 			// TODO: webworker per emit messaggi FFT
 			function socketSendFFT() {
 				window.setTimeout(function() {
@@ -124,10 +126,18 @@
 				}, 1000 / 30);
 				if (socketOn) {
 
+					// encode 3 used freqs in a string, with 3 decimals
+					encoded =
+						audioAnalyzer.getFreq(2).toFixed(3) +
+						audioAnalyzer.getFreq(0).toFixed(3) +
+						audioAnalyzer.getFreq(200).toFixed(3)
+						;
+
 					socket.emit('mxr_push_fft', {
-						a: audioAnalyzer.getFreq(2),
-						b: audioAnalyzer.getFreq(0),
-						c: audioAnalyzer.getFreq(200)
+						a: encoded
+						// a: audioAnalyzer.getFreq(2),
+						// b: audioAnalyzer.getFreq(0),
+						// c: audioAnalyzer.getFreq(200)
 
 						//d: audioAnalyzer.getFreq(64),
 						//e: audioAnalyzer.getFreq(200)

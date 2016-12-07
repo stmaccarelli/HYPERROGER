@@ -1,8 +1,8 @@
 var socketVisual = function(){
+  var socket;
 
   function init(){
-    
-    var socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
+    socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
     //chech if previously got a ID
     var local_mobi_id = window.localStorage.getItem('mobile_id');
 
@@ -52,21 +52,20 @@ var socketVisual = function(){
     //reset HLRemote params
     // HLRemote.updateHLParams(0,0,0,0,0);
 
-    if(!partSocket){
+    if(!partSocket)
+    socket.on('mxr_push_to_cli_fft', function(d){
 
-      socket.on('mxr_push_to_cli_fft', function(d){
+      HLRemote.updateHLParams(
+        //decode message, it is a string featuring 3 values with 3 decimals eg 0.1230.4560.789
+        d.msg.a.substr(0,5),
+        d.msg.a.substr(5,5),
+        d.msg.a.substr(15,5),
 
-        HLRemote.updateHLParams(
-
-          d.msg.a,
-          d.msg.b,
-          d.msg.c
-
-        );
-
-      });
-
-    }
+        // d.msg.a,
+        // d.msg.b,
+        // d.msg.c
+      );
+    });
 
 
     socket.on('mxr_push_to_cli_key', function(d){
