@@ -8,7 +8,7 @@ set squareness to 0 for a flat land
          cameraPositionY: 10,
          seaLevel: 0,
 
-         displayText: 'CHAPTER ONE, MIZU<br>TO BE TRAPPED INTO THE MORNING UNDERTOW',
+         displayText: '<b>CHAPTER ONE, MIZU</b><br/><i>TO BE TRAPPED INTO THE MORNING UNDERTOW</i>',
          speed: 10,
          modelsParams: ['stones', function(){return 1+Math.random()*40}, 3, true, true, 0],
 
@@ -32,7 +32,7 @@ set squareness to 0 for a flat land
          seaLevel: -450,
          fogDensity: 0.00054,
 
-         displayText: 'CHAPTER TWO, SOLAR VALLEY<br>FIRE EXECUTION STOPPED BY CLOUDS',
+         displayText: '<b>CHAPTER TWO, SOLAR VALLEY</b><br><i>FIRE EXECUTION STOPPED BY CLOUDS</i>',
          speed: 10,
          modelsParams: ['stones', function(){return 1+Math.random()*5}, 40, true, false, -750],
 
@@ -55,8 +55,8 @@ set squareness to 0 for a flat land
          cameraPositionY: 40,
          seaLevel: 50,
 
-         displayText: 'CHAPTER THREE, ESCHER SURFERS<br>TAKING REST ON K 11',
-         speed: 10,
+         displayText: '<b>CHAPTER THREE, ESCHER SURFERS</b><br><i>TAKING REST ON K 11</i>',
+         speed: 15,
          modelsParams: ['cube', 3, 1, true, true, 0 ],
 
          tiles: 73,
@@ -65,11 +65,11 @@ set squareness to 0 for a flat land
          cFactor: 0,
          buildFreq: 10,
          natural: 0,
-         rainbow: 0.492,//0.16273670793882017,
+         rainbow: 0.16273670793882017,
          squareness: 0.08945796327125173,
 
          map: 'pattern1',
-         landRGB: 0xff1166,//16727705,
+         landRGB: 16727705,
          horizonRGB: 7935,
          skyMap: 'sky1',
      },
@@ -80,11 +80,9 @@ set squareness to 0 for a flat land
          cameraPositionY: 100,//HLE.WORLD_HEIGHT*.5,
          seaLevel: -100,
 
-         displayText: 'CHAPTER FOUR, CURRYBOX<br>A FLAKE ON THE ROAD AND A KING AND HIS BONES',
+         displayText: '<b>CHAPTER FOUR, CURRYBOX</b><br><i>A FLAKE ON THE ROAD AND A KING AND HIS BONES</i>',
          speed: 5,
-         modelsParams: ['band', function(){return 50+Math.random()*20}, 2, false, true, -150],
-
-        //  modelsParams: [['cube'], function(){return 1+Math.random()*5}, 1, true, false,-100],
+         modelsParams: [['cube'], function(){return 1+Math.random()*5}, 1, true, false,-100],
 
          tiles: 145,
          repeatUV: 1,
@@ -106,7 +104,7 @@ set squareness to 0 for a flat land
          cameraPositionY: 50,
          seaLevel: -100,
 
-         displayText: 'CHAPTER FIVE, GALAXY GLACIER<br>HITTING ICEBERGS BLAMES',
+         displayText: '<b>CHAPTER FIVE, GALAXY GLACIER</b><br><i>HITTING ICEBERGS BLAMES</i>',
          speed: 2,
          modelsParams: [null, 1, true, true],
 
@@ -125,14 +123,11 @@ set squareness to 0 for a flat land
      },
 
      firefly: {
-
          cameraPositionY: 50,
-         seaLevel: 0,
+         displayText: '<b>CHAPTER SIX, FIREFLY</b>',
 
-         displayText: 'CHAPTER SIX, FIREFLY',
-
-         speed: 1,
-         modelsParams: [null, 1, true, true],
+         speed: 10,
+         modelsParams: ['sea', 1, true, true],
 
          tiles: 100,
          repeatUV: 1,
@@ -157,9 +152,9 @@ set squareness to 0 for a flat land
          cameraPositionY: -450,
          seaLevel: 0,
 
-         displayText: 'CHAPTER SEVEN, DRIFT<br>LEAVING THE BOAT',
+         displayText: '<b>CHAPTER SEVEN, DRIFT</b><br><i>LEAVING THE BOAT</i>',
          speed: 3,
-         modelsParams: ['stones', function(){return 1+Math.random()*2}, 2, true, true, 0],
+         modelsParams: [['ducky'], function(){return 1+Math.random()*2}, 2, true, true, 0],
 
          tiles: 128,
          repeatUV: 0,
@@ -180,7 +175,7 @@ set squareness to 0 for a flat land
      hyperocean: {
          cameraPositionY: 50,
 
-         displayText: 'CHAPTER EIGHT, HYPEROCEAN<br>CRAVING FOR LOVE LASTS FOR LIFE',
+         displayText: '<b>CHAPTER EIGHT, HYPEROCEAN</b><br><i>CRAVING FOR LOVE LASTS FOR LIFE</i>',
          speed: 8,//18,
          modelsParams: ['space', 2, 40, true, false, 200],
 
@@ -204,7 +199,7 @@ set squareness to 0 for a flat land
      twin_horizon: {
          cameraPositionY: 100,
 
-         displayText: 'CHAPTER NINE, TWIN HORIZON<br>ON THE RIGHT VISION TO THE RIGHT SEASON',
+         displayText: '<b>CHAPTER NINE, TWIN HORIZON</b><br><i>ON THE RIGHT VISION TO THE RIGHT SEASON</i>',
          speed: 10,
          modelsParams: ['sea', function(){return 20+Math.random()*20}, 20, false, false, 550],
 
@@ -231,10 +226,9 @@ set squareness to 0 for a flat land
      else: {
          cameraPositionY: 50,
 
-         displayText: 'CHAPTER TEN, ELSE<br>DIE LIKE AN ELECTRIC MACHINE',
+         displayText: '<b>CHAPTER TEN, ELSE</b><br><i>DIE LIKE AN ELECTRIC MACHINE</i>',
          speed: 10,
-
-         modelsParams: ['band', function(){return 50+Math.random()*100}, 2, true, true, -50],
+         modelsParams: [['ducky'], function(){return 2+Math.random()*20}, 3, true, true, 0],
 
          tiles: 104,
          repeatUV: 128,
@@ -258,10 +252,9 @@ set squareness to 0 for a flat land
      roger_water: {
          cameraPositionY: 50,
 
-         displayText: 'CHAPTER ELEVEN, ROGER WATER<br>PROTECT WATER',
+         displayText: '<b>CHAPTER ELEVEN, ROGER WATER</b><br><i>PROTECT WATER</i>',
          speed: 10,
-         modelsParams: [null, 0, 0, true, true, 0],
-         // HLH.shootGroup(group, scale, speed,rotation,floating, midpoint){
+         modelsParams: ['stones', function(){return 1+Math.random()*40}, 3, true, true, 0],
 
          tiles: 80,
          repeatUV: 1,
@@ -281,7 +274,7 @@ set squareness to 0 for a flat land
      alpha_11: {
          cameraPositionY: 50,
 
-         displayText: 'CHAPTER TWELVE, ALPHA 11<br>A MASSIVE WAVE IS DRIVING ME HOME',
+         displayText: '<b>CHAPTER TWELVE, ALPHA 11</b><br><i>A MASSIVE WAVE IS DRIVING ME HOME</i>',
          speed: 1,
          modelsParams: ['stones', function(){return 1+Math.random()*40}, 3, true, true, 0],
 
@@ -328,30 +321,6 @@ set squareness to 0 for a flat land
          skyMap: 'sky1',
      },
 
-     vanillacola:
-     {
-       cameraPositionY: 100,//HLE.WORLD_HEIGHT*.5,
-       seaLevel: 0,
-
-       speed: 5,
-       modelsParams: ['band', function(){return 40+Math.random()*20}, 1, false, true, -20],
-       displayText: 'VANILLACOLA<br>THE FILM IS OUT OF COLOR',
-
-       tiles: 256,
-       repeatUV: 64,
-       bFactor: 0.57059,
-       cFactor: 0.04105,
-       buildFreq: 10,
-       natural: 0.625669164732314,
-       rainbow: 0.30715903408406997,
-       squareness: 0.1785271559526051,
-       map: 'land1',
-       landRGB: 10848182,
-       horizonRGB: 8195175,
-       skyMap: 'sky3'
-
-     },
-
      intro: {
          cameraPositionY: 650,
          seaLevel:0,
@@ -373,28 +342,6 @@ set squareness to 0 for a flat land
          landRGB: 0x111111,
          horizonRGB: 0x6f6f6f,
          skyMap: 'sky3'
-     },
-
-     offline: {
-         cameraPositionY: 50,
-
-         displayText: 'OFFLINE SCENE',
-         speed: 0,//18,
-         modelsParams: null,
-
-         tiles: 200,
-         repeatUV: 12,
-         bFactor: 1.001,
-         cFactor: 0.21934025248846812,
-         buildFreq: 15.188759407623216,
-         natural: 0.7051924010682208,
-         rainbow: 0.1952840495265842,
-         squareness: 0.00001,
-         map: 'land5',
-         landRGB: 14798516,
-         horizonRGB: 7173242,
-         skyMap: 'sky2',
-     },
-
+     }
 
  }

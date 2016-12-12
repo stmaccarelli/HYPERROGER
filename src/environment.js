@@ -13,7 +13,7 @@ var HLE = {
   SEA_TILES:16,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:.49,
+  PIXEL_RATIO_SCALE:.5,
 
   SCREEN_WIDTH_SCALE:1,
   SCREEN_HEIGHT_SCALE:isMobile?1:1,
@@ -82,6 +82,7 @@ var HLC = {
   clouds: new THREE.Color(1,1,1),
 
   gWhite: new THREE.Color(0xffffff),
+  UI: new THREE.Color(0xff0011)
 }
 
 
@@ -167,12 +168,11 @@ var HL = {
     // mercury:["3dm/mercury/mercury_c.obj",5],
     // tiger:["3dm/uncletiger/uncletiger_c.obj",5],
     cube:["3dm/cube.obj",2.5],
+    intro:["3dm/hyperland_intro.obj",3],
     logo:["3dm/hyperland_logo.obj",5],
-    // maker:["3dm/makerfaire.obj",5],
-    // data:["3dm/roma_data.obj",5],
 
-    // whale:["3dm/lowpoly/lo_whale.obj",10],
-    // airbus2:["3dm/lowpoly/lo_airbus.obj",10],
+    tomat:["3dm/tomat_lo.obj",10],
+    ottino:["3dm/ottino_lo.obj",10],
 
     stone1:["3dm/stones/stone1.obj",10],
     stone2:["3dm/stones/stone2.obj",10],
@@ -184,7 +184,8 @@ var HL = {
     sea:['whale'],
     ducks:['ducky'],
     stones:['stone1','stone2','stone3'],
-    cube:['cube']
+    cube:['cube'],
+    band:['tomat','ottino']
   },
   // object containing models dynamically cloned from originals, for animation.
   dynamicModelsClones:{length:0},
@@ -346,11 +347,15 @@ var HLEnvironment = function(){
     HL.cameraGroup = new THREE.Group();
 
 
-    HL.cameraCompanion = new THREE.Mesh(new THREE.PlaneBufferGeometry(128,128,1,1),new THREE.MeshBasicMaterial({color:0xff0000,transparent:true,side:THREE.DoubleSide}));
-    HL.cameraCompanion.position.z = -500;
-    HL.cameraCompanion.visible = false;
+    HL.cameraCompanion = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(window.innerWidth,window.innerHeight, 1, 1 ),
+      new THREE.MeshLambertMaterial( { color:HLC.UI, emissive: HLC.UI.clone().multiplyScalar(.5), transparent:true, side:THREE.DoubleSide } )
+    );
 
-    // c.geometry.rotateX(Math.PI/2);
+    HL.cameraCompanion.position.z = -600;
+
+    HL.cameraCompanion.visible = true;
+
     HL.cameraGroup.add(HL.camera);
     HL.cameraGroup.add(HL.cameraCompanion);
     HL.cameraGroup.position.y = 50;

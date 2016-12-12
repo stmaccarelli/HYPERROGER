@@ -9,6 +9,8 @@
   var isNoiseCam = window.location.href.indexOf('?noisecam')>-1;
   var isWire = window.location.href.indexOf('?wire')>-1;
   var hasShadows = false;
+  var noHUD = window.location.href.indexOf('?noHUD')>-1;
+
   var noSocket = window.location.href.indexOf('?nosocket')>-1;
   var partSocket = window.location.href.indexOf('?partsocket')>-1;
   var hasGUI = window.location.href.indexOf('?gui')>-1;
@@ -41,10 +43,27 @@
     noScroll.enable();
 
     function onResized() {
-      HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-      if(isCardboard) HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-      HL.camera.aspect = (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+
+      HL.camera.aspect = window.innerWidth / window.innerHeight;
       HL.camera.updateProjectionMatrix();
+      HL.renderer.setSize( window.innerWidth, window.innerHeight );
+      if(isCardboard)
+        HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+
+      //
+      // HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+      // if(HLE.WATER)
+      //   HL.materials.water.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+      //
+      // if(HLE.MIRROR)
+      //   HL.materials.mirror.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+      //
+      // if(isCardboard) HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+      //
+      // HL.camera.aspect = (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+      // HL.camera.updateProjectionMatrix();
+
+
     }
 
     window.addEventListener("resize", onResized);
@@ -111,20 +130,42 @@
 
 
     // Rendering
+    // HL.renderer.autoClear = false;
+    // HL.renderer.clear();
+
     if(HLE.WATER)
       HL.materials.water.render();
+
     if(HLE.MIRROR)
       HL.materials.mirror.render();
+
     if(isCardboard || isVR){
-      if(HLE.MIRROR || HLE.WATER)
+
+      if(HLE.MIRROR || HLE.WATER){
+
         HL.renderer.setRenderTarget( null );
-      if(isCardboard)
+
+      }
+
+      if(isCardboard){
         HL.stereoEffect.render(HL.scene,HL.camera);
-      if(isVR)
+
+      }
+
+      if(isVR){
+
        HL.VREffect.render(HL.scene,HL.camera);
+
+      }
+
     }
-    else
+    else{
+
       HL.renderer.render(HL.scene,HL.camera);
+
+    }
+
+
 
     delta = null;
   }
@@ -220,6 +261,10 @@
       loadingDiv.innerHTML += ('<p>' + message +'</p>');
   };
   console.error = console.debug = console.info = console.log
+
+
+
+
 
 
 

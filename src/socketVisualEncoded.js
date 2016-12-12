@@ -2,7 +2,8 @@ var socketVisual = function(){
   var socket;
 
   function init(){
-    socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
+    // socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
+    socket = io('http://pixelsmasher.io:1502'); // aaron 13.95.147.55
     //chech if previously got a ID
     var local_mobi_id = window.localStorage.getItem('mobile_id');
 
@@ -11,7 +12,7 @@ var socketVisual = function(){
     else socket.emit('ack',{whoami:'visual'});
 
     // hmmm
-    socket.on('youare', function(e){console.log(e); window.localStorage.setItem('mobile_id',e.mobi_id);});
+    socket.on('youare', function(e){console.log("socket youare: ");console.log(e); window.localStorage.setItem('mobile_id',e.mobi_id); });
 
     console.log('sent ack');
 
@@ -57,9 +58,9 @@ var socketVisual = function(){
 
       HLRemote.updateHLParams(
         //decode message, it is a string featuring 3 values with 3 decimals eg 0.1230.4560.789
-        d.msg.a.substr(0,5),
-        d.msg.a.substr(5,5),
-        d.msg.a.substr(15,5),
+        d.msg.substr(0,5),
+        d.msg.substr(5,5),
+        d.msg.substr(10,5)
 
         // d.msg.a,
         // d.msg.b,
@@ -72,8 +73,10 @@ var socketVisual = function(){
 
       if (Number(d.msg.a) == 53) //5
           HLH.shootGroup(HLS.modelsParams);
-
+        
       if (Number(d.msg.a) == 54) //6
+          HLS.logoChange('intro');
+      if (Number(d.msg.a) == 55) //7
           HLS.logoChange('logo');
       if (Number(d.msg.a) == 56) //8
           HLS.logoChange('cube');

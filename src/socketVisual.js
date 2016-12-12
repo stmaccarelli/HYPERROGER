@@ -1,8 +1,12 @@
 var socketVisual = function(){
 
   function init(){
-    
-    var socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
+
+    // var socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
+    var socket = io('http://pixelsmasher.io:1502'); // aaron 13.95.147.55
+    // var socket = io('http://hyperland-sock.azurewebsites.net:1502'); // aaron 13.95.147.55
+
+
     //chech if previously got a ID
     var local_mobi_id = window.localStorage.getItem('mobile_id');
 

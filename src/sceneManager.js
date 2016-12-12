@@ -14,7 +14,7 @@ var HLS = {
     tempColor: 0,
 
     //hud
-    hud: new HUD(false),
+    hud: null,
 
     color : new THREE.Vector3(),
     lumi:0,
@@ -29,6 +29,13 @@ HLS.initScenes =   {};
 HLS.scenes = {};
 // custom scenes addons, follow scenes, called in scenes
 HLS.scenesAddons = {};
+
+
+function initHUD(){
+  HLS.hud = new HUD(true);
+}
+var load = window.addEventListener('HLEload',initHUD);
+
 
 
 HLS.loadParams = function(params) {
@@ -53,6 +60,8 @@ HLS.loadParams = function(params) {
 
     if (params.modelsParams !== undefined)
         HLS.modelsParams = params.modelsParams;
+    else
+      HLS.modelsParams = null;
 
     if (params.tiles !== undefined) {
         HL.land.geometry = new THREE.PlaneBufferGeometry(
@@ -106,6 +115,18 @@ HLS.startScene = function(sceneId) {
     else window.cancelAnimationFrame(HLS.raf);
 
 
+    if (HLSP[sceneId] !== undefined) {
+
+      //start hud display
+      if (HLS.hud !== undefined && !noHUD) HLS.hud.display((isMobile||isVR)?'':(HLSP[sceneId].displayText || sceneId), 8, false);
+
+      //load scene parameters
+
+      HLS.loadParams(HLSP[sceneId]);
+
+    }
+
+
     //reset fog
     HL.scene.fog.density = 0.00025;
 
@@ -117,19 +138,13 @@ HLS.startScene = function(sceneId) {
 
 
 
-    //load scene parameters
-    if (HLSP.scenesParams[sceneId] !== undefined) {
-        HLS.loadParams(HLSP.scenesParams[sceneId]);
-        //start hud display
-        if (HLS.hud !== undefined) HLS.hud.display((isMobile||isVR)?'':((HLSP.scenesParams[sceneId].displayText || sceneId)+'<br><br>mobile interactive experience: http://hyland.xyz<br>mobile cardboard experience: http://hyland.xyz/?cardboard'), 4, false);
-    }
+
 
     // reset camera rotations etc
     HL.cameraGroup.rotation.x = 0;
     HL.cameraGroup.rotation.y = 0;
     HL.cameraGroup.rotation.z = 0;
     HL.cameraCompanion.visible = false;
-
 
 
     //init custom scene, in case any
@@ -140,6 +155,7 @@ HLS.startScene = function(sceneId) {
     // scene timer, useful for timed scene events
     // eg:  if(frameCount-HLS.sceneStart>=600) HLR.startScene('scene2');
     HLS.sceneStart = frameCount;
+
 
     //start new sceneI
     if(isVR) HLS.raf = HL.VREffect.requestAnimationFrame(HLS.scenes[sceneId] || HLS.scenes.standard);
@@ -180,8 +196,8 @@ HLS.scenes.standard = function() {
     HLE.landHeight += (HLR.tempLandHeight - HLE.landHeight) * 0.45;
     // HLE.landZeroPoint = - HLR.fft3 * HLE.landHeight * .5;
 
-    if (HLR.fft3 > 0.97)
-        HLH.shootGroup(HLS.modelsParams);
+    // if (HLR.fft3 > 0.97)
+    //     HLH.shootGroup(HLS.modelsParams);
 
     // thunderbolts
     HLS.lumi = HLR.fft3;
@@ -197,18 +213,28 @@ HLS.scenes.standard = function() {
       HLC.land.g = THREE.Math.clamp(HLC.land.g + HLS.color.y,0,1);
       HLC.land.b = THREE.Math.clamp(HLC.land.b + HLS.color.z,0,1);
     }
+
+
     //camera motion
-    if (!isMobile && !isVR && HLS.sceneId!='firefly' && HLS.sceneID!='intro')
-        HLS.cameraMotion(HLS.sceneId.indexOf('solar_valley')>-1);
+    if (!isMobile && !isVR && HLS.sceneId!='firefly' )
+      HLS.cameraMotion(HLS.sceneId.indexOf('solar_valley')>-1 && HLS.sceneId.indexOf('intro')>-1);
 
     if (HLS.scenesAddons[HLS.sceneId] || undefined)
         HLS.scenesAddons[HLS.sceneId]();
 }
 
 
+HLS.scenesAddons.intro = function(){
+  // cameraCompanion move
+  HL.cameraCompanion.rotation.y = ( Math.sin(frameCount*.0013)*0.252) ;
+  HL.cameraCompanion.rotation.x = ( Math.cos(frameCount*.00125)*0.35) ;
+}
+
 HLS.initScenes.firefly = function() {
+    HLS.logoChange('cube');
     HL.cameraCompanion.visible = true;
 }
+
 HLS.scenes.firefly = function() {
     // HLS.raf = window.requestAnimationFrame(HLS.scenes.static);
     if(isVR) HLS.raf = HL.VREffect.requestAnimationFrame(HLS.scenes.firefly);
@@ -216,6 +242,10 @@ HLS.scenes.firefly = function() {
     // compute move speed
     HLE.reactiveMoveSpeed = 1 + HLR.fft1 * HLE.BASE_MOVE_SPEED;
     HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.015;
+
+    // cameraCompanion move
+    HL.cameraCompanion.rotation.y = ( (frameCount*.0055)*0.252);
+    HL.cameraCompanion.rotation.x = ( (frameCount*.005)*0.25);
 
 }
 
@@ -246,7 +276,7 @@ HLS.scenesAddons.drift = function() {
     HL.cameraGroup.position.y += HLR.fft1 * 0.075;
     HL.cameraGroup.position.y = THREE.Math.clamp(
         HL.cameraGroup.position.y,
-        HLSP.scenesParams.drift.cameraPositionY, -HLSP.scenesParams.drift.cameraPositionY
+        HLSP.drift.cameraPositionY, -HLSP.drift.cameraPositionY
     );
 }
 
@@ -259,10 +289,6 @@ HLS.scenesAddons.drift = function() {
 //
 // HL.cameraGroup.children[1].material.map = HL.dynamicTextures.stars.texture;
 // HL.cameraGroup.children[1].material.needsUpdate = true;
-
-HLS.scenesAddons.escher_surfers = function() {
-    // HL.cameraGroup.rotation.x = Math.sin(HLE.advance * 0.00004) * Math.PI / 32;
-}
 
 HLS.scenesAddons.else = function() {
     // thunderbolts
@@ -392,20 +418,21 @@ var tilen = Math.round(Math.random()*HLE.WORLD_TILES/2);
 
 
 HLS.logoChange = function(model) {
-    HL.cameraGroup.remove(HL.cameraCompanion);
 
-    HL.cameraCompanion = HL.models[model].clone();
-    HL.cameraCompanion.geometry = HL.cameraCompanion.geometry.clone().scale(30, 30, 30);
-    // HL.cameraCompanion.rotation.y = Math.PI;
-    HL.cameraCompanion.position.z = -600;
-    HL.cameraCompanion.position.y = -40;
-    HL.cameraCompanion.position.x = -20;
-    // HL.cameraCompanion.material = new THREE.MeshBasicMaterial({color:0xff0000,side:THREE.DoubleSide});
-    HL.cameraCompanion.material.color.set(0xff0000);
-    HL.cameraCompanion.material.emissive.set(0xaa0000);
+    if( typeof model ===  'string' ){
 
-    HL.cameraGroup.add(HL.cameraCompanion);
+      model = HL.models[model];
 
+    }
+
+    if( model instanceof THREE.Mesh ){
+
+      model = model.geometry;
+
+    }
+
+    HL.cameraCompanion.geometry = model.clone().scale(30, 30, 30);
+    HL.cameraCompanion.visible = true;
 }
 
 
@@ -429,7 +456,7 @@ console.log('HLS.MIDIcontrols init');
 
     var midiInputIndex = 144 // channel in DJ mode without hex calculations
 
-    for (var key in HLSP.scenesParams) {
+    for (var key in HLSP) {
         if (ev.data[2]>0 && ev.data[1]==103 && ev.data[0]== midiInputIndex++) {
           HLS.startScene(key);
         }
@@ -437,7 +464,9 @@ console.log('HLS.MIDIcontrols init');
 
 
     if (ev.data[2]>0 && ev.data[1]==0) //5
+      if(HLS.modelsParams !== null)
         HLH.shootGroup(HLS.modelsParams);
+
     if (ev.data[0]==156 && ev.data[2]>0 && ev.data[1]==1) { //9
       HLE.CENTER_PATH=!HLE.CENTER_PATH;
       HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
@@ -447,11 +476,11 @@ console.log('HLS.MIDIcontrols init');
 }
 
 
-HLS.modelshooting = function(k) {
+HLS.KeyboardControls = function(k) {
   // console.log(k);
     // create keys for scenes
     var keyCodeIndex = 65 // 'a' on keyboard
-    for (var key in HLSP.scenesParams) {
+    for (var key in HLSP) {
         if (k.keyCode == keyCodeIndex++) {
           // console.log(key);
             HLS.startScene(key);
@@ -472,9 +501,9 @@ HLS.modelshooting = function(k) {
         HLH.shootGroup(HLS.modelsParams);
 
     if (k.keyCode == 54) //6
-        HLS.logoChange('logo');
+        HLS.logoChange('intro');
     if (k.keyCode == 55) //7
-        HLS.logoChange('maker');
+        HLS.logoChange('logo');
     if (k.keyCode == 56) //8
         HLS.logoChange('cube');
     if (k.keyCode == 48)//0
@@ -485,6 +514,11 @@ HLS.modelshooting = function(k) {
       HLE.CENTER_PATH=!HLE.CENTER_PATH;
       HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
     }
+
+    if(k.keyCode == 88){ //x ?
+      HLS.logoChange(HUD.textGeometries.mizu);
+    }
+
     //
     // if(k.keyCode==49)//1
     //   {HLS.startScene('scene1');}
@@ -502,6 +536,6 @@ HLS.modelshooting = function(k) {
 }
 if(noSocket){
   if(midiIn) window.addEventListener('HLEload', HLS.MIDIcontrols);
-  else window.addEventListener('keydown', HLS.modelshooting);
+  else window.addEventListener('keydown', HLS.KeyboardControls);
 }
-window.addEventListener('HLEload', HLS.scenes.intro);
+window.addEventListener('HLEload', function(){ HLS.startScene('intro')} );

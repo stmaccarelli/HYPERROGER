@@ -58,3 +58,31 @@ FULLSCREEN va solo su ios Safari
 - scena tutta nera da usare fra un pezzo e l'altro
 - render facce mie e di gas da lanciare ( se ti va)
 - bigliettini da distribuire con link
+
+
+
+
+- scritta intro più piccola
+- scena offline: hyperocean senza montagne, scritta HYPERLAND piccola in cameraCompanion
+- frase per bigliettino
+
+rifare logica comandi da tastiera / midi
+  audiomonitor + sceneManager + socketVisual
+
+  fare mappa comandi ed associarla ad un keyCode e ad una MIDInote
+  0 - 50 scene
+  51 - 99 comandi
+    51-70 = cameraCompanion models on/off
+    71 = lancio model group relativo a scena
+    72 =  
+
+
+  se usiamo keyboard:
+    - keyboard input su audiomonitor
+    - su palco abbiamo audio diretto e comandi da socket (modalità partSocket)
+    - su mobile abbiamo tutto in input da socket (audio e comandi)
+
+  se usiamo midi per i comandi:
+    - audiomonitor prende input midi
+    - su palco abbiamo audio diretto e comandi da socket (modalità partSocket)
+    - su mobile abbiamo tutto in input da socket (audio e comandi)

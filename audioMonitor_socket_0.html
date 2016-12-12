@@ -114,10 +114,11 @@
 		var scenesListDom = document.getElementById("scenesList");
 
 		function init() {
-			var socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
-			socket.emit('ack', { whoami: 'mxr' });
+			// var socket = io('http://13.81.1.49:1502'); // aaron 13.95.147.55
+		  var socket = io('http://pixelsmasher.io:1502'); // aaron 13.95.147.55
+			//var socket = io('http://hyperland-sock.azurewebsites.net:1502'); // aaron 13.95.147.55
 
-			var encoded = '';
+			socket.emit('ack', { whoami: 'mxr' });
 
 			// TODO: webworker per emit messaggi FFT
 			function socketSendFFT() {
@@ -126,18 +127,10 @@
 				}, 1000 / 30);
 				if (socketOn) {
 
-					// encode 3 used freqs in a string, with 3 decimals
-					encoded =
-						audioAnalyzer.getFreq(2).toFixed(3) +
-						audioAnalyzer.getFreq(0).toFixed(3) +
-						audioAnalyzer.getFreq(200).toFixed(3)
-						;
-
 					socket.emit('mxr_push_fft', {
-						a: encoded
-						// a: audioAnalyzer.getFreq(2),
-						// b: audioAnalyzer.getFreq(0),
-						// c: audioAnalyzer.getFreq(200)
+						a: audioAnalyzer.getFreq(2),
+						b: audioAnalyzer.getFreq(0),
+						c: audioAnalyzer.getFreq(200)
 
 						//d: audioAnalyzer.getFreq(64),
 						//e: audioAnalyzer.getFreq(200)
@@ -156,7 +149,7 @@
 				});
 
 				var keyCodeIndex = 65 // 'a' on keyboard
-				for (var key in HLSP.scenesParams) {
+				for (var key in HLSP) {
 					if (e.keyCode == keyCodeIndex++) {
 						socket.emit('mxr_set_scene', key);
 						curSceneDom.innerHTML = " ( " + String.fromCharCode(keyCodeIndex-1) + " ) " + key;
@@ -165,7 +158,7 @@
 			}
 
 			keyCodeIndex = 65 // 'a' on keyboard
-			for (var key in HLSP.scenesParams) {
+			for (var key in HLSP) {
 					scenesListDom.innerHTML += "<br> ( " + String.fromCharCode(keyCodeIndex++) + " ) " + key;
 			}
 
@@ -233,7 +226,7 @@
 					var midiInputIndex = 144 // channel in DJ mode without hex calculations
 					// var keyCodeIndex = 65 // 'a' on keyboard
 
-					for (var key in HLSP.scenesParams) {
+					for (var key in HLSP) {
 						if (ev.data[2]>0 && ev.data[1]==103 && ev.data[0] == midiInputIndex++ ) { //mapping mini in to old keyCodes
 							socket.emit('mxr_set_scene', key);
 							curSceneDom.innerHTML = " ( " + String.fromCharCode(midiInputIndex-1-79) + " ) " + key;
