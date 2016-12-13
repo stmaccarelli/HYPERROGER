@@ -1,12 +1,4 @@
 
-fare scena "black" (schermo nero e basta)
-
-fare tasto / socket message "randomColor" per cellulari
-
-rotazione camera noiseCam o altro, organico e audioreattivo
-anche quando scorriamo solo in avanti, la camera deve avere dei movimenti organici tipo di onde, in base a velocità globale
-
-
 refactor shader materials
 
 --
@@ -17,56 +9,59 @@ Fullscreen su android
 
 VIBRATION API (oggetti)
 
-DISABLE CAMERA VIBRATION FROM VR and CARD modes
 
 --
 
 hyperland website temporary
 --
 
-REMOTE
-master speed ?
-
-
 testare su android
 albertosarullo.com/demos/accelerometer/
 
 
-
-TODO socket
-
-fare una mappa di codici per le varie azioni, ed usarla su socket, midi e tastiera.
-
 android loading
-onerror models √
-HUD in THREE.JS canvas, non esterno.
-refactor FFT (eliminare fft4 e 5 da oggetto)
-
+onerror models
 
 FULLSCREEN va solo su ios Safari
 
 
 
-
-
-
 ---- DA TOMAT
 
-- superficie proiezione mappabile
-- intro con link pre concerto da proiettare fatto bene
+√- superficie proiezione mappabile
+√- intro con link pre concerto da proiettare fatto bene
 - scena da lasciare quando non si suona ( mare piatto e/o scritta Hyperland)
 - scena tutta nera da usare fra un pezzo e l'altro
-- render facce mie e di gas da lanciare ( se ti va)
-- bigliettini da distribuire con link
+√- bigliettini da distribuire con link
 
 
 
 
-- scritta intro più piccola
-- scena offline: hyperocean senza montagne, scritta HYPERLAND piccola in cameraCompanion
-- frase per bigliettino
+√- scritta intro più piccola
+√- scena offline: hyperocean senza montagne, scritta HYPERLAND piccola in cameraCompanion
+√- frase per bigliettino
 
-rifare logica comandi da tastiera / midi
+- fadeout display hud
+
+- ENTRY POINT:
+  - per mobile
+    - cardboard
+    - Spheric Panorama
+  - per desktop
+    - mapping screen (white panel)
+    - audioMonitor
+    - visual
+      - socket radio button
+        - nosocket (offline)
+        - partsocket (ndefault per live)
+        - full socket (per debug / test)
+    - gui on/off checkbox
+    - mapping radio
+      - mapped A (total distortion)
+      - mapped B (most correct aspect)
+      - no mapping
+
+- rifare logica comandi da tastiera / midi
   audiomonitor + sceneManager + socketVisual
 
   fare mappa comandi ed associarla ad un keyCode e ad una MIDInote
@@ -74,7 +69,7 @@ rifare logica comandi da tastiera / midi
   51 - 99 comandi
     51-70 = cameraCompanion models on/off
     71 = lancio model group relativo a scena
-    72 =  
+    72 =
 
 
   se usiamo keyboard:
@@ -86,3 +81,8 @@ rifare logica comandi da tastiera / midi
     - audiomonitor prende input midi
     - su palco abbiamo audio diretto e comandi da socket (modalità partSocket)
     - su mobile abbiamo tutto in input da socket (audio e comandi)
+
+
+  se noSocket
+  visual prende tutti i comandi ta tastiera
+  se noSocket + midi, visual prende comandi da midi

@@ -99,6 +99,9 @@ var HL = {
   clock:null,
   noise:null,
 
+  mappedRenderer:null,
+  mappedScene:null,
+
   geometries: {
     sky:null,
     land:null,
@@ -367,20 +370,89 @@ var HLEnvironment = function(){
     // TODO: The easyest method to spedup FPS on slow mobile, is to reduce resolution
     // we can do this by settind pixel ratio to fraction of devicePixelRatio
 
+
+    HL.renderer = new THREE.WebGLRenderer({antialias: true});
+
+    HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE, true);
+
     if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
-      HL.renderer = new THREE.WebGLRenderer({antialias: true});
-      HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE, true);
+
       HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
 
-      // HL.renderer.domElement.style.imageRendering = 'pixelated';
-      // HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
-      // HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
-    }
-    else {
-      HL.renderer = new THREE.WebGLRenderer({antialias: true});
-      HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+    } else {
+
       HL.renderer.setPixelRatio(window.devicePixelRatio);
+
     }
+
+
+    if(isMapped){
+
+      HL.mappingCoords = JSON.parse(localStorage.getItem('HYPERLAND_SCREEN_MAPPING_COORDS'));
+
+      HL.mappingScreenGeometry = new THREE.PlaneGeometry(200,200,1,1);
+
+      // load coords, and let's assume we have 4 corners
+      for(var i=0; i<HL.mappingScreenGeometry.vertices.length;i++){
+        HL.mappingScreenGeometry.vertices[i].x = HL.mappingCoords[i].x;
+        HL.mappingScreenGeometry.vertices[i].y = HL.mappingCoords[i].y;
+        HL.mappingScreenGeometry.vertices[i].z = HL.mappingCoords[i].z;
+      }
+
+      // flip Y, I don't know why but I guess it's a weird orthoCam / plane geometry positioning
+      for(var f = 0; f<2; f++ )
+        for(var v = 0; v<3; v++ )
+          HL.mappingScreenGeometry.faceVertexUvs[0][f][v].y = 1 - HL.mappingScreenGeometry.faceVertexUvs[0][f][v].y;
+
+
+      HL.mappingScreenGeometry.verticesNeedUpdate = true;
+      HL.mappingScreenGeometry.uvsNeedUpdate = true;
+      HL.mappingScreenGeometry.computeBoundingBox();
+
+
+      // calculate mapped area width and height
+      var width = HL.mappingScreenGeometry.boundingBox.max.x - HL.mappingScreenGeometry.boundingBox.min.x;
+      var height = HL.mappingScreenGeometry.boundingBox.max.y - HL.mappingScreenGeometry.boundingBox.min.y;
+
+      // TODO: VERIFY IF NECESSARY change aspect of HL.camera
+      if(mappingCorrectAspect){
+
+        HL.camera.aspect = width/height;
+        HL.camera.updateProjectionMatrix();
+
+      }
+
+
+      var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
+
+      HL.mappingRenderTarget = new THREE.WebGLRenderTarget( width, height, parameters );
+      HL.mappingScene = new THREE.Scene();
+      HL.mappingScreen = new THREE.Mesh(
+        HL.mappingScreenGeometry,
+        new THREE.MeshBasicMaterial({color:0xffffff, side:THREE.DoubleSide, map: HL.mappingRenderTarget.texture})
+      );
+
+      HL.mappingScene.add(HL.mappingScreen);
+      // HL.mappingCamera = new THREE.OrthographicCamera(-width/2, width/2, -height/2, height/2, 1, 10000);
+      // HL.mappingCamera = new THREE.OrthographicCamera(-width/2, width/2, -height/2, height/2, 1, 10000);
+      HL.mappingCamera = new THREE.OrthographicCamera(-window.innerWidth/2, window.innerWidth/2, -window.innerHeight/2, window.innerHeight/2, 1, 10000);
+      HL.mappingCamera.position.z = 5000;
+      // HL.mappingCamera.rotateY(Math.PI);
+
+    }
+
+
+    // if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
+    //   HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
+    //
+    //   // HL.renderer.domElement.style.imageRendering = 'pixelated';
+    //   // HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
+    //   // HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
+    // }
+    // else {
+    //   HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
+    //   HL.renderer.setPixelRatio(window.devicePixelRatio);
+    // }
     // HL.renderer.shadowMap.enabled = true;
     //HL.renderer.sortObjects = false;
 

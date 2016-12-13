@@ -10,6 +10,9 @@
   var isWire = window.location.href.indexOf('?wire')>-1;
   var hasShadows = false;
   var noHUD = window.location.href.indexOf('?noHUD')>-1;
+  var isMapped = window.location.href.indexOf('?mapped')>-1;
+  var mappingCorrectAspect = window.location.href.indexOf('?mappedB')>-1;
+
 
   var noSocket = window.location.href.indexOf('?nosocket')>-1;
   var partSocket = window.location.href.indexOf('?partsocket')>-1;
@@ -148,6 +151,7 @@
       }
 
       if(isCardboard){
+
         HL.stereoEffect.render(HL.scene,HL.camera);
 
       }
@@ -161,7 +165,16 @@
     }
     else{
 
-      HL.renderer.render(HL.scene,HL.camera);
+      if(isMapped){
+
+        HL.renderer.render(HL.scene,HL.camera, HL.mappingRenderTarget);
+        HL.renderer.render(HL.mappingScene,HL.mappingCamera);
+
+      } else {
+
+        HL.renderer.render(HL.scene,HL.camera);
+
+      }
 
     }
 
