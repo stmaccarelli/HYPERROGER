@@ -126,7 +126,9 @@ var HL = {
     sky2:"img/skybox2/skydome3.jpg",
     sky3:"img/skybox2/sky_invert.jpg",
     sky4:"img/skybox2/skymap_photo9.jpg",
-    sky5:"img/skybox2/sky_stars_2.jpg",
+    // sky5:"img/skybox2/TychoSkymapII.t4_08192x04096.jpg",
+    sky5:"img/skybox2/nasa2.jpg",
+    // sky5:"img/skybox2/sky_stars_2.jpg",
 
     land:"img/white2x2.gif",
     sea:"img/white2x2.gif",
