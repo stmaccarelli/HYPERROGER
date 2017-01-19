@@ -2,7 +2,7 @@
   // global vars
   var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
   var isCardboard = window.location.href.indexOf('?cardboard')>-1;
-  var isVR = window.location.href.indexOf('?vr')>-1;
+  var isVR = window.location.href.indexOf('?webvr')>-1;
   var isDebug = window.location.href.indexOf('?debug')>-1;
   var isFPC = window.location.href.indexOf('?fpc')>-1;
   var isOrbit = window.location.href.indexOf('?orbit')>-1;
@@ -12,6 +12,9 @@
   var noHUD = window.location.href.indexOf('?noHUD')>-1;
   var isMapped = window.location.href.indexOf('?mapped')>-1;
   var mappingCorrectAspect = window.location.href.indexOf('?mappedB')>-1;
+  var staticAudio = window.location.href.indexOf('?staticaudio')>-1;
+
+
 
 
   var noSocket = window.location.href.indexOf('?nosocket')>-1;
@@ -22,6 +25,13 @@
   var frameCount = 0;
   var millis = 0;
   var delta = 0;
+  var mouse = {
+    x:null, y:null,
+    // coords relative to center
+    rX:null,rY:null,
+    // coords in the prev frame
+    prevX:null,prevY:null
+  };
 
   function mainInit(){
     // init and enable NoSleep so screen won't dim
@@ -44,6 +54,19 @@
     // init noScroll TODO do it according to broswer / os
     var noScroll = new NoScroll();
     noScroll.enable();
+
+    // function setMouse(e){
+    //   mouse.pX = mouse.x;
+    //   mouse.pY = mouse.y;
+    //
+    //   mouse.x = e.pageX;
+    //   mouse.y = e.pageY;
+    //
+    //   mouse.rX = e.pageX - window.innerWidth*0.5;
+    //   mouse.rY = e.pageY - window.innerHeight*0.5;
+    // }
+    // window.addEventListener('mousemove',setMouse);
+    // console.log('mouse var enabled');
 
     function onResized() {
 
@@ -71,7 +94,10 @@
 
     window.addEventListener("resize", onResized);
 
-    if(noSocket || partSocket){ AA = AudioAnalyzer(); AA.initGetUserMedia();}
+
+    // AUDIO ANALYSIS
+    if((noSocket || partSocket) && !isMobile && !staticAudio) { AA = AudioAnalyzer(); AA.initGetUserMedia();}
+    if(staticAudio){ AA = new AAMS(); }
 
   }
 
@@ -101,12 +127,14 @@
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
 
-    if( (noSocket || partSocket) && !isMobile)
-      HLRemote.updateHLParams(AA.getFreq(2/*2*/), AA.getFreq(0), AA.getFreq(200/*400*/));//), AA.getFreq(64), AA.getFreq(200));
-
-
-
-      // HLRemote.updateHLParams(.5,.5,.5,.5,.5);
+    if(staticAudio){
+      HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(200));//), AA.getFreq(64), AA.getFreq(200));
+    }
+    else if( (noSocket || partSocket) && !isMobile)
+      HLRemote.updateHLParams(AA.getFreq(2/*2*/)*0.975, AA.getFreq(0), AA.getFreq(200/*400*/));//), AA.getFreq(64), AA.getFreq(200));
+    else {
+      HLRemote.updateHLParams(.5,.5,.5);
+    }
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
@@ -134,7 +162,7 @@
 
     // Rendering
     // HL.renderer.autoClear = false;
-    // HL.renderer.clear();
+     HL.renderer.clear();
 
     if(HLE.WATER)
       HL.materials.water.render();
@@ -163,7 +191,7 @@
       }
 
     }
-    else{
+    else{ // no stereo
 
       if(isMapped){
 
@@ -177,8 +205,6 @@
       }
 
     }
-
-
 
     delta = null;
   }

@@ -178,21 +178,22 @@ set squareness to 0 for a flat land
 
 //H
      hyperocean: {
-         cameraPositionY: 50,
+         cameraPositionY: 400,
 
          displayText: 'CHAPTER EIGHT, HYPEROCEAN<br>CRAVING FOR LOVE LASTS FOR LIFE',
-         speed: 8,//18,
+         speed: 5,
          modelsParams: ['space', 2, 40, true, false, 160],
 
-         tiles: 200,
-         repeatUV: 16,
+         tiles: 256,
+         repeatUV: 24,
          bFactor: 0.901,
          cFactor: 0.519,
          buildFreq: 15.188759407623216,
-         natural: 0.6051924010682208,
-         rainbow: 0.4952840495265842,
+         natural: 0.9651924010682208,
+         rainbow: 0.38,
          squareness: 0.00001,
          map: 'land5',
+         map2: 'land4',
          landRGB: 0xffffff,
          horizonRGB: 7173242,
          skyMap: 'sky2',
@@ -256,7 +257,7 @@ set squareness to 0 for a flat land
 
 //K
      roger_water: {
-         cameraPositionY: 50,
+         cameraPositionY: 500,
 
          displayText: 'CHAPTER ELEVEN, ROGER WATER<br>PROTECT WATER',
          speed: 10,

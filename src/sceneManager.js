@@ -6,6 +6,7 @@ var HLS = {
     sceneProgress: 0,
     modelsParams: null,
     sceneId: null, //stores current scene id
+    defaultScene:'mizu',
 
     //local debouncers
     shotFlora: true,
@@ -54,9 +55,11 @@ HLS.loadParams = function(params) {
     else
         HL.sea.position.y = 0;
 
-    if (params.fogDeensity !== undefined)
-        HL.scene.fog.density = params.fogDensity;
-    else HL.scene.fog.density = 0.00025;
+    if(HL.scene.fog!==null){
+      if (params.fogDeensity !== undefined)
+          HL.scene.fog.density = params.fogDensity;
+        else HL.scene.fog.density = 0.00015;
+    }
 
     if (params.modelsParams !== undefined)
         HLS.modelsParams = params.modelsParams;
@@ -82,6 +85,8 @@ HLS.loadParams = function(params) {
         HL.land.material.uniforms.buildFreq = 0;
     if (params.map !== undefined)
         HL.land.material.uniforms.map.value = HL.textures[params.map];
+    if (params.map2 !== undefined)
+        HL.land.material.uniforms.map2.value = HL.textures[params.map2];
     if (params.natural !== undefined)
         HL.land.material.uniforms.natural.value = params.natural;
     if (params.rainbow !== undefined)
@@ -128,7 +133,8 @@ HLS.startScene = function(sceneId) {
 
 
     //reset fog
-    HL.scene.fog.density = 0.00025;
+    if(HL.scene.fog!==null)
+      HL.scene.fog.density = 0.00025;
 
     //destroy all running models
     HLH.destroyAllModels();
@@ -173,7 +179,7 @@ HLS.scenes.standard = function() {
     // HLS.raf = window.requestAnimationFrame(HLS.scenes.standard);
 
     // advance buildFreq
-    HL.materials.land.uniforms.buildFreq.value += Math.max(0, (HLR.fft1 - 0.97)) * 2.6;
+    // HL.materials.land.uniforms.buildFreq.value += Math.max(0, (HLR.fft1 - 0.97)) * 2.6;
 
     // // compute move speed
     HLE.reactiveMoveSpeed = 1 + ( HLR.fft2 + HLR.fft3+ HLR.fft1) * 0.3 * HLE.BASE_MOVE_SPEED + HLE.BASE_MOVE_SPEED*0.5;
@@ -216,11 +222,13 @@ HLS.scenes.standard = function() {
 
 
     //camera motion
-    if (!isMobile && !isVR && HLS.sceneId!='firefly' )
-      HLS.cameraMotion(HLS.sceneId.indexOf('solar_valley')>-1 && HLS.sceneId.indexOf('intro')>-1);
+    // if (!isMobile && !isVR && HLS.sceneId!='firefly' )
+    //   HLS.cameraMotion(HLS.sceneId.indexOf('solar_valley')>-1 && HLS.sceneId.indexOf('intro')>-1);
+    // HLS.cameraMotion();
 
     if (HLS.scenesAddons[HLS.sceneId] || undefined)
         HLS.scenesAddons[HLS.sceneId]();
+
 }
 
 
@@ -315,7 +323,26 @@ HLS.scenesAddons.twin_horizon = function() {
 }
 
 
-HLS.scenesAddons.hyperocean = function() {}
+HLS.scenesAddons.hyperocean = function() {
+  if(HLR.fft1>0.97){
+
+// if (k.keyCode == 53) //5
+//     HLH.shootGroup(HLS.modelsParams);
+
+    if(randomLandDebounce){
+      HLS.randomizeLand();
+
+      HLH.startModel(HL.models['whale'],
+        THREE.Math.randInt(-1000, 1000),
+        THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 2.5, null, 10
+      ); //TODO
+      HLH.shootGroup(HLS.modelsParams);
+
+      randomLandDebounce=false;
+    }
+  } else randomLandDebounce = true;
+
+}
 
 
 
@@ -329,14 +356,14 @@ HLS.scenesAddons.roger_water = function(){
   );
 
   if(HLR.fft1>0.97){
-    if(rogerDebounce){
+    if(randomLandDebounce){
       HLS.randomizeLand();
-      rogerDebounce=false;
+      randomLandDebounce=false;
     }
-  } else rogerDebounce = true;
+  } else randomLandDebounce = true;
 }
 
-var rogerDebounce = true;
+var randomLandDebounce = true;
 
 HLS.scenesAddons.popeye = function(){
   HL.materials.land.uniforms.buildFreq.value += Math.max(0,HLR.fft1-0.8) * .05;
@@ -354,65 +381,76 @@ HLS.scenesAddons.popeye = function(){
 * COMMON HELPERS
 *
 */
-
-
-HLS.cameraMotion = function(straight) {
-
-  var b = Math.PI + Math.sin(HLE.advance  * 0.0001 ) * Math.PI;
-  var r = HLE.WORLD_WIDTH* (0.15 - Math.sin(HLE.advance*0.0002)*0.10);
-var h = 0;
-if(straight)
-  h = HL.cameraGroup.position.y
-else
-  h = (HL.cameraGroup.position.y+(HL.cameraGroup.position.y-HL.sea.position.y)),
-
-  HL.cameraGroup.lookAt(
-     new THREE.Vector3(
-      Math.sin(b) * r,
-      h,
-//      HL.sea.position.y,//HL.cameraGroup.position.y*2,//(2 - Math.sin(HLE.advance*0.002)*2),
-      Math.cos(b) * r
-    )
-    );
-  // HL.cameraGroup.position.y += Math.sin(HLE.advance*0.002)*.1;
-
-    // HL.cameraGroup.rotation.x = -Math.sin(HLE.advance * 0.000062) * Math.PI / 32;
-    // HL.cameraGroup.rotation.y = Math.PI - Math.cos(HLE.advance * 0.00005) * Math.PI;
-    // HL.cameraGroup.rotation.z = -Math.sin(HLE.advance * 0.00004) * Math.PI / 32;
-
-    // HL.cameraGroup.rotation.x += Math.cos(HLR.fft1*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
-    // HL.cameraGroup.rotation.y += Math.sin(HLR.fft2*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
-    // HL.cameraGroup.rotation.z += Math.cos(HLR.fft3*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
-
-    // HL.cameraCompanion.rotation.x = Math.sin(HLE.advance*0.00062)*Math.PI/64;
-    // HL.cameraCompanion.rotation.y = -Math.cos(HLE.advance*0.0005)*Math.PI/12;
-    // HL.cameraCompanion.rotation.z = Math.sin(HLE.advance*0.0004)*Math.PI/64;
-
-
-}
+//
+// var b = 0, h=0, r=0;
+// HLS.cameraMotion = function(straight) {
+//
+//
+//   // b -= mouse.rX * 0.00001;
+//   // b = -mouse.rX * 0.01;
+//   //   h = mouse.rY;
+//
+//   b = b + ((b-mouse.rX*0.0005)-b)*0.13;
+//   h = THREE.Math.clamp( h - ((h-mouse.rY*0.05)-h)*0.13, -360, 360);
+//
+//   r = HLE.WORLD_WIDTH* (0.15 - Math.sin(HLE.advance*0.0002)*0.10);
+//
+//   // if(straight)
+//   //   h = HL.cameraGroup.position.y
+//   // else
+//      h = (HL.cameraGroup.position.y+(HL.cameraGroup.position.y-HL.sea.position.y)),
+//   HL.cameraGroup.lookAt(
+//      new THREE.Vector3(
+//       Math.sin(b) * r,
+//       h,
+// //      HL.sea.position.y,//HL.cameraGroup.position.y*2,//(2 - Math.sin(HLE.advance*0.002)*2),
+//       Math.cos(b) * r
+//     )
+//     );
+//   // HL.cameraGroup.position.y += Math.sin(HLE.advance*0.002)*.1;
+//
+//     // HL.cameraGroup.rotation.x = -Math.sin(HLE.advance * 0.000062) * Math.PI / 32;
+//     // HL.cameraGroup.rotation.y = Math.PI - Math.cos(HLE.advance * 0.00005) * Math.PI;
+//     // HL.cameraGroup.rotation.z = -Math.sin(HLE.advance * 0.00004) * Math.PI / 32;
+//
+//     // HL.cameraGroup.rotation.x += Math.cos(HLR.fft1*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
+//     // HL.cameraGroup.rotation.y += Math.sin(HLR.fft2*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
+//     // HL.cameraGroup.rotation.z += Math.cos(HLR.fft3*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
+//
+//     // HL.cameraCompanion.rotation.x = Math.sin(HLE.advance*0.00062)*Math.PI/64;
+//     // HL.cameraCompanion.rotation.y = -Math.cos(HLE.advance*0.0005)*Math.PI/12;
+//     // HL.cameraCompanion.rotation.z = Math.sin(HLE.advance*0.0004)*Math.PI/64;
+// }
 
 HLS.randomizeLand = function(){
 
-var tilen = Math.round(Math.random()*HLE.WORLD_TILES/2);
+var tilen = Math.round(Math.random()*24);
 
  // HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tilen,tilen);
  // HL.land.geometry.rotateX(-Math.PI / 2);
  // HL.land.material.uniforms.worldTiles.value = tilen;
- HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen * Math.random(), tilen * Math.random() );
+ HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen , tilen  );
 
- HL.land.material.uniforms.bFactor.value = Math.random();
- HL.land.material.uniforms.cFactor.value = Math.random();
- HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
- HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+ HL.land.material.uniforms.bFactor.value = Math.random()*1.25;
+ HL.land.material.uniforms.cFactor.value = Math.random()*1.0;
+ // HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
+
+ // HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+ // HL.land.material.uniforms.map2.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+
+ HL.land.material.uniforms.map2.value = HL.textures['land'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+ HL.land.material.uniforms.map2.value = HL.textures['land'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+
  HL.land.material.uniforms.natural.value = Math.random();
  HL.land.material.uniforms.rainbow.value = Math.random();
- HL.land.material.uniforms.squareness.value = Math.random()*0.005;
+ HL.land.material.uniforms.squareness.value = Math.random()*0.05;
 
  HL.sky.material.map = HL.textures['sky'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
 
 
  HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
-  HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
+  HLC.horizon.setRGB( 0.2+Math.random()*0.8, 0.2+Math.random()*0.8, 0.2+Math.random()*0.8 );
+  HLC.tempHorizon.set(HLC.horizon);
 
 };
 
@@ -538,4 +576,4 @@ if(noSocket){
   if(midiIn) window.addEventListener('HLEload', HLS.MIDIcontrols);
   else window.addEventListener('keydown', HLS.KeyboardControls);
 }
-window.addEventListener('HLEload', function(){ HLS.startScene('intro')} );
+window.addEventListener('HLEload', function(){ HLS.startScene(HLS.defaultScene)} );

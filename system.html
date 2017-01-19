@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>HYPERLAND</title>
+	<meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+	<link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body style="height:100%">
+<div id="loadingDiv" style="position:absolute;bottom:0;left:0;width:100%;min-height:100%;z-index:99; background: #131313 url('img/loading.gif') center center no-repeat; background-attachment:fixed;"> -->
+ <p style="font-size:50px; ">LOADING 8MB</p>
+	expected time: 10sec on a 4G network
+</div>
+
+<!--
+	<div id="splash">
+		<div id ="prompt">
+			<div id="prompt-big">Collect the crystals <br> before the dawn comes!</div>
+			<div id="prompt-small">Use arrow keys to move left or right.</div>
+		</div>
+	</div>
+	<div id="debug-text"></div>
+	<div id="score-text">0</div>
+	<div id="container"></div>
+	<div id="music-toggle"></div>
+	<div id="preloader"></div>
+
+	<div id="info">Built with Love by <a href='http://www.airtight.cc'>Airtight</a>. Try it on Mobile!</div> -->
+
+  <!--
+  A BIG thanks to airtight.cc for the WebGL / THREE.JS tutorials
+  The main landscape motion logic is based on Winter Rush game logic developed by airtight.cc
+  -->
+	<!-- Utils Libs -->
+  <script src="lib/NoSleep.min.js"></script>
+  <script src="lib/NoScroll.js"></script>
+  <script src="lib/dev/dat.gui.min.js"></script>
+
+	<!-- <script src="lib/dev/AudioAnalyzer.js"></script> -->
+  <!--  THREE.JS and addons -->
+  <script src="lib/three.min.js"></script>
+	<script src="lib/ImprovedNoise.js"></script>
+	<script src="lib/StereoEffect.js"></script>
+	<script src="lib/DeviceOrientationControls.js"></script>
+	<script src="lib/dev/FirstPersonControls.js"></script>
+	<script src="lib/FlyControls.js"></script>
+	<!-- <script src="lib/dev/NoiseCameraMove.js"></script> -->
+
+	<script src="lib/noise25f.js"></script>
+	<script src="lib/mirror-wave-material.js"></script>
+	<script src="lib/water-material-moving.js"></script>
+	<script src="lib/land-custom-material.js"></script>
+
+	<!-- <script src="lib/skybox-material.js"></script> -->
+
+	<script src="lib/loaders/OBJLoader.js"></script>
+
+	<script src="lib/CubemapToEquirectangular.js"></script>
+
+
+
+
+	<!-- HYPERLAND Source Files -->
+
+	<script src="src/main.js"></script>
+
+	<script src="src/sceneParams.js"></script>
+  <script src="src/environment.js"></script>
+	<script src="src/animationHelpers.js"></script>
+  <script src="src/animation.js"></script>
+	<script src="src/remoteControl.js"></script>
+	<script src="src/hud.js"></script>
+	<script src="src/sceneManager.js"></script>
+	<script src="src/DEV_GUI.js"></script>
+
+	<!-- VR -->
+	<script src="lib/webVR.js"></script>
+	<script src="lib/VREffect.js"></script>
+	<script src="lib/VRControls.js"></script>
+
+	<!-- DEV audio lib -->
+	<script src="lib/dev/AudioAnalyzerDev.js"></script>
+
+	<!-- socket.io -->
+	<script src="lib/socket.io-1.4.5.js"></script>
+	<script src="src/socketVisualEncoded.js"></script>
+
+
+	<script src="lib/audioAnalyzerMultiSource.js"></script>
+	<!-- <script src="lib/fftArray.js"></script> -->
+
+	<!-- <audio id="rogerwater" src="assets/audio/rogerwater2.mp3" controls></audio> -->
+
+	<script>
+	  // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  // })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+		//
+	  // ga('create', 'UA-88767926-1', 'auto');
+	  // ga('send', 'pageview');
+
+	</script>
+</body>
+</html>

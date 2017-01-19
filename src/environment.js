@@ -6,8 +6,8 @@ The HLEnvironment module inits scene, renderer, camera, effects, shaders, geomet
 
 // HL Environment constants and parameters
 var HLE = {
-  WORLD_WIDTH:5000,
-  WORLD_HEIGHT:1000,
+  WORLD_WIDTH:6000,
+  WORLD_HEIGHT:400,
   WORLD_TILES: isMobile?128:512,
   TILE_SIZE:null,
   SEA_TILES:16,
@@ -25,7 +25,7 @@ var HLE = {
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: 0,
-  CENTER_PATH:true, // true if you don't want terrain in the middle of the scene
+  CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computed move speed
@@ -321,13 +321,14 @@ var HLEnvironment = function(){
     HL.scene = new THREE.Scene();
 
     if(HLE.FOG && !isWire){
-      // HL.scene.fog = new THREE.Fog(
-      //   HLC.horizon,
-      //   HLE.WORLD_WIDTH * 0.3,
-      //   HLE.WORLD_WIDTH * 0.45
-      // );
-      HL.scene.fog = new THREE.FogExp2();
-      HL.scene.fog.density = 0.00025;//0.00025;
+      HL.scene.fog = new THREE.Fog(
+        HLC.horizon,
+        HLE.WORLD_WIDTH * 0.375,
+        HLE.WORLD_WIDTH * 0.475
+      );
+      // HL.scene.fog = new THREE.FogExp2();
+      // HL.scene.fog.density = 0.00025;//0.00025;
+
       HL.scene.fog.color = HLC.horizon;
     }
 
@@ -388,6 +389,9 @@ var HLEnvironment = function(){
     }
 
 
+    document.body.appendChild(HL.renderer.domElement);
+
+
     if(isMapped){
 
       HL.mappingCoords = JSON.parse(localStorage.getItem('HYPERLAND_SCREEN_MAPPING_COORDS'));
@@ -444,23 +448,6 @@ var HLEnvironment = function(){
     }
 
 
-    // if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
-    //   HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
-    //
-    //   // HL.renderer.domElement.style.imageRendering = 'pixelated';
-    //   // HL.renderer.domElement.style.imageRendering += '-webkit-crisp-edges';
-    //   // HL.renderer.domElement.style.imageRendering += '-moz-crisp-edges';
-    // }
-    // else {
-    //   HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-    //   HL.renderer.setPixelRatio(window.devicePixelRatio);
-    // }
-    // HL.renderer.shadowMap.enabled = true;
-    //HL.renderer.sortObjects = false;
-
-    document.body.appendChild(HL.renderer.domElement);
-
-
     // EFFECT AND CONTROLS
     if(isCardboard){
       HL.camera.fov = 50;//70;
@@ -485,8 +472,15 @@ var HLEnvironment = function(){
     else if(isFPC){
       HL.controls = new THREE.FirstPersonControls(HL.cameraGroup);
       HL.controls.invertY = true;
-		  HL.controls.movementSpeed = 10;
-		  HL.controls.lookSpeed = 0.1;
+      HL.controls.movementSpeed = 0;
+      HL.controls.lookSpeed = 0.045;
+      HL.controls.dragToLook = false;
+
+      // HL.controls = new THREE.FlyControls(HL.cameraGroup);
+      // HL.controls.movementSpeed = 0.0;
+    	// HL.controls.rollSpeed = 0.5;
+    	// HL.controls.dragToLook = true;
+    	// HL.controls.autoForward = true;
     }
     else if(isNoiseCam){
       HL.controls = new THREE.NoiseCameraMove(HL.cameraGroup);
@@ -504,8 +498,14 @@ var HLEnvironment = function(){
 
   //  HL.geometries.sky = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
   //  HL.geometries.sky.translate(0,0, HLE.TILE_SIZE*0.5);
-    HL.geometries.sky = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*3-10,64,64);
+    HL.geometries.sky = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*.5-50,64,64);
     // SphereBufferGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
+
+    // HL.boundaries = new THREE.Mesh(
+    //   new THREE.BoxBufferGeometry(HLE.WORLD_WIDTH-100,HLE.WORLD_WIDTH-100,HLE.WORLD_WIDTH-100),
+    //   new THREE.MeshBasicMaterial({side:THREE.DoubleSide})
+    // );
+    // HL.scene.add(HL.boundaries);
 
     if(HLE.LAND_IS_BUFFER)
     HL.geometries.land = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH,
@@ -611,6 +611,7 @@ var HLEnvironment = function(){
 
    });
    HL.materials.land.uniforms.worldColor.value = HLC.horizon;
+   HL.materials.land.uniforms.skyColor.value = HLC.horizon;
    HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
 
    HL.materials.land.uniforms.advance.value = HLE.advance;
@@ -667,7 +668,6 @@ var HLEnvironment = function(){
     }
 
    if(HLE.WATER) {
-
       // Load textures
   		HL.textures.water.wrapS = HL.textures.water.wrapT = THREE.RepeatWrapping;
       HL.textures.water.repeat.set( 1, 1);
@@ -677,12 +677,12 @@ var HLEnvironment = function(){
   			textureWidth: isCardboard?200:512 ,
   			textureHeight: isCardboard?200:512,
   			waterNormals: HL.textures.water,
-        noiseScale: .65,
-        distortionScale:90,
+        noiseScale: .4,
+        distortionScale: 220,
   			// sunDirection: HL.lights.sun.position.normalize(),
         sunDirection: new THREE.Vector3(0,100, -1000).normalize(),
   		  color: HLC.sea,
-        opacity: 0.88,
+        opacity: 0.75,
   			// betaVersion: 1,
         fog: true,
         side: THREE.DoubleSide,
@@ -701,11 +701,11 @@ var HLEnvironment = function(){
       side: THREE.DoubleSide,
       opacity:1,
       transparent: false,
-      size: isCardboard||isVR?10:25,
+      size: isCardboard||isVR?6:12,
       fog: true,
       sizeAttenuation: true,
       // alphaTest: -0.5,
-      depthWrite: false,
+      depthWrite: true,
       // map:isWire?null:HL.textures.cloud1,
     });
     HL.materials.clouds.color = HLC.clouds; // set by reference
@@ -890,7 +890,7 @@ var HLEnvironment = function(){
       HL.sea.add( HL.materials.mirror );
     }
     else if(HLE.WATER){
-      HL.sea = new THREE.Mesh( new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH,HLE.WORLD_WIDTH,1,1), HL.materials.water.material );
+      HL.sea = new THREE.Mesh( new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH,HLE.WORLD_WIDTH,16,16), HL.materials.water.material );
       HL.sea.add(HL.materials.water);
       HL.sea.rotateX(-Math.PI * .5);
     } else {
