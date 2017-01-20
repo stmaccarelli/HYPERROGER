@@ -88,7 +88,13 @@ var HLC = {
 
 // HL scene library
 var HL = {
-  loadingManager:null,
+  modelsLoadingManager:null,
+  texturesLoadingManager:null,
+
+  modelsLoaded:0,
+  totalModels:0,
+  texturesLoaded:0,
+  totalTextures:0,
 
   scene:null,
   renderer:null,
@@ -218,13 +224,13 @@ var HLEnvironment = function(){
     if(imagesLoaded==loadableImagesCounter) {
       //console.timeEnd('images');
       HL.textures['length'] = imagesLoaded;
-      initMaterials();
+      // initMaterials();
     }
   }
 
   function loadTextures(){
     //console.time('images');
-    var loader = new THREE.TextureLoader(HL.loadingManager);
+    var loader = new THREE.TextureLoader(HL.texturesLoadingManager);
     for (var key in HL.textures)
       if(HL.textures[key]!=null){
         // console.log('loading image '+key);
@@ -238,6 +244,7 @@ var HLEnvironment = function(){
               //set texture wrapping
             HL.textures[k].wrapS = THREE.RepeatWrapping;
             HL.textures[k].wrapT = THREE.RepeatWrapping;
+            HL.textures[k].repeat.set( 1, 1);
             imageLoaded() } })(key)
           //   function(e){console.log(e.loaded+"/"+e.total)},
           // // (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
@@ -270,29 +277,81 @@ var HLEnvironment = function(){
 
   function init(){
 
-    HL.loadingManager = new THREE.LoadingManager();
-    HL.loadingManager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+    var HLAssetLoadEvent = new Event("HLAssetLoaded");
 
-  	console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+    HL.texturesLoadingManager = new THREE.LoadingManager();
+
+    HL.texturesLoadingManager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+
+  	  console.log( 'Started loading textures');
 
     };
 
-    HL.loadingManager.onLoad = function ( ) {
+    HL.texturesLoadingManager.onLoad = function ( ) {
 
     	console.log( 'Loading complete!');
+      // assign textures to materials
+      for(var k in HL.models){
+        HL.materials[k].map = HL.textures[k]!==undefined?HL.textures[k]:null;
+      }
+      HL.materials.sky.uniforms.map1.value = HL.textures.sky2;
+      HL.materials.sky.uniforms.map2.value = HL.textures.sky3;
+      HL.materials.sky.uniforms.map3.value = HL.textures.sky5;
+
+      HL.materials.water.material.uniforms.normalSampler.value = HL.textures.water;
+
+
+      console.log('Textures assigned to materials');
+      console.error('dispatching HLAssetLoaded event');
+      window.dispatchEvent(HLAssetLoadEvent);
 
     };
 
 
-    HL.loadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+    HL.texturesLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+      HL.texturesLoaded = itemsLoaded;
+      HL.totalTextures = itemsTotal;
+      // TODO: updateProgressBar();
+    	console.log( 'Completed loading texture: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+    };
 
-    	console.log( 'Completed loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+    HL.texturesLoadingManager.onError = function ( url ) {
+
+    	console.log( 'There was an error loading texture ' + url );
 
     };
 
-    HL.loadingManager.onError = function ( url ) {
 
-    	console.log( 'There was an error loading ' + url );
+    // init models loader
+
+    HL.modelsLoadingManager = new THREE.LoadingManager();
+
+    HL.modelsLoadingManager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+
+      console.log( 'Started loading models');
+
+    };
+
+    HL.modelsLoadingManager.onLoad = function ( ) {
+
+      console.log( 'Loading complete!');
+      console.warn('dispatching HLAssetLoaded event');
+      window.dispatchEvent(HLAssetLoadEvent);
+
+    };
+
+
+    HL.modelsLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+      HL.modelsLoaded = itemsLoaded;
+      HL.totalModels = itemsTotal;
+     // TODO:   updateProgressBar();
+      console.log( 'Completed loading model: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+
+    };
+
+    HL.modelsLoadingManager.onError = function ( url ) {
+
+      console.log( 'There was an error loading model ' + url );
 
     };
 
@@ -302,14 +361,29 @@ var HLEnvironment = function(){
     initEnvironment();
     initGeometries();
     initDynamicTextures();
-    loadTextures();
-    // loadTextures() calls initMaterials() once all images are loaded
-    // initMaterials() calls initMeshes()
-    // initMeshes() calls initLights()
-    // initLights() is the last call, so it dispatches HLEload event
+    initMaterials();
+    initLights();
 
-    // start clock;
-    HL.clock.start();
+    loadTextures();
+    initModels();
+    // TODO: when textures and models are loaded, dispatch HLEload event and start clock.
+    // try this:
+
+    window.addEventListener('HLAssetLoaded',assetLoadListener);
+  }
+
+  var assetTotal = 2, assetLoaded=0;
+
+  function assetLoadListener(){
+    if(++assetLoaded == assetTotal){
+      // start clock;
+      console.log('start HL.clock');
+      HL.clock.start();
+      //dispatch HLEload event
+      var HLEload = new Event("HLEload");
+      console.log("assetLoadListener dispatching HLEload");
+      window.dispatchEvent(HLEload);
+    }
   }
 
   function initEnvironment(){
@@ -571,21 +645,21 @@ var HLEnvironment = function(){
   function initMaterials(){
     //console.time('materials');
 
-    HL.materials.sky = new THREE.MeshBasicMaterial({
-      color: HLC.horizon,
-      fog: false,
-      side: THREE.BackSide,
-      wireframe: false,//isWire,
-      wireframeLinewidth: 2,
-      map:isWire?null:HL.textures.sky2,
-    });
+    // HL.materials.sky = new THREE.MeshBasicMaterial({
+    //   color: HLC.horizon,
+    //   fog: false,
+    //   side: THREE.BackSide,
+    //   wireframe: false,//isWire,
+    //   wireframeLinewidth: 2,
+    //   //map:isWire?null:HL.textures.sky2,
+    // });
 
     HL.materials.sky = new THREE.SkyShaderMaterial({
       wireframe: isWire,
       wireframeLinewidth: 2,
-      map1:isWire?null:HL.textures.sky2,
-      map2:isWire?null:HL.textures.sky3,
-      map3:isWire?null:HL.textures.sky5,
+      map1:isWire?null:true,//HL.textures.sky2,
+      map2:isWire?null:true,//HL.textures.sky3,
+      map3:isWire?null:true,//HL.textures.sky5,
     });
 
     HL.materials.sky.uniforms.color.value = HLC.horizon;// set by reference
@@ -627,7 +701,8 @@ var HLEnvironment = function(){
       color:HLC.land,
       wireframe:isWire,
       // wireframeLinewidth:2,
-      map:isWire?null:HL.textures.land,
+      //map:isWire?null:HL.textures.land,
+      map:true,
       fog:true,
       repeatUV: new THREE.Vector2(1,1),
       centerPath : HLE.CENTER_PATH,
@@ -663,7 +738,7 @@ var HLEnvironment = function(){
          transparent:false,
          opacity:0.80,
          alphaTest: 0.5,
-         map:isWire?null:HL.textures.sea
+         //map:isWire?null:HL.textures.sea
       });
       HL.materials.sea.color = HLC.sea; // set by reference
 
@@ -693,15 +768,12 @@ var HLEnvironment = function(){
     }
 
    if(HLE.WATER) {
-      // Load textures
-  		HL.textures.water.wrapS = HL.textures.water.wrapT = THREE.RepeatWrapping;
-      HL.textures.water.repeat.set( 1, 1);
 
   		// Create the water effect
   		HL.materials.water = new THREE.Water(HL.renderer, HL.camera, HL.scene, {
   			textureWidth: isCardboard?200:512 ,
   			textureHeight: isCardboard?200:512,
-  			waterNormals: HL.textures.water,
+  			// waterNormals: HL.textures.water,
         noiseScale: .4,
         distortionScale: 170,
   			// sunDirection: HL.lights.sun.position.normalize(),
@@ -771,7 +843,7 @@ var HLEnvironment = function(){
     for(var k in HL.models){
       HL.materials[k] = new THREE.MeshLambertMaterial({
         color: 0x000000,
-        map:isWire?null:(HL.textures[k]!==undefined?HL.textures[k]:null),
+        map:isWire?null:true,//(HL.textures[k]!==undefined?HL.textures[k]:null),
         fog:true,
         wireframe:isWire,
         wireframeLinewidth:2,
@@ -785,7 +857,7 @@ var HLEnvironment = function(){
 
     //console.timeEnd('materials');
 
-    initModels();
+    // initModels();
 
   }
 
@@ -802,7 +874,7 @@ var HLEnvironment = function(){
 
   function initModels(){
     //console.time('models');
-    var loader = new THREE.OBJLoader(HL.loadingManager), modelPath, modelScale;
+    var loader = new THREE.OBJLoader(HL.modelsLoadingManager), modelPath, modelScale;
     var keys = {};
     // load a resource
     for (var key in HL.models){
@@ -826,7 +898,7 @@ var HLEnvironment = function(){
   //            HL.models[key].geometry.rotateX(Math.PI*0.5);
               HL.models[nK].geometry.computeBoundingBox();
               HL.models[nK]['size']=HL.models[nK].geometry.boundingBox.getSize();
-              HL.models[nK].material = HL.materials[nK].clone();
+              HL.models[nK].material = HL.materials[nK];
             //  HL.models[nK].material.color = HLC.horizon; // set by reference
 
               HL.scene.add( HL.models[nK] );
@@ -887,9 +959,6 @@ var HLEnvironment = function(){
 
      //console.timeEnd('lights');
 
-     var HLEload = new Event("HLEload");
-     //console.timeEnd('HL environment');
-     window.dispatchEvent(HLEload);
   }
 
 

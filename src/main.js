@@ -281,25 +281,25 @@
 
 
   var loadingDiv = document.getElementById('loadingDiv');
-
-  if (typeof console.log != 'undefined'){
-    console.olog = console.log;
-    console.oTimeEnd = console.timeEnd;
-    }
-  else{
-      console.olog = function() {};
-    }
-
-  console.log = function(message) {
-      console.olog(message);
-      loadingDiv.innerHTML += ('<p>' + message + '</p>');
-  };
-
-  console.timeEnd = function(message) {
-      console.oTimeEnd(message);
-      loadingDiv.innerHTML += ('<p>' + message +'</p>');
-  };
-  console.error = console.debug = console.info = console.log
+  //
+  // if (typeof console.log != 'undefined'){
+  //   console.olog = console.log;
+  //   console.oTimeEnd = console.timeEnd;
+  //   }
+  // else{
+  //     console.olog = function() {};
+  //   }
+  //
+  // console.log = function(message) {
+  //     console.olog(message);
+  //     loadingDiv.innerHTML += ('<p>' + message + '</p>');
+  // };
+  //
+  // console.timeEnd = function(message) {
+  //     console.oTimeEnd(message);
+  //     loadingDiv.innerHTML += ('<p>' + message +'</p>');
+  // };
+  // console.error = console.debug = console.info = console.log
 
 
 
