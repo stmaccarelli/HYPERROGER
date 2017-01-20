@@ -271,17 +271,29 @@ var HLEnvironment = function(){
   function init(){
 
     HL.loadingManager = new THREE.LoadingManager();
-    HL.loadingManager.onProgress = function ( item, loaded, total ) {
+    HL.loadingManager.onStart = function ( url, itemsLoaded, itemsTotal ) {
 
-	     console.log( item +" "+ loaded +" "+ total );
+  	console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
 
     };
-    HL.loadingManager.onLoad = function () {
-      console.log('all items loaded');
+
+    HL.loadingManager.onLoad = function ( ) {
+
+    	console.log( 'Loading complete!');
+
     };
-    HL.loadingManager.onError = function () {
-      console.log('there has been an error');
-      loadingDiv.innerHTML += ('<p style="font-size:40px;"> LOADING ERROR, PLEASE RELOAD</p>');
+
+
+    HL.loadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+
+    	console.log( 'Completed loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+
+    };
+
+    HL.loadingManager.onError = function ( url ) {
+
+    	console.log( 'There was an error loading ' + url );
+
     };
 
 
@@ -323,7 +335,7 @@ var HLEnvironment = function(){
     if(HLE.FOG && !isWire){
       HL.scene.fog = new THREE.Fog(
         HLC.horizon,
-        HLE.WORLD_WIDTH * 0.375,
+        HLE.WORLD_WIDTH * 0.3,
         HLE.WORLD_WIDTH * 0.475
       );
       // HL.scene.fog = new THREE.FogExp2();
@@ -476,6 +488,10 @@ var HLEnvironment = function(){
       HL.controls.lookSpeed = 0.045;
       HL.controls.dragToLook = false;
 
+      HL.controls.constrainVertical = true;
+      HL.controls.verticalMin = Math.PI/4;
+      HL.controls.verticalMax = Math.PI/1.5;
+
       // HL.controls = new THREE.FlyControls(HL.cameraGroup);
       // HL.controls.movementSpeed = 0.0;
     	// HL.controls.rollSpeed = 0.5;
@@ -563,7 +579,16 @@ var HLEnvironment = function(){
       wireframeLinewidth: 2,
       map:isWire?null:HL.textures.sky2,
     });
-    HL.materials.sky.color = HLC.horizon; // set by reference
+
+    HL.materials.sky = new THREE.SkyShaderMaterial({
+      wireframe: isWire,
+      wireframeLinewidth: 2,
+      map1:isWire?null:HL.textures.sky2,
+      map2:isWire?null:HL.textures.sky3,
+      map3:isWire?null:HL.textures.sky5,
+    });
+
+    HL.materials.sky.uniforms.color.value = HLC.horizon;// set by reference
     // HL.textures.sky1.wrapS = HL.textures.sky1.wrapT = THREE.RepeatWrapping;
     // HL.textures.sky1.repeat.set( 3, 1);
 
@@ -678,11 +703,11 @@ var HLEnvironment = function(){
   			textureHeight: isCardboard?200:512,
   			waterNormals: HL.textures.water,
         noiseScale: .4,
-        distortionScale: 220,
+        distortionScale: 170,
   			// sunDirection: HL.lights.sun.position.normalize(),
         sunDirection: new THREE.Vector3(0,100, -1000).normalize(),
   		  color: HLC.sea,
-        opacity: 0.75,
+        opacity: 0.85,
   			// betaVersion: 1,
         fog: true,
         side: THREE.DoubleSide,

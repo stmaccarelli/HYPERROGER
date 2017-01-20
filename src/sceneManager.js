@@ -182,7 +182,7 @@ HLS.scenes.standard = function() {
     // HL.materials.land.uniforms.buildFreq.value += Math.max(0, (HLR.fft1 - 0.97)) * 2.6;
 
     // // compute move speed
-    HLE.reactiveMoveSpeed = 1 + ( HLR.fft2 + HLR.fft3+ HLR.fft1) * 0.3 * HLE.BASE_MOVE_SPEED + HLE.BASE_MOVE_SPEED*0.5;
+    HLE.reactiveMoveSpeed = 1 + ( HLR.fft2 + HLR.fft3 * 3 + HLR.fft1) * 0.3 * HLE.BASE_MOVE_SPEED + HLE.BASE_MOVE_SPEED*0.5;
     // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.25;
     HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isMobile || isVR) ? 0.3 : 1 );
     HLE.moveSpeed *= 0.96;
@@ -324,7 +324,7 @@ HLS.scenesAddons.twin_horizon = function() {
 
 
 HLS.scenesAddons.hyperocean = function() {
-  if(HLR.fft1>0.97){
+  if(HLR.fft1>0.975){
 
 // if (k.keyCode == 53) //5
 //     HLH.shootGroup(HLS.modelsParams);
@@ -336,11 +336,23 @@ HLS.scenesAddons.hyperocean = function() {
         THREE.Math.randInt(-1000, 1000),
         THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 2.5, null, 10
       ); //TODO
-      HLH.shootGroup(HLS.modelsParams);
+  //    HLH.shootGroup(HLS.modelsParams);
 
       randomLandDebounce=false;
     }
   } else randomLandDebounce = true;
+
+  if(HLR.fft3>0.3)
+    HLH.shootGroup(['space', 1, 40,true,false, HLE.WORLD_HEIGHT / 3 ] );
+  //  shootGroup = function(group, scale, speed,rotation,floating, midpoint){
+
+
+  HLS.lumi = Math.min(HLR.fft3*2+HLR.fft1*0.2,1);
+  HLC.horizon.setRGB(
+      HLC.tempHorizon.r + HLS.lumi,
+      HLC.tempHorizon.g + HLS.lumi,
+      HLC.tempHorizon.b + HLS.lumi
+  );
 
 }
 
@@ -432,20 +444,22 @@ var tilen = Math.round(Math.random()*24);
  HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen , tilen  );
 
  HL.land.material.uniforms.bFactor.value = Math.random()*1.25;
- HL.land.material.uniforms.cFactor.value = Math.random()*1.0;
+ HL.land.material.uniforms.cFactor.value = Math.random()*.70;
  // HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
 
  // HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
  // HL.land.material.uniforms.map2.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
 
- HL.land.material.uniforms.map2.value = HL.textures['land'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+ HL.land.material.uniforms.map.value = HL.textures['land'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
  HL.land.material.uniforms.map2.value = HL.textures['land'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
 
  HL.land.material.uniforms.natural.value = Math.random();
  HL.land.material.uniforms.rainbow.value = Math.random();
  HL.land.material.uniforms.squareness.value = Math.random()*0.05;
 
- HL.sky.material.map = HL.textures['sky'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+ // HL.sky.material.map = HL.textures['sky'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
+ HL.sky.material.uniforms.mixFactor.value = Math.random();
+ HL.sky.geometry.rotateY( Math.random() * Math.PI);
 
 
  HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
