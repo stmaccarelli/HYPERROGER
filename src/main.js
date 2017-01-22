@@ -211,8 +211,10 @@
 
   function loadRoutine(){
     mainInit();
+    
     // init HyperLand Environment
     HLEnvironment.init();
+
     // run is called when it's all loaded
     window.addEventListener('HLEload', function(){
         console.log("event HLEload received");

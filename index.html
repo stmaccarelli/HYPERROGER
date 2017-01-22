@@ -9,21 +9,39 @@
     <h2>A REAL TIME AUDIOREACTIVE VIRTUAL REALITY EXPERIENCE</h2>
 
     <ul>
-      <li>
+      <li class="desktop">
         <a href="system.html?fpc?staticaudio?nosocket">DESKTOP</a>
       </li>
-      <li>
-        <a href="system.html?staticaudio?nosocket">MOBILE/TABLET</a>
-      </li>
-      <li>
-        <a href="system.html?staticaudio?nosocket?cardboard">CARDBOARD</a>
-      </li>
-      <li>
+      <li class="desktop">
         <a href="system.html?staticaudio?nosocket?webvr">HTC VIVE</a>
       </li>
+      <li class="mobile">
+        <a href="system.html?staticaudio?nosocket">MOBILE/TABLET</a>
+      </li>
+      <li class="mobile">
+        <a href="system.html?staticaudio?nosocket?cardboard">CARDBOARD</a>
+      </li>
+
       <li>
         <a href="audioAnalysisTest.html">audioAnalysisTest</a>
       </li>
     </ul>
+
+    <script type="text/javascript">
+      /*
+        HIDE UNNEEDED OPTIONS
+      */
+      var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
+      function display(selector, visible){
+        var elements = document.querySelectorAll(selector);
+        for(var e of elements)
+          e.style.display = visible?'auto':'none';
+      }
+
+      if(isMobile)
+        display('.desktop', false);
+      else
+        display('.mobile', false);
+    </script>
   </body>
 </html>

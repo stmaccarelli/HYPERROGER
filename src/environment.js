@@ -218,6 +218,21 @@ var HL = {
 
 var HLEnvironment = function(){
 
+  // CUSTOM STYLE FOR console.log
+  var console = { log:function(){}, warn:function(){}, error:function(){} };
+  if(isDebug)
+  for(var k in console){
+    console[k] =
+      (function(_k){
+        return function(message){
+          window.console[_k]('%c  %cHLEnvironment:\n'+message,
+            "background-image: url(\"https://isitchristmas.com/emojis/sunrise_over_mountains.png\"); background-size: cover",
+            "color:black"
+            );
+        }
+      })(k);
+  }
+
   var loadableImagesCounter=0,imagesLoaded=0;
 
   function imageLoaded(){
@@ -301,8 +316,7 @@ var HLEnvironment = function(){
       HL.materials.water.material.uniforms.normalSampler.value = HL.textures.water;
 
 
-      console.log('Textures assigned to materials');
-      console.error('dispatching HLAssetLoaded event');
+      console.log('Textures assigned to materials\ndispatching HLAssetLoaded event');
       window.dispatchEvent(HLAssetLoadEvent);
 
     };
@@ -334,8 +348,7 @@ var HLEnvironment = function(){
 
     HL.modelsLoadingManager.onLoad = function ( ) {
 
-      console.log( 'Loading complete!');
-      console.warn('dispatching HLAssetLoaded event');
+      console.log('Models Loading complete!\ndispatching HLAssetLoaded event');
       window.dispatchEvent(HLAssetLoadEvent);
 
     };
@@ -798,7 +811,7 @@ var HLEnvironment = function(){
       sizeAttenuation: true,
       // alphaTest: -0.5,
       depthWrite: true,
-      map:isWire?null:HL.textures.cloud1,
+      // map:isWire?null:HL.textures.cloud1,
     });
     HL.materials.clouds.color = HLC.clouds; // set by reference
 
@@ -870,7 +883,7 @@ var HLEnvironment = function(){
 
   function initModels(){
     //console.time('models');
-    var loader = new THREE.OBJLoader(HL.modelsLoadingManager), modelPath, modelScale;
+    var loader = new THREE.OBJLoader(HL.modelsLoadingManager, false), modelPath, modelScale;
     var keys = {};
     // load a resource
     for (var key in HL.models){
