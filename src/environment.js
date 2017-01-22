@@ -566,11 +566,6 @@ var HLEnvironment = function(){
       HL.controls.verticalMin = Math.PI/4;
       HL.controls.verticalMax = Math.PI/1.5;
 
-      // HL.controls = new THREE.FlyControls(HL.cameraGroup);
-      // HL.controls.movementSpeed = 0.0;
-    	// HL.controls.rollSpeed = 0.5;
-    	// HL.controls.dragToLook = true;
-    	// HL.controls.autoForward = true;
     }
     else if(isNoiseCam){
       HL.controls = new THREE.NoiseCameraMove(HL.cameraGroup);
@@ -702,7 +697,7 @@ var HLEnvironment = function(){
       wireframe:isWire,
       // wireframeLinewidth:2,
       //map:isWire?null:HL.textures.land,
-      map:true,
+      map:isWire?null:true,
       fog:true,
       repeatUV: new THREE.Vector2(1,1),
       centerPath : HLE.CENTER_PATH,
@@ -803,7 +798,7 @@ var HLEnvironment = function(){
       sizeAttenuation: true,
       // alphaTest: -0.5,
       depthWrite: true,
-      // map:isWire?null:HL.textures.cloud1,
+      map:isWire?null:HL.textures.cloud1,
     });
     HL.materials.clouds.color = HLC.clouds; // set by reference
 
@@ -849,6 +844,7 @@ var HLEnvironment = function(){
         wireframeLinewidth:2,
         side:THREE.FrontSide,
         transparent:true,
+        shading: THREE.SmoothShading
       });
       HL.materials[k].color = new THREE.Color(0xffffff);
 
