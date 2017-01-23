@@ -96,9 +96,9 @@
 
 
     // AUDIO ANALYSIS
-    if((noSocket || partSocket) && !isMobile && !staticAudio) { AA = AudioAnalyzer(); AA.initGetUserMedia();}
-    if(staticAudio){ AA = new AAMS(); }
-
+    // if((noSocket || partSocket) && !isMobile && !staticAudio) { AA = AudioAnalyzer(); AA.initGetUserMedia();}
+    AA = new AAMS();
+    
   }
 
 
@@ -127,14 +127,14 @@
     // if we are on SOCKET MODE this function will be called by a socket.on() event
     // so we should not call it here.
 
-    if(staticAudio){
+    // if(staticAudio){
       HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(200));//), AA.getFreq(64), AA.getFreq(200));
-    }
-    else if( (noSocket || partSocket) && !isMobile)
-      HLRemote.updateHLParams(AA.getFreq(2/*2*/)*0.975, AA.getFreq(0), AA.getFreq(200/*400*/));//), AA.getFreq(64), AA.getFreq(200));
-    else {
-      HLRemote.updateHLParams(.5,.5,.5);
-    }
+    // }
+    // else if( (noSocket || partSocket) && !isMobile)
+    //   HLRemote.updateHLParams(AA.getFreq(2/*2*/)*0.975, AA.getFreq(0), AA.getFreq(200/*400*/));//), AA.getFreq(64), AA.getFreq(200));
+    // else {
+    //   HLRemote.updateHLParams(.5,.5,.5);
+    // }
 
     // HLAnim.particles(); // moved in sceneManager
     if(!HLE.MIRROR && !HLE.WATER) HLAnim.sea();
@@ -211,7 +211,7 @@
 
   function loadRoutine(){
     mainInit();
-    
+
     // init HyperLand Environment
     HLEnvironment.init();
 
@@ -220,7 +220,7 @@
         console.log("event HLEload received");
         // DEV
         if(hasGUI) { G = GUI(); G.guiInit();}
-        if(!noSocket) socketVisual.init();
+        // if(!noSocket) socketVisual.init();
 
         //remove loadingDiv
         document.body.removeChild(loadingDiv);

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>screen test</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+    <script src="lib/three.min.js"></script>
+    <script src="lib/NoScroll.js"></script>
+
+  </head>
+  <style media="screen">
+    body{margin:0;padding:0;position:fixed;}
+    html{position:fixed;width:100%;height:100%;}
+  </style>
+  <body draggable=false>
+<script type="text/javascript">
+  // init noScroll
+  var noScroll = new NoScroll();
+  noScroll.enable();
+  //clamp helper
+  function clamp(n,min,max){
+    return Math.min(Math.max(n,min),max);
+  }
+
+
+  var width = window.innerWidth, height=window.innerHeight;
+
+  var scene = new THREE.Scene();
+
+  var camera = new THREE.OrthographicCamera(-width/2, width/2, -height/2, height/2, 1, 10000);
+  camera.position.z = 5000;
+
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(width,height);
+  document.body.appendChild( renderer.domElement );
+
+  // this is the white screen surface
+  var screen = new THREE.Mesh(new THREE.PlaneGeometry(100,100,1,1), new THREE.MeshBasicMaterial({color:0xffffff, side:THREE.DoubleSide}) );
+  scene.add(screen);
+
+  var cornerPoints = new Array();
+  var point = new THREE.Mesh(new THREE.PlaneGeometry(20,20,1,1), new THREE.MeshBasicMaterial({color:0xff0000, side: THREE.DoubleSide}) );
+  // populate cornerPoints array by placing a point on every screen's vertex
+  for(var i=0;i<screen.geometry.vertices.length;i++){
+      var v = screen.geometry.vertices[i];
+      point.position.set( v.x,v.y,v.z );
+      cornerPoints[i] = point.clone();
+      cornerPoints[i].name = i;
+      cornerPoints[i].material = cornerPoints[i].material.clone();
+      scene.add(cornerPoints[i]);
+  }
+  point = null;
+  delete(point);
+
+  // init raycaster for picking points
+  var raycaster = new THREE.Raycaster();
+  var intersects;
+  var mouse = new THREE.Vector2();
+
+  var intersect;
+  var pointPicked = null;
+
+  function onMouseMove( event ) {
+
+  	// calculate mouse position in normalized device coordinates
+  	// (-1 to +1) for both components
+
+  	mouse.x = ( (event.pageX - renderer.domElement.offsetLeft) / width ) * 2 - 1;
+  	mouse.y = - ( (event.pageY - renderer.domElement.offsetTop) / height ) * 2 + 1;
+
+    if(pointPicked!==null) dragVertex(event);
+
+  }
+
+
+
+
+  function dragVertex( e ){
+    var x = clamp(e.pageX-width/2,-width/2,width/2), y = clamp(e.pageY-height/2,-height/2,height/2);
+    pointPicked.position.set(x,y,0);
+    screen.geometry.vertices[pointPicked.name].copy( pointPicked.position );
+    screen.geometry.verticesNeedUpdate = true;
+    screen.geometry.computeBoundingBox();
+  }
+
+  function render() {
+    window.requestAnimationFrame(render);
+
+  	// update the picking ray with the camera and mouse position
+  	raycaster.setFromCamera( mouse, camera );
+    // calculate objects intersecting the picking ray
+  	intersects = raycaster.intersectObjects( cornerPoints );
+    // set free corner points color red
+    for(var i=0;i<cornerPoints.length;i++)
+      cornerPoints[i].material.color.set(0xff0000);
+    // set intersected point color green
+  	for ( var i = 0; i < intersects.length; i++ )
+  		intersects[ i ].object.material.color.set( 0x00ff00 );
+
+    //rendere scene
+  	renderer.render( scene, camera );
+  }
+
+  //set loaded coordinates in screen vertices and points position
+  function setLoadedCoords(coords){
+    for(var i=0; i<screen.geometry.vertices.length;i++){
+      screen.geometry.vertices[i].x = coords[i].x;
+      screen.geometry.vertices[i].y = coords[i].y;
+      screen.geometry.vertices[i].z = coords[i].z;
+      screen.geometry.verticesNeedUpdate = true;
+      screen.geometry.computeBoundingBox();
+      cornerPoints[i].position.copy(screen.geometry.vertices[i]);
+      // TODO: quando carico la shape dello screen,
+      // dovro anche reimpostare width/height del renderer e della camera,
+      // per ottimizzare prestazioni e visualizzazione
+      // posso basarmi su boundingBox della geometria
+    }
+  }
+
+  window.addEventListener( 'mousemove', onMouseMove, false );
+  window.addEventListener( 'mousedown', function(){
+    if(intersects.length>0)
+      // set pointPicked with the first intersected object (one point picked)
+      pointPicked=intersects[0].object;
+  }, false );
+  window.addEventListener( 'mouseup', function(){
+    // unset pointPicked (no points picked)
+    pointPicked = null;
+  }, false );
+
+  window.addEventListener( 'keydown', function(e){
+    if(e.keyCode==83){
+      localStorage.setItem('HYPERLAND_SCREEN_MAPPING_COORDS', JSON.stringify(screen.geometry.vertices));
+      alert('screen coordinates saved');
+    }
+    if(e.keyCode==84){
+      var loadedCoords = JSON.parse(localStorage.getItem('HYPERLAND_SCREEN_MAPPING_COORDS'));
+      setLoadedCoords(loadedCoords);
+      loadedCoords = null;
+    }
+  },false);
+
+  window.requestAnimationFrame(render);
+
+
+</script>
+  </body>
+</html>

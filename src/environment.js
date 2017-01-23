@@ -128,66 +128,66 @@ var HL = {
     models:null,
   },
   textures: {
-    sky1:"img/skybox2/_sky_1.jpg",
-    sky2:"img/skybox2/skydome3.jpg",
-    sky3:"img/skybox2/sky_invert.jpg",
-    sky4:"img/skybox2/skymap_photo9.jpg",
-    // sky5:"img/skybox2/TychoSkymapII.t4_08192x04096.jpg",
-    sky5:"img/skybox2/nasa2.jpg",
-    // sky5:"img/skybox2/sky_stars_2.jpg",
+    sky1:"assets/img/skybox2/_sky_1.jpg",
+    sky2:"assets/img/skybox2/skydome3.jpg",
+    sky3:"assets/img/skybox2/sky_invert.jpg",
+    sky4:"assets/img/skybox2/skymap_photo9.jpg",
+    // sky5:"assets/img/skybox2/TychoSkymapII.t4_08192x04096.jpg",
+    sky5:"assets/img/skybox2/nasa2.jpg",
+    // sky5:"assets/img/skybox2/sky_stars_2.jpg",
 
-    land:"img/white2x2.gif",
-    sea:"img/white2x2.gif",
-    flora:"img/white2x2.gif",
-    fauna:"img/white2x2.gif",
-    water:"img/waternormals5.jpg",//wn5
+    land:"assets/img/white2x2.gif",
+    sea:"assets/img/white2x2.gif",
+    flora:"assets/img/white2x2.gif",
+    fauna:"assets/img/white2x2.gif",
+    water:"assets/img/waternormals5.jpg",//wn5
 
     //for models
-    whale:"3dm/BL_WHALE/BL_WHALE.jpg",
-    ducky:"3dm/ducky/ducky.png",
-    airbus:"3dm/airbus/airbus_d2.png",
-    helicopter:"3dm/aurora/aurora.png",
-    aurora:"3dm/aurora/aurora.png",
-    heartbomb:"3dm/heartbomb/heartbomb_full_l.png",
-    // mercury:"3dm/mercury/mercury.png",
+    whale:"assets/3dm/BL_WHALE/BL_WHALE.jpg",
+    ducky:"assets/3dm/ducky/ducky.png",
+    airbus:"assets/3dm/airbus/airbus_d2.png",
+    helicopter:"assets/3dm/aurora/aurora.png",
+    aurora:"assets/3dm/aurora/aurora.png",
+    heartbomb:"assets/3dm/heartbomb/heartbomb_full_l.png",
+    // mercury:"assets/3dm/mercury/mercury.png",
 
-    pattern1:"img/patterns/pattern-1.png",
-    pattern2:"img/patterns/pattern-2.png",
-    pattern3:"img/patterns/pattern-3.png",
-    pattern4:"img/patterns/pattern-4.png",
-    pattern5:"img/patterns/pattern-5.png",
+    pattern1:"assets/img/patterns/pattern-1.png",
+    pattern2:"assets/img/patterns/pattern-2.png",
+    pattern3:"assets/img/patterns/pattern-3.png",
+    pattern4:"assets/img/patterns/pattern-4.png",
+    pattern5:"assets/img/patterns/pattern-5.png",
 
-    land1:"img/land/land_tex_1.jpg",
-    land2:"img/land/land_tex_2.jpg",
-    land3:"img/land/land_tex_3.jpg",
-    land4:"img/land/land_tex_4.jpg",
-    land5:"img/land/land_tex_5.jpg",
+    land1:"assets/img/land/land_tex_1.jpg",
+    land2:"assets/img/land/land_tex_2.jpg",
+    land3:"assets/img/land/land_tex_3.jpg",
+    land4:"assets/img/land/land_tex_4.jpg",
+    land5:"assets/img/land/land_tex_5.jpg",
 
-    white:"img/white2x2.gif",
+    white:"assets/img/white2x2.gif",
   },
   dynamicTextures:{
     stars:null,
     textbox:null,
   },
   models: {
-    whale:["3dm/BL_WHALE/whale_m.obj",1],
-    ducky:["3dm/ducky/ducky_m.obj",5],
-    airbus:["3dm/airbus/airbus_m.obj",5],
-    aurora:["3dm/aurora/aurora_m.obj",5],
-    helicopter:["3dm/lo_helicopter2.obj",5],
-    heartbomb:["3dm/heartbomb/heartbomb_m.obj",5],
-    // mercury:["3dm/mercury/mercury_c.obj",5],
-    // tiger:["3dm/uncletiger/uncletiger_c.obj",5],
-    cube:["3dm/cube.obj",2.5],
-    intro:["3dm/hyperland_intro.obj",3],
-    logo:["3dm/hyperland_logo.obj",5],
+    whale:["assets/3dm/BL_WHALE/whale_m.obj",1],
+    ducky:["assets/3dm/ducky/ducky_m.obj",5],
+    airbus:["assets/3dm/airbus/airbus_m.obj",5],
+    aurora:["assets/3dm/aurora/aurora_m.obj",5],
+    helicopter:["assets/3dm/lo_helicopter2.obj",5],
+    heartbomb:["assets/3dm/heartbomb/heartbomb_m.obj",5],
+    // mercury:["assets/3dm/mercury/mercury_c.obj",5],
+    // tiger:["assets/3dm/uncletiger/uncletiger_c.obj",5],
+    cube:["assets/3dm/cube.obj",2.5],
+    intro:["assets/3dm/hyperland_intro.obj",3],
+    logo:["assets/3dm/hyperland_logo.obj",5],
 
-    tomat:["3dm/tomat_lo.obj",10],
-    ottino:["3dm/ottino_lo.obj",10],
+    tomat:["assets/3dm/tomat_lo.obj",10],
+    ottino:["assets/3dm/ottino_lo.obj",10],
 
-    stone1:["3dm/stones/stone1.obj",10],
-    stone2:["3dm/stones/stone2.obj",10],
-    stone3:["3dm/stones/stone3.obj",10],
+    stone1:["assets/3dm/stones/stone1.obj",10],
+    stone2:["assets/3dm/stones/stone2.obj",10],
+    stone3:["assets/3dm/stones/stone3.obj",10],
   },
   modelsKeys:null,
   mGroups:{
@@ -414,7 +414,7 @@ var HLEnvironment = function(){
 
     //init noise
     HLE.noiseSeed = Math.random() * 1000;
-    HL.noise = new ImprovedNoise();
+    // HL.noise = new ImprovedNoise();
 
     // SCENE
     HL.scene = new THREE.Scene();
@@ -684,7 +684,7 @@ var HLEnvironment = function(){
     //   opacity: 1,
     //   transparent:false,
     //   //shading: THREE.FlatShading,
-    //     map: new THREE.TextureLoader().load( "img/blur-400x400.png" ),
+    //     map: new THREE.TextureLoader().load( "assets/img/blur-400x400.png" ),
     // //  normalMap: rockNormalMap,
     // });
     // HL.materials.land.color = HLC.land; // set by reference
@@ -730,7 +730,7 @@ var HLEnvironment = function(){
 
   //  HL.materials.land = new THREE.LandMaterial(HLE.WORLD_WIDTH,HLE.WORLD_TILES,{
   //    wireframe:false,
-  //    map : new THREE.TextureLoader().load( "img/DEV_princessB.png" ),
+  //    map : new THREE.TextureLoader().load( "assets/img/DEV_princessB.png" ),
   //    repeatUV:new THREE.Vector2(1,HLE.WORLD_TILES),
   //    fog : true,
   //  });

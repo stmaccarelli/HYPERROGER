@@ -4,46 +4,46 @@
 var HLH = function() {
 	var i,x,y,dynModelsCounter=0;
 	// GENERIC
-
-	function easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t };
-	function easeOutQuad(t) { return t*(2-t) };
-	function easeInQuad(t) { return t*t };
+	//
+	// function easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t };
+	// function easeOutQuad(t) { return t*(2-t) };
+	// function easeInQuad(t) { return t*t };
 
 
 	// GEOMETRIES
 
 	// Simple sine motion on Y axis for a plane geometry, for seawaves
-	function seaMotion(geometry, stepsCount, heights, speed) {
-		for (y = 0; y < geometry.parameters.heightSegments; y++)
-			for (x = 0; x < geometry.parameters.widthSegments + 1; x++) {
-				geometry.vertices[y * (geometry.parameters.widthSegments + 1) + x].y =
-					Math.sin(millis * speed + x * x * ((y * 2 - stepsCount * 2))) * (heights[y] + .2); //add 1 to height because we don't want a completely flat sea
-			}
-		geometry.verticesNeedUpdate = true;
-	}
+	// function seaMotion(geometry, stepsCount, heights, speed) {
+	// 	for (y = 0; y < geometry.parameters.heightSegments; y++)
+	// 		for (x = 0; x < geometry.parameters.widthSegments + 1; x++) {
+	// 			geometry.vertices[y * (geometry.parameters.widthSegments + 1) + x].y =
+	// 				Math.sin(millis * speed + x * x * ((y * 2 - stepsCount * 2))) * (heights[y] + .2); //add 1 to height because we don't want a completely flat sea
+	// 		}
+	// 	geometry.verticesNeedUpdate = true;
+	// }
 
 	//  Sine motion on Y axis for a BufferGeometry
-	function bufSinMotion(geometry, height, speed) {
-		height = height || 1;
-		speed = speed || 1;
-		for (i = 0; i < geometry.attributes.position.array.length; i += 3){
-			geometry.attributes.position.array[i + 1] = 10000;
-//			Math.sin(millis * speed + i+1.45435) * height;
-		}
-		geometry.attributes.position.needsUpdate = true;
-	}
+// 	function bufSinMotion(geometry, height, speed) {
+// 		height = height || 1;
+// 		speed = speed || 1;
+// 		for (i = 0; i < geometry.attributes.position.array.length; i += 3){
+// 			geometry.attributes.position.array[i + 1] = 10000;
+// //			Math.sin(millis * speed + i+1.45435) * height;
+// 		}
+// 		geometry.attributes.position.needsUpdate = true;
+// 	}
 
 
-	// shift vertex heights of all the geometry rows from the previous vertex row.
-	// it's the core of the landscape motion logic
-	function shiftHeights(geometry) {
-		for (y = HLE.WORLD_TILES; y > 0; y--)
-			for (x = 0; x < HLE.WORLD_TILES + 1; x++) {
-				geometry.vertices[y * (HLE.WORLD_TILES + 1) + x].y =
-				geometry.vertices[(y - 1) * (HLE.WORLD_TILES + 1) + x].y;
-			}
-		geometry.verticesNeedUpdate = true;
-	}
+	// // shift vertex heights of all the geometry rows from the previous vertex row.
+	// // it's the core of the landscape motion logic
+	// function shiftHeights(geometry) {
+	// 	for (y = HLE.WORLD_TILES; y > 0; y--)
+	// 		for (x = 0; x < HLE.WORLD_TILES + 1; x++) {
+	// 			geometry.vertices[y * (HLE.WORLD_TILES + 1) + x].y =
+	// 			geometry.vertices[(y - 1) * (HLE.WORLD_TILES + 1) + x].y;
+	// 		}
+	// 	geometry.verticesNeedUpdate = true;
+	// }
 
 
 	// var ny=0,py=0;
@@ -58,32 +58,32 @@ var HLH = function() {
 	// }
 
 
-	var ny=0,py=0;
-	function shiftHeightsBuf(geometry) {
-		for(y = geometry.parameters.heightSegments-1;y>=0;y--)
-			for(x = 0; x<geometry.parameters.widthSegments*3;x+=3){
-				ny = 		 y*(geometry.parameters.widthSegments+1)*3;
-				py = (y-1)*(geometry.parameters.widthSegments+1)*3;
-				geometry.attributes.position.array[ny+x+1] = geometry.attributes.position.array[py+x+1];
-			}
-			geometry.attributes.position.needsUpdate = true;
-	}
+	// var ny=0,py=0;
+	// function shiftHeightsBuf(geometry) {
+	// 	for(y = geometry.parameters.heightSegments-1;y>=0;y--)
+	// 		for(x = 0; x<geometry.parameters.widthSegments*3;x+=3){
+	// 			ny = 		 y*(geometry.parameters.widthSegments+1)*3;
+	// 			py = (y-1)*(geometry.parameters.widthSegments+1)*3;
+	// 			geometry.attributes.position.array[ny+x+1] = geometry.attributes.position.array[py+x+1];
+	// 		}
+	// 		geometry.attributes.position.needsUpdate = true;
+	// }
 
 
 
-	// computes terrain heights
-	var noiseA,noiseB,noiseC;
-	function landHeightNoise(x, y, sparuto) {
-		sparuto = sparuto || HLE.landCliffFrequency;
-		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency*sparuto, y  * HLE.noiseFrequency*sparuto , HLE.noiseSeed);
-		noiseB = HL.noise.nNoise(x * HLE.noiseFrequency2,y  * HLE.noiseFrequency2, HLE.noiseSeed*2);
-		noiseC = HL.noise.nNoise(x * HLE.noiseFrequency2*5,y  * HLE.noiseFrequency2*5, HLE.noiseSeed*3);
-	//	return (noiseA + (noiseA*0.5+1) * noiseB * noiseC) * HLE.landHeight;
-		// return ((noiseA*0.5+1) * (noiseB + noiseC)*0.5) * HLE.landHeight;
-//		return ((noiseA) *  (noiseC*0.5+1)) * HLE.landHeight;
-		return (noiseA + (noiseA*0.5+1) * noiseB * (noiseC*0.5+1)) * HLE.landHeight;
-
-	}
+// 	// computes terrain heights
+// 	var noiseA,noiseB,noiseC;
+// 	function landHeightNoise(x, y, sparuto) {
+// 		sparuto = sparuto || HLE.landCliffFrequency;
+// 		noiseA = HL.noise.nNoise(x * HLE.noiseFrequency*sparuto, y  * HLE.noiseFrequency*sparuto , HLE.noiseSeed);
+// 		noiseB = HL.noise.nNoise(x * HLE.noiseFrequency2,y  * HLE.noiseFrequency2, HLE.noiseSeed*2);
+// 		noiseC = HL.noise.nNoise(x * HLE.noiseFrequency2*5,y  * HLE.noiseFrequency2*5, HLE.noiseSeed*3);
+// 	//	return (noiseA + (noiseA*0.5+1) * noiseB * noiseC) * HLE.landHeight;
+// 		// return ((noiseA*0.5+1) * (noiseB + noiseC)*0.5) * HLE.landHeight;
+// //		return ((noiseA) *  (noiseC*0.5+1)) * HLE.landHeight;
+// 		return (noiseA + (noiseA*0.5+1) * noiseB * (noiseC*0.5+1)) * HLE.landHeight;
+//
+// 	}
 
 
 	// PARTICLE SYSTEMS
@@ -119,23 +119,23 @@ var HLH = function() {
 	}
 
 
-	// used to populate a Geometry for a particle system
-	function initParticleSystem(geometry, worldWidth, worldHeight, amount, randomize, dynamic) {
-		for (i = 0; i < amount; i++) {
-			if (randomize)
-				geometry.vertices.push(
-					new THREE.Vector3(
-						Math.random() * worldWidth - worldWidth / 2,
-						Math.random() * worldWidth / 2,
-						Math.random() * worldWidth - worldWidth / 2)
-				);
-			else
-				geometry.vertices.push(
-					new THREE.Vector3(1, 1, -WORLD_WIDTH)
-				);
-		}
-		if (dynamic) geometry.dynamic = true;
-	}
+	// // used to populate a Geometry for a particle system
+	// function initParticleSystem(geometry, worldWidth, worldHeight, amount, randomize, dynamic) {
+	// 	for (i = 0; i < amount; i++) {
+	// 		if (randomize)
+	// 			geometry.vertices.push(
+	// 				new THREE.Vector3(
+	// 					Math.random() * worldWidth - worldWidth / 2,
+	// 					Math.random() * worldWidth / 2,
+	// 					Math.random() * worldWidth - worldWidth / 2)
+	// 			);
+	// 		else
+	// 			geometry.vertices.push(
+	// 				new THREE.Vector3(1, 1, -WORLD_WIDTH)
+	// 			);
+	// 	}
+	// 	if (dynamic) geometry.dynamic = true;
+	// }
 
 
 
@@ -152,16 +152,16 @@ var HLH = function() {
 	//
 
   // moves all the particles in that geometry living inside acrive area (>-worldSize/2 - wordSize/2)
-	function moveParticles(geometry, worldSize, moveSpeed) {
-
-		for (i = 0; i < geometry.attributes.position.array.length; i += 3) {
-			if (geometry.attributes.position.array[i + 2] > -worldSize)
-				geometry.attributes.position.array[i + 2] += moveSpeed;
-			if (geometry.attributes.position.array[i + 2] >= worldSize)
-				geometry.attributes.position.array[i + 2] = -worldSize;
-		}
-		geometry.attributes.position.needsUpdate = true;
-	}
+	// function moveParticles(geometry, worldSize, moveSpeed) {
+	//
+	// 	for (i = 0; i < geometry.attributes.position.array.length; i += 3) {
+	// 		if (geometry.attributes.position.array[i + 2] > -worldSize)
+	// 			geometry.attributes.position.array[i + 2] += moveSpeed;
+	// 		if (geometry.attributes.position.array[i + 2] >= worldSize)
+	// 			geometry.attributes.position.array[i + 2] = -worldSize;
+	// 	}
+	// 	geometry.attributes.position.needsUpdate = true;
+	// }
 
   function loopParticles(geometry, worldSize, moveSpeed) {
 		for (i = 0; i < geometry.attributes.position.array.length; i += 3) {
@@ -176,35 +176,35 @@ var HLH = function() {
 		geometry.attributes.position.needsUpdate = true;
 	}
 
-	function startParticle(geometry, worldSize) {
-		for (i = 0; i < geometry.attributes.position.array.length; i+=3) {
-			if (geometry.attributes.position.array[i + 2] <= -worldSize) {
-				geometry.attributes.position.array[i + 2] = -worldSize + .1;
-				break;
-			}
-		}
-		geometry.attributes.position.needsUpdate = true;
-	}
+	// function startParticle(geometry, worldSize) {
+	// 	for (i = 0; i < geometry.attributes.position.array.length; i+=3) {
+	// 		if (geometry.attributes.position.array[i + 2] <= -worldSize) {
+	// 			geometry.attributes.position.array[i + 2] = -worldSize + .1;
+	// 			break;
+	// 		}
+	// 	}
+	// 	geometry.attributes.position.needsUpdate = true;
+	// }
 
 
-	function shotFloraCluster(geometry, stepsCount, amountToBurst) {
-	  var skipped = 0;
-		var sC = stepsCount / HLE.WORLD_TILES;
-		for (i = 0; i < Math.min(geometry.attributes.position.array.length, amountToBurst*3+skipped*3); i+=3) {
-			// if particle is inactive at "standby" distance
-			if (geometry.attributes.position.array[i + 2] <= -HLE.WORLD_WIDTH) {
-				var nX = Math.random();
-				geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 2);
-				geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH * 0.5;
-				var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5
-				geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC)) ;
-				//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
-				if (geometry.attributes.position.array[i + 1]>0) i-=6;
-			} else skipped++;
-		}
-		geometry.attributes.position.needsUpdate = true;
-		console.log("HLH.shotFlora");
-	}
+	// function shotFloraCluster(geometry, stepsCount, amountToBurst) {
+	//   var skipped = 0;
+	// 	var sC = stepsCount / HLE.WORLD_TILES;
+	// 	for (i = 0; i < Math.min(geometry.attributes.position.array.length, amountToBurst*3+skipped*3); i+=3) {
+	// 		// if particle is inactive at "standby" distance
+	// 		if (geometry.attributes.position.array[i + 2] <= -HLE.WORLD_WIDTH) {
+	// 			var nX = Math.random();
+	// 			geometry.attributes.position.array[i] = (nX * 2 - 1) * (HLE.WORLD_WIDTH / 2);
+	// 			geometry.attributes.position.array[i + 2] = -HLE.WORLD_WIDTH * 0.5;
+	// 			var nY = (geometry.attributes.position.array[i + 2] / HLE.WORLD_WIDTH + 0.5) * -1; // in range 0 , 0.5
+	// 			geometry.attributes.position.array[i + 1] = landHeightNoise(nX, (sC)) ;
+	// 			//         HL.geometries.land.vertices[i].y = HLH.landHeightNoise(i / (HL.geometries.land.parameters.widthSegments), (HLE.landStepsCount / HLE.WORLD_TILES) * 0.75 );
+	// 			if (geometry.attributes.position.array[i + 1]>0) i-=6;
+	// 		} else skipped++;
+	// 	}
+	// 	geometry.attributes.position.needsUpdate = true;
+	// 	console.log("HLH.shotFlora");
+	// }
   // HLH.landHeightNoise(
   //  i / (HL.geometries.land.parameters.widthSegments),
   //  (HLE.landStepsCount / HLE.WORLD_TILES) );
@@ -376,43 +376,43 @@ var HLH = function() {
 
 
 	return {
-		initParticleSystem: function(a, b, c, d, e) {
-			return initParticleSystem(a, b, c, d, e)
-		},
+		// initParticleSystem: function(a, b, c, d, e) {
+		// 	return initParticleSystem(a, b, c, d, e)
+		// },
 		initBufParticleSystem: function(a, b, c, d, e) {
 			return initBufParticleSystem(a, b, c, d, e)
 		},
-		//  initShootableParticles:function(a,b){       return initShootableParticles(a,b)             },
-		startParticle: function(a, b) {
-			return startParticle(a, b)
-		},
-		moveParticles: function(a, b, c) {
-			return moveParticles(a, b, c)
-		},
+		// //  initShootableParticles:function(a,b){       return initShootableParticles(a,b)             },
+		// startParticle: function(a, b) {
+		// 	return startParticle(a, b)
+		// },
+		// moveParticles: function(a, b, c) {
+		// 	return moveParticles(a, b, c)
+		// },
 		loopParticles: function(a, b, c) {
 			return loopParticles(a, b, c)
 		},
 		// shuffleUVs:           function(a){          return shuffleUVs(a)                },
 		// scaleUVs:             function(a,b){        return scaleUVs(a,b)                },
 		// offsetUV:             function(a,b){        return offsetUV(a,b)                },
-		shiftHeights: function(a) {
-			return shiftHeights(a)
-		},
-		shiftHeightsBuf: function(a) {
-			return shiftHeightsBuf(a)
-		},
-		seaMotion: function(a, b, c, d) {
-			return seaMotion(a, b, c, d)
-		},
-		bufSinMotion: function(a, b, c) {
-			return bufSinMotion(a, b, c)
-		},
-		shotFloraCluster: function(a, b, c) {
-			return shotFloraCluster(a, b, c)
-		},
-		landHeightNoise: function(a, b,c) {
-			return landHeightNoise(a, b, c)
-		},
+		// shiftHeights: function(a) {
+		// 	return shiftHeights(a)
+		// },
+		// shiftHeightsBuf: function(a) {
+		// 	return shiftHeightsBuf(a)
+		// },
+		// seaMotion: function(a, b, c, d) {
+		// 	return seaMotion(a, b, c, d)
+		// },
+		// bufSinMotion: function(a, b, c) {
+		// 	return bufSinMotion(a, b, c)
+		// },
+		// shotFloraCluster: function(a, b, c) {
+		// 	return shotFloraCluster(a, b, c)
+		// },
+		// landHeightNoise: function(a, b,c) {
+		// 	return landHeightNoise(a, b, c)
+		// },
 		resetModel: function(a) {resetModel(a)},
 		resetAllModels: resetAllModels,
 		startModel: function(a,b,c,d,e,f,i) {startModel(a,b,c,d,e,f,i)},

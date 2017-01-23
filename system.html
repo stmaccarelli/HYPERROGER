@@ -9,59 +9,53 @@
 	<link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body style="height:100%">
-<div id="loadingDiv" style="position:absolute;bottom:0;left:0;width:100%;min-height:100%;z-index:99; background: #000;"> -->
+<div id="loadingDiv" style="position:absolute;bottom:0;left:0;width:100%;min-height:100%;z-index:99; background: transparent;">
  <p style="font-size:50px; ">LOADING 8MB</p>
 	expected time: 10sec on a 4G network
 </div>
 
-<!--
-	<div id="splash">
-		<div id ="prompt">
-			<div id="prompt-big">Collect the crystals <br> before the dawn comes!</div>
-			<div id="prompt-small">Use arrow keys to move left or right.</div>
-		</div>
-	</div>
-	<div id="debug-text"></div>
-	<div id="score-text">0</div>
-	<div id="container"></div>
-	<div id="music-toggle"></div>
-	<div id="preloader"></div>
+<div class="screens" id="init">
+</div>
+<div class="screens" id="paused">
+</div>
+<div class="screens" id="ended">
+</div>
+<div class="" id="progress"></div>
 
-	<div id="info">Built with Love by <a href='http://www.airtight.cc'>Airtight</a>. Try it on Mobile!</div> -->
-
-  <!--
-  A BIG thanks to airtight.cc for the WebGL / THREE.JS tutorials
-  The main landscape motion logic is based on Winter Rush game logic developed by airtight.cc
-  -->
-	<!-- Utils Libs -->
+	<!-- UTILS  -->
   <script src="lib/NoSleep.min.js"></script>
   <script src="lib/NoScroll.js"></script>
-  <script src="lib/dev/dat.gui.min.js"></script>
+	<!-- DAT GUI + helper -->
+	<script src="lib/dev/dat.gui.min.js"></script>
+	<script src="src/DEV_GUI.js"></script>
+	<!-- AUDIO ANALYSIS -->
+	<script src="lib/audioAnalyzerMultiSource.js"></script>
 
-	<!-- <script src="lib/dev/AudioAnalyzer.js"></script> -->
-  <!--  THREE.JS and addons -->
+  <!--  THREE.JS -->
   <script src="lib/three.min.js"></script>
-	<script src="lib/ImprovedNoise.js"></script>
-	<script src="lib/StereoEffect.js"></script>
-	<script src="lib/DeviceOrientationControls.js"></script>
-	<script src="lib/dev/FirstPersonControls.js"></script>
-	<script src="lib/FlyControls.js"></script>
-	<!-- <script src="lib/dev/NoiseCameraMove.js"></script> -->
 
-	<script src="lib/noise25f.js"></script>
-	<script src="lib/mirror-wave-material.js"></script>
-	<script src="lib/water-material-moving.js"></script>
-	<script src="lib/land-custom-material.js"></script>
-	<script src="lib/sky-custom-material.js"></script>
+	<!-- THREE.JS EFFECTS AND CONTROLS-->
+	<script src="lib/effects/webVR.js"></script>
+	<script src="lib/effects/StereoEffect.js"></script>
+	<script src="lib/effects/VREffect.js"></script>
 
+	<script src="lib/controls/DeviceOrientationControls.js"></script>
+	<script src="lib/controls/FirstPersonControls.js"></script>
+	<script src="lib/controls/VRControls.js"></script>
+
+
+	<!-- LOADERS -->
 	<script src="lib/loaders/OBJLoader.js"></script>
 
-	<script src="lib/CubemapToEquirectangular.js"></script>
+
+	<!-- MATERIALS -->
+	<script src="lib/materials/glslNoise25f.js"></script>
+	<script src="lib/materials/water-custom-material.js"></script>
+	<script src="lib/materials/land-custom-material.js"></script>
+	<script src="lib/materials/sky-custom-material.js"></script>
 
 
-
-
-	<!-- HYPERLAND Source Files -->
+	<!-- ROGER WATER x HYPERLAND SOURCE FILES -->
 
 	<script src="src/main.js"></script>
 
@@ -72,23 +66,7 @@
 	<script src="src/remoteControl.js"></script>
 	<script src="src/hud.js"></script>
 	<script src="src/sceneManager.js"></script>
-	<script src="src/DEV_GUI.js"></script>
 
-	<!-- VR -->
-	<script src="lib/webVR.js"></script>
-	<script src="lib/VREffect.js"></script>
-	<script src="lib/VRControls.js"></script>
-
-	<!-- DEV audio lib -->
-	<script src="lib/dev/AudioAnalyzerDev.js"></script>
-
-	<!-- socket.io -->
-	<script src="lib/socket.io-1.4.5.js"></script>
-	<script src="src/socketVisualEncoded.js"></script>
-
-
-	<script src="lib/audioAnalyzerMultiSource.js"></script>
-	<!-- <script src="lib/fftArray.js"></script> -->
 
 	<!-- <audio id="rogerwater" src="assets/audio/rogerwater2.mp3" controls></audio> -->
 
