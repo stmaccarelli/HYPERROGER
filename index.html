@@ -5,25 +5,22 @@
     <title>ROGER WATER, A JOURNEY INTO HYPERLAND</title>
   </head>
   <body>
+    <script src="lib/Detector.js"></script>
     <h1>ROGER WATER</h1>
     <h2>A REAL TIME AUDIOREACTIVE VIRTUAL REALITY EXPERIENCE</h2>
 
-    <ul>
+    <ul class="action">
       <li class="desktop">
-        <a href="system.html?fpc?staticaudio?nosocket">DESKTOP</a>
+        <a href="system.html?fpc">DESKTOP</a>
       </li>
       <li class="desktop">
-        <a href="system.html?staticaudio?nosocket?webvr">HTC VIVE</a>
+        <a href="system.html?webvr">HTC VIVE</a>
       </li>
       <li class="mobile">
-        <a href="system.html?staticaudio?nosocket">MOBILE/TABLET</a>
+        <a href="system.html">MOBILE/TABLET</a>
       </li>
       <li class="mobile">
-        <a href="system.html?staticaudio?nosocket?cardboard">CARDBOARD</a>
-      </li>
-
-      <li>
-        <a href="audioAnalysisTest.html">audioAnalysisTest</a>
+        <a href="system.html?cardboard">CARDBOARD</a>
       </li>
     </ul>
 
@@ -42,6 +39,15 @@
         display('.desktop', false);
       else
         display('.mobile', false);
+    </script>
+
+    <script type="text/javascript">
+    // HIDE ALL ACTION BUTTONS IF WEBGL IS NOT SUPPORTED
+      if ( ! Detector.webgl ){
+        Detector.addGetWebGLMessage();
+        document.getElementsByClassName('action')[0].style.display = 'none';
+      }
+
     </script>
   </body>
 </html>
