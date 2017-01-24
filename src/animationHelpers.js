@@ -2,6 +2,7 @@
 // GEOMETRY, ANIMATION
 
 var HLH = function() {
+
 	var i,x,y,dynModelsCounter=0;
 	// GENERIC
 	//
@@ -225,24 +226,39 @@ var HLH = function() {
 	}
 
 
-	function startModel(model,x,y,speed,rotations, scale, isParticle){
+	// starting rotation vector
+	var srv = new THREE.Euler( 0, 0, 0, 'YXZ' );
+
+	function startModel(model,xPositioning,y,speed,rotations, scale, isParticle, towardsCamera){
 		scale = scale || 1;
 		isParticle = isParticle!==undefined?isParticle:false;
 		model = HL.models[model] || model;
+		towardsCamera = towardsCamera || true;
 
 		if(isParticle) HLE.PARTICLE_MODELS_OUT++;
 		if(HL.dynamicModelsClones.length >= HLE.MAX_MODELS_OUT + HLE.PARTICLE_MODELS_OUT) return
 		dynModelsCounter++;
 
 		speed = speed || 0;
-		x = x || 0;
+		var x = xPositioning || 0;
 		y = y || 0;
 		rotations = rotations || 'n';
 
 		HL.dynamicModelsClones['m'+dynModelsCounter] = model.clone();
 
+		// set starting rotation vector
+		srv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
+		// assign srv to model
+		HL.dynamicModelsClones['m'+dynModelsCounter]['srv'] = srv;
 
+		// set X and Z position of model
 		var z = -HLE.WORLD_WIDTH/2;
+	  if(towardsCamera){
+			x = Math.sin( srv.y + (xPositioning/(HLE.WORLD_WIDTH)) ) * z;
+			z = Math.cos( srv.y + (xPositioning/(HLE.WORLD_WIDTH)) ) * z;
+			// set model rotation so it faces camera at start
+			HL.dynamicModelsClones['m'+dynModelsCounter].rotateY( srv.y );
+		}
 		// y === true means we want models attached to landscape
 		if(y === true){
 
@@ -285,6 +301,9 @@ var HLH = function() {
 		HL.dynamicModelsClones['m'+dynModelsCounter]["targetY"] = y;
 		HL.dynamicModelsClones['m'+dynModelsCounter]['moving'] = true;
 		HL.dynamicModelsClones['m'+dynModelsCounter]['rotations'] = rotations;
+		HL.dynamicModelsClones['m'+dynModelsCounter]['towardsCamera'] = towardsCamera;
+
+
 
 	}
 
@@ -298,19 +317,27 @@ var HLH = function() {
 
 		rv.x = Math.sin(rv.y);
 		rv.z = Math.cos(rv.y);
-		
+
+		// transform starting camera rotation vector to model angle vector
+		model.srv.x = Math.sin(model.srv.y);
+		model.srv.z = Math.cos(model.srv.y);
+
 // TODO: testare logica movimento bidirezionale
 		if(
-			// (model.position.x >= -HLE.WORLD_WIDTH/2) &&
+		  (model.position.x >= -HLE.WORLD_WIDTH/2) &&
 			(model.position.z >= -HLE.WORLD_WIDTH/2)
 		){
-			model.position.x += rv.x * (model.speed + HLE.moveSpeed);
-			model.position.z += rv.z * (model.speed + HLE.moveSpeed);
+			// spostamento sul mondo condizionato dalla camera move
+			model.position.x += rv.x * HLE.moveSpeed;
+			model.position.z += rv.z * HLE.moveSpeed;
 
-			// if(! model.isParticle && model.position.y!=0)
-			// 	model.position.y = -model.size.y + (model.targetY+model.size.y)
-			// 		- easeInQuad(Math.abs(model.position.z)/HLE.WORLD_WIDTH)
-			// 			*(model.targetY+model.size.y);
+			if(model.towardsCamera){
+				model.position.x += model.srv.x * model.speed;
+				model.position.z += model.srv.z * model.speed;
+			}
+			else {
+				model.position.z += model.speed + HLE.moveSpeed;
+			}
 
 			if(model.rotations.indexOf('x')!=-1) model.rotateX(model.speed*0.0005);
 			if(model.rotations.indexOf('y')!=-1) model.rotateY(model.speed*0.0005);
@@ -338,9 +365,10 @@ var HLH = function() {
 		HL.camera.rotation.z*=0.98;
 
 		if(
-			(model.position.x >= HLE.WORLD_WIDTH/2) ||
-			(model.position.x <= -HLE.WORLD_WIDTH/2) ||
-			(model.position.z >= HLE.WORLD_WIDTH/2)
+			(model.position.x > HLE.WORLD_WIDTH/2) ||
+			(model.position.x < -HLE.WORLD_WIDTH/2) ||
+			(model.position.z > HLE.WORLD_WIDTH/2) ||
+			(model.position.z < -HLE.WORLD_WIDTH/2)
 		){			//resetModel(model);
 			HL.scene.remove(model);
 			model.material.dispose();
@@ -436,7 +464,6 @@ var HLH = function() {
 		moveModel: function(a,b) {moveModel(a,b)},
 		destroyAllModels:destroyAllModels,
 		shootEverything:shootEverything,
-		shootGroup:function(a,b,c,d){shootGroup(a,b,c,d)},
-
+		shootGroup:function(a,b,c,d){shootGroup(a,b,c,d)}
 	}
 }();

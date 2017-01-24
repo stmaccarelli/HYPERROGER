@@ -574,7 +574,7 @@ var HLEnvironment = function(){
       HL.controls = new THREE.FirstPersonControls(HL.cameraGroup, HL.renderer.domElement);
       HL.controls.invertY = true;
       HL.controls.movementSpeed = 0;
-      HL.controls.lookSpeed = 0.045;
+      HL.controls.lookSpeed = 0.1045;
       HL.controls.dragToLook = false;
 
       HL.controls.constrainVertical = true;
@@ -857,7 +857,7 @@ var HLEnvironment = function(){
         fog:true,
         wireframe:isWire,
         wireframeLinewidth:2,
-        side:THREE.FrontSide,
+        side:THREE.DoubleSide,
         transparent:true,
         shading: THREE.SmoothShading
       });
