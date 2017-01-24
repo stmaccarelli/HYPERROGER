@@ -186,8 +186,8 @@ HLS.scenes.standard = function() {
   // if mobile, compute automated movement compute move speed
   HLE.reactiveMoveSpeed = HLE.BASE_MOVE_SPEED*0.5 + ( HLR.smoothFFT1 + HLR.smoothFFT2 + HLR.smoothFFT3 * 20) * 0.5 * HLE.BASE_MOVE_SPEED ;
   // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.25;
-  HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isMobile || isVR) ? 0.3 : 1 ) + HLE.acceleration;
-  // HLE.moveSpeed *= 0.96;
+  HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isMobile || isVR) ? 0.3 : 1 );
+  HLE.moveSpeed += HLE.MAX_MOVE_SPEED * HLE.acceleration;
 
 
 

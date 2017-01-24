@@ -288,6 +288,25 @@ var HLH = function() {
 
 	}
 
+
+	// var rv = new THREE.Euler( 0, 0, 0, 'YXZ' );
+  // // var seaMotion = new THREE.Vector2(0,0);
+	//
+  // function landGLSL(){
+	//
+  //   rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
+  //   // HLE.moveSpeed *= Math.cos(rv.x);
+  //   //HLE.acceleration += HLE.moveSpeed; // advance is a master advance rate for the entire environment
+  //   HL.cameraGroup.position.y = THREE.Math.clamp(HL.cameraGroup.position.y + rv.x * 10*HLE.acceleration, HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT*4);
+	//
+  //   rv.x = Math.sin(rv.y);
+  //   rv.z = Math.cos(rv.y);
+	//
+  //   HLE.landMotion.x += rv.x*(0 + HLE.moveSpeed);
+  //   HLE.landMotion.z += rv.z*(0 + HLE.moveSpeed);
+
+
+
 	function moveModel(model){
 		if(model.position.z >= -HLE.WORLD_WIDTH){
 			model.position.z += model.speed + HLE.moveSpeed;

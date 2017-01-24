@@ -107,24 +107,24 @@ var HLAnim = function(){
     //HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(params.repeatUV, params.repeatUV);
 
     HL.land.material.uniforms.bFactor.value = THREE.Math.clamp(
-      HL.land.material.uniforms.bFactor.value + (Math.random()-.5)*0.0001, 0.01,1);
+      HL.land.material.uniforms.bFactor.value + (Math.random()-.5)*0.00005, 0.0001,1);
 
     HL.land.material.uniforms.cFactor.value = THREE.Math.clamp(
-      HL.land.material.uniforms.cFactor.value + (Math.random()-.5)*0.0001, 0.01,1);
+      HL.land.material.uniforms.cFactor.value + (Math.random()-.5)*0.00005, 0.0001,1);
 
     HL.land.material.uniforms.buildFreq.value = THREE.Math.clamp(
-      HL.land.material.uniforms.buildFreq.value + (Math.random()-.5)*0.0001, 0,1);
+      HL.land.material.uniforms.buildFreq.value + (Math.random()-.5)*0.00005, 0,100000);
 
     //HL.land.material.uniforms.map.value = HL.textures[params.map];
 
     HL.land.material.uniforms.natural.value = THREE.Math.clamp(
-      HL.land.material.uniforms.natural.value + (Math.random()-.5)*0.0001, 0.01,1);
+      HL.land.material.uniforms.natural.value + (Math.random()-.5)*0.00005, 0.0001,1);
 
     HL.land.material.uniforms.rainbow.value = THREE.Math.clamp(
-      HL.land.material.uniforms.rainbow.value + (Math.random()-.5)*0.0001, 0.01,1);
+      HL.land.material.uniforms.rainbow.value + (Math.random()-.5)*0.00005, 0.0001,1);
 
     HL.land.material.uniforms.squareness.value = THREE.Math.clamp(
-      HL.land.material.uniforms.squareness.value + (Math.random()-.5)*0.0001, 0.01,1);
+      HL.land.material.uniforms.squareness.value + (Math.random()-.5)*0.00001, 0.0001,1);
 
   }
 
@@ -137,7 +137,7 @@ var HLAnim = function(){
     rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
     // HLE.moveSpeed *= Math.cos(rv.x);
     //HLE.acceleration += HLE.moveSpeed; // advance is a master advance rate for the entire environment
-    HL.cameraGroup.position.y = THREE.Math.clamp(HL.cameraGroup.position.y + rv.x * 1.5, HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT*3);
+    HL.cameraGroup.position.y = THREE.Math.clamp(HL.cameraGroup.position.y + rv.x * 10*HLE.acceleration, HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT*4);
 
     rv.x = Math.sin(rv.y);
     rv.z = Math.cos(rv.y);
