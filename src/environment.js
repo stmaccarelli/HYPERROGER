@@ -29,7 +29,8 @@ var HLE = {
 
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computed move speed
-  advance:0, // for GLSL land moving, build up with time
+  acceleration:0, // for GLSL land moving, build up with time
+  landMotion: new THREE.Vector3(0,0,0), // for GLSL land moving, build up with time
   buildFreq:50.0, //for GLSL land material
 
   BASE_SEA_SPEED:2.5,
@@ -88,6 +89,7 @@ var HLC = {
 
 // HL scene library
 var HL = {
+  audioFilePath: "assets/audio/rogerwater3.mp3",
   modelsLoadingManager:null,
   texturesLoadingManager:null,
 
@@ -170,12 +172,12 @@ var HL = {
     textbox:null,
   },
   models: {
-    whale:["assets/3dm/BL_WHALE/whale_m.obj",1],
-    ducky:["assets/3dm/ducky/ducky_m.obj",5],
-    airbus:["assets/3dm/airbus/airbus_m.obj",5],
-    aurora:["assets/3dm/aurora/aurora_m.obj",5],
-    helicopter:["assets/3dm/lo_helicopter2.obj",5],
-    heartbomb:["assets/3dm/heartbomb/heartbomb_m.obj",5],
+    whale:["assets/3dm/BL_WHALE/whale_m.obj",.5],
+    ducky:["assets/3dm/ducky/ducky_m.obj",.25],
+    airbus:["assets/3dm/airbus/airbus_m.obj",2],
+    aurora:["assets/3dm/aurora/aurora_m.obj",2],
+    helicopter:["assets/3dm/lo_helicopter2.obj",2],
+    heartbomb:["assets/3dm/heartbomb/heartbomb_m.obj",2],
     // mercury:["assets/3dm/mercury/mercury_c.obj",5],
     // tiger:["assets/3dm/uncletiger/uncletiger_c.obj",5],
     cube:["assets/3dm/cube.obj",2.5],
@@ -569,7 +571,7 @@ var HLEnvironment = function(){
       HL.controls = new THREE.DeviceOrientationControls(HL.cameraGroup);
     }
     else if(isFPC){
-      HL.controls = new THREE.FirstPersonControls(HL.cameraGroup);
+      HL.controls = new THREE.FirstPersonControls(HL.cameraGroup, HL.renderer.domElement);
       HL.controls.invertY = true;
       HL.controls.movementSpeed = 0;
       HL.controls.lookSpeed = 0.045;
@@ -722,7 +724,7 @@ var HLEnvironment = function(){
    HL.materials.land.uniforms.skyColor.value = HLC.horizon;
    HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
 
-   HL.materials.land.uniforms.advance.value = HLE.advance;
+   HL.materials.land.uniforms.advance.value = HLE.acceleration;
    HL.materials.land.uniforms.noiseFreq.value = HLE.noiseFrequency;
    HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;
    HL.materials.land.uniforms.landHeight.value = HLE.landHeight * 1.3 ;

@@ -97,8 +97,8 @@
 
     // AUDIO ANALYSIS
     // if((noSocket || partSocket) && !isMobile && !staticAudio) { AA = AudioAnalyzer(); AA.initGetUserMedia();}
-    AA = new AAMS();
-    
+    AA = new AAMS(HL.audioFilePath);
+
   }
 
 

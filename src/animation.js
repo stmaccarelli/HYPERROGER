@@ -98,55 +98,52 @@ var HLAnim = function(){
 
   function landOrganicChange(f){
 
-    // HLC.land.r += (Math.random()-.5)*0.1;
-    // HLC.land.g += (Math.random()-.5)*0.1;
-    // HLC.land.b += (Math.random()-.5)*0.1;
+    HLC.land.r += (Math.random()-.5)*0.01;
+    HLC.land.g += (Math.random()-.5)*0.01;
+    HLC.land.b += (Math.random()-.5)*0.01;
 
-    // HL.land.material.uniforms.worldTiles.value = params.tiles;
-    //
-    // HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(params.repeatUV, params.repeatUV);
+    //HL.land.material.uniforms.worldTiles.value = params.tiles;
 
-    // HL.land.material.uniforms.bFactor.value = THREE.Math.clamp(
-    //   HL.land.material.uniforms.bFactor.value + (Math.random()-.5)*f, 0,1);
-    //
-    // HL.land.material.uniforms.cFactor.value = THREE.Math.clamp(
-    //   HL.land.material.uniforms.cFactor.value + (Math.random()-.5)*f, 0,1);
+    //HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(params.repeatUV, params.repeatUV);
 
-    //  THREE.Math.clamp(
-    //   HL.land.material.uniforms.bFactor.value+Math.random(), 0.00001, 1.0);
-    //
-    // HL.land.material.uniforms.cFactor.value = THREE.Math.clamp(
-    //   HL.land.material.uniforms.cFactor.value+Math.random(), 0.00001, 1.0);
-    // //
-    // HL.land.material.uniforms.buildFreq.value = params.buildFreq;
-    //
-    //
-    // HL.land.material.uniforms.map.value = HL.textures[params.map];
-    //
-    // HL.land.material.uniforms.natural.value = params.natural;
-    //
-    // HL.land.material.uniforms.rainbow.value = params.rainbow;
-    //
-    // HL.land.material.uniforms.squareness.value = params.squareness;
-    //
+    HL.land.material.uniforms.bFactor.value = THREE.Math.clamp(
+      HL.land.material.uniforms.bFactor.value + (Math.random()-.5)*0.0001, 0.01,1);
+
+    HL.land.material.uniforms.cFactor.value = THREE.Math.clamp(
+      HL.land.material.uniforms.cFactor.value + (Math.random()-.5)*0.0001, 0.01,1);
+
+    HL.land.material.uniforms.buildFreq.value = THREE.Math.clamp(
+      HL.land.material.uniforms.buildFreq.value + (Math.random()-.5)*0.0001, 0,1);
+
+    //HL.land.material.uniforms.map.value = HL.textures[params.map];
+
+    HL.land.material.uniforms.natural.value = THREE.Math.clamp(
+      HL.land.material.uniforms.natural.value + (Math.random()-.5)*0.0001, 0.01,1);
+
+    HL.land.material.uniforms.rainbow.value = THREE.Math.clamp(
+      HL.land.material.uniforms.rainbow.value + (Math.random()-.5)*0.0001, 0.01,1);
+
+    HL.land.material.uniforms.squareness.value = THREE.Math.clamp(
+      HL.land.material.uniforms.squareness.value + (Math.random()-.5)*0.0001, 0.01,1);
+
   }
 
 
-  var landMotion = new THREE.Vector3(0,0,0), rv = new THREE.Euler( 0, 0, 0, 'YXZ' );
+  var rv = new THREE.Euler( 0, 0, 0, 'YXZ' );
   // var seaMotion = new THREE.Vector2(0,0);
 
   function landGLSL(){
 
     rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
-    HLE.moveSpeed *= Math.cos(rv.x);
-    //HLE.advance += HLE.moveSpeed; // advance is a master advance rate for the entire environment
-    HL.cameraGroup.position.y = THREE.Math.clamp(HL.cameraGroup.position.y + rv.x * 0.5, HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT*3);
+    // HLE.moveSpeed *= Math.cos(rv.x);
+    //HLE.acceleration += HLE.moveSpeed; // advance is a master advance rate for the entire environment
+    HL.cameraGroup.position.y = THREE.Math.clamp(HL.cameraGroup.position.y + rv.x * 1.5, HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT*3);
 
     rv.x = Math.sin(rv.y);
     rv.z = Math.cos(rv.y);
 
-    landMotion.x += rv.x*HLE.moveSpeed;
-    landMotion.z += rv.z*HLE.moveSpeed;
+    HLE.landMotion.x += rv.x*(0 + HLE.moveSpeed);
+    HLE.landMotion.z += rv.z*(0 + HLE.moveSpeed);
 
     // seaMotion.x += rv.x*HLE.moveSpeed*0.01;
     // seaMotion.y += rv.x*HLE.moveSpeed*0.01;
@@ -154,8 +151,8 @@ var HLAnim = function(){
     // HL.materials.water.material.uniforms.seaMotion.value = seaMotion;
 
 
-    HL.materials.land.uniforms.advance.value = HLE.advance;
-    HL.materials.land.uniforms.landMotion.value = landMotion;
+    // HL.materials.land.uniforms.advance.value = HLE.acceleration;
+    HL.materials.land.uniforms.landMotion.value = HLE.landMotion;
 
     HL.materials.land.uniforms.noiseFreq.value = HLE.noiseFrequency;
     HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;

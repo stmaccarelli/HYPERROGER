@@ -33,6 +33,8 @@ var HLR = {
   tempNoiseFreq:0,
   tempNoiseFreq2:0,
 
+  // global game status
+  status:0
 }
 
 
@@ -64,9 +66,9 @@ var HLRemote = function(){
     // begin audioreactive stuff
 //    if(!isNaN(HLR.fft1)){
       // compute smooth
-      HLR.smoothFFT1 += (HLR.fft1 - HLR.smoothFFT1)*0.005;
-      HLR.smoothFFT2 += (HLR.fft2 - HLR.smoothFFT2)*0.005;
-      HLR.smoothFFT3 += (HLR.fft3 - HLR.smoothFFT3)*0.005;
+      HLR.smoothFFT1 += (HLR.fft1 - HLR.smoothFFT1)*0.04;
+      HLR.smoothFFT2 += (HLR.fft2 - HLR.smoothFFT2)*0.04;
+      HLR.smoothFFT3 += (HLR.fft3 - HLR.smoothFFT3)*0.04;
       // HLR.smoothFFT4 += (HLR.fft4 - HLR.smoothFFT4)*0.005;
       // HLR.smoothFFT5 += (HLR.fft5 - HLR.smoothFFT5)*0.005;
 
@@ -90,17 +92,7 @@ var HLRemote = function(){
               HLS.startScene(key);
           }
       }
-      //
-      if (k.keyCode == 49) //1
-          HLH.shootGroup('sea', 8, false, false);
-      if (k.keyCode == 50) //2
-          HLH.shootGroup('weird', 0, true, true);
-      if (k.keyCode == 51) //3
-          HLH.shootGroup('space', 50, true, false);
-      if (k.keyCode == 52) //4
-          HLH.startModel(HL.models['whale'],
-          THREE.Math.randInt(-1000, 1000),
-          THREE.Math.randInt(-HLE.WORLD_HEIGHT * 0.01, HLE.WORLD_HEIGHT * 1.1), 2.5, null, 10); //TODO
+
       if (k.keyCode == 53) //5
           HLH.shootGroup(HLS.modelsParams);
 
@@ -114,19 +106,19 @@ var HLRemote = function(){
           HL.cameraCompanion.visible = !HL.cameraCompanion.visible;
 
 
-      if(k.keyCode == 57){ //9
-        HLE.CENTER_PATH=!HLE.CENTER_PATH;
-        HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
-      }
+      // if(k.keyCode == 57){ //9
+      //   HLE.CENTER_PATH=!HLE.CENTER_PATH;
+      //   HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
+      // }
 
       if(k.keyCode == 88){ //x ?
         HLS.logoChange(HUD.textGeometries.mizu);
       }
 
 
-        if(k.key == 'p'){
-          AA.audioPlayPause();
-        }
+        // if(k.key == 'p'){
+        //   AA.filePlayPause();
+        // }
 
         if(k.key == 'm'){
           AA.connectMic();
@@ -134,6 +126,43 @@ var HLRemote = function(){
 
         if(k.key=='f'){
           AA.connectFile();
+        }
+
+        if(k.key==' '){
+          playPause();
+        }
+
+        // lancio modelli
+        if(k.key=='h' || k.key=='H'){
+          HLH.startModel(HL.models['heartbomb'],
+            THREE.Math.randInt(-1000, 1000),
+            THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 4
+          ); //TODO
+        }
+
+        if(k.key=='y' || k.key=='Y'){
+          HLH.shootGroup(['band', 10, 20,true,false, HLE.WORLD_HEIGHT / 3 ] );
+        }
+
+        if(k.key=='p' || k.key=='P'){
+          HLH.startModel(HL.models['whale'],
+            THREE.Math.randInt(-1000, 1000),
+            THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, null, 10
+          ); //TODO
+        }
+
+        if(k.key=='e' || k.key=='E'){
+          HLH.startModel(HL.models['ducky'],
+            THREE.Math.randInt(-1000, 1000),
+            THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 100
+          ); //TODO
+        }
+
+        if(k.key=='r' || k.key=='R'){
+          HLH.startModel(HL.models['airbus'],
+            THREE.Math.randInt(-1000, 1000),
+            THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 40, null, 5
+          ); //TODO
         }
 
       //
@@ -151,15 +180,46 @@ var HLRemote = function(){
       // }
 
   }
-  if(noSocket){
-     window.addEventListener('keydown', keyboardControls);
-   }
 
-  // listen audio events
+
+  // listen keyboard TODO+ check final commands!
+  window.addEventListener('keydown', keyboardControls);
+
+  var visible = function(selector, visible){
+    document.querySelector(selector).style.opacity = visible?1:0;
+    document.querySelector(selector).style.display = visible?'block':'none';
+    console.log('visible: selector: '+selector+' visibile: '+visible);
+  }
+
+  //pause game
+  var playPause = function(){
+    //pause file if playing
+    AA.filePlayPause();
+    //show pause div if paused
+    visible('#paused', AA.fileGetPaused());
+  };
+  // document.addEventListener('mousedown', playPause);
+
   window.addEventListener('HLEload', function(){
-    AA.audioFile.addEventListener('timeupdate', function(){
-      if (AA.audioFile.currentTime > 0) {
-        var value = (100 / AA.audioFile.duration) * AA.audioFile.currentTime;
+    // connect FILE and play file
+    AA.connectFile();
+    // AA.filePlayPause();
+
+    // show end screen when audi oends
+    AA.fileEventListener('ended', function(){
+      // update game status
+      HLR.status = 0;
+      // rewind file trach
+      AA.fileRewind();
+      //show ending screens
+      visible('#ended',true);
+
+    });
+
+    // change progress bar
+    AA.fileEventListener('timeupdate', function(){
+      if (AA.fileGetTime() > 0) {
+        var value = (100 / AA.fileGetDuration()) * AA.fileGetTime();
       }
       document.getElementById('progress').style.width = value + "%";
     });

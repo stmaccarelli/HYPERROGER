@@ -302,9 +302,9 @@ var HLH = function() {
 			if(model.rotations.indexOf('z')!=-1) model.rotateZ(model.speed*0.0005);
 
 			if(model.position.y==HL.sea.position.y){
-				model.rotation.x = Math.cos(HLE.advance*0.003)*0.3 * Math.sin(HLE.advance*0.003);
-				model.rotation.y = Math.sin(HLE.advance*0.003)*0.3 * Math.cos(HLE.advance*0.003);;
-				model.rotation.z = Math.cos(HLE.advance*0.003)*0.3;
+				model.rotation.x = Math.cos(frameCount*0.003)*0.3 * Math.sin(frameCount*0.003);
+				model.rotation.y = Math.sin(frameCount*0.003)*0.3 * Math.cos(frameCount*0.003);;
+				model.rotation.z = Math.cos(frameCount*0.003)*0.3;
 
 			}
 

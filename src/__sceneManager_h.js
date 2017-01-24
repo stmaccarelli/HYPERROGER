@@ -140,7 +140,7 @@ HLS.startScene = function(sceneId) {
     HLH.destroyAllModels();
 
     HL.materials.land.uniforms.buildFreq.value =
-      HLE.advance = HLE.reactiveMoveSpeed = HLE.moveSpeed = 0;
+      HLE.acceleration = HLE.reactiveMoveSpeed = HLE.moveSpeed = 0;
 
 
 
@@ -405,7 +405,7 @@ HLS.scenesAddons.popeye = function(){
 //   b = b + ((b-mouse.rX*0.0005)-b)*0.13;
 //   h = THREE.Math.clamp( h - ((h-mouse.rY*0.05)-h)*0.13, -360, 360);
 //
-//   r = HLE.WORLD_WIDTH* (0.15 - Math.sin(HLE.advance*0.0002)*0.10);
+//   r = HLE.WORLD_WIDTH* (0.15 - Math.sin(HLE.acceleration*0.0002)*0.10);
 //
 //   // if(straight)
 //   //   h = HL.cameraGroup.position.y
@@ -415,23 +415,23 @@ HLS.scenesAddons.popeye = function(){
 //      new THREE.Vector3(
 //       Math.sin(b) * r,
 //       h,
-// //      HL.sea.position.y,//HL.cameraGroup.position.y*2,//(2 - Math.sin(HLE.advance*0.002)*2),
+// //      HL.sea.position.y,//HL.cameraGroup.position.y*2,//(2 - Math.sin(HLE.acceleration*0.002)*2),
 //       Math.cos(b) * r
 //     )
 //     );
-//   // HL.cameraGroup.position.y += Math.sin(HLE.advance*0.002)*.1;
+//   // HL.cameraGroup.position.y += Math.sin(HLE.acceleration*0.002)*.1;
 //
-//     // HL.cameraGroup.rotation.x = -Math.sin(HLE.advance * 0.000062) * Math.PI / 32;
-//     // HL.cameraGroup.rotation.y = Math.PI - Math.cos(HLE.advance * 0.00005) * Math.PI;
-//     // HL.cameraGroup.rotation.z = -Math.sin(HLE.advance * 0.00004) * Math.PI / 32;
+//     // HL.cameraGroup.rotation.x = -Math.sin(HLE.acceleration * 0.000062) * Math.PI / 32;
+//     // HL.cameraGroup.rotation.y = Math.PI - Math.cos(HLE.acceleration * 0.00005) * Math.PI;
+//     // HL.cameraGroup.rotation.z = -Math.sin(HLE.acceleration * 0.00004) * Math.PI / 32;
 //
-//     // HL.cameraGroup.rotation.x += Math.cos(HLR.fft1*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
-//     // HL.cameraGroup.rotation.y += Math.sin(HLR.fft2*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
-//     // HL.cameraGroup.rotation.z += Math.cos(HLR.fft3*0.001*HLE.advance)*0.0005*HLE.moveSpeed;
+//     // HL.cameraGroup.rotation.x += Math.cos(HLR.fft1*0.001*HLE.acceleration)*0.0005*HLE.moveSpeed;
+//     // HL.cameraGroup.rotation.y += Math.sin(HLR.fft2*0.001*HLE.acceleration)*0.0005*HLE.moveSpeed;
+//     // HL.cameraGroup.rotation.z += Math.cos(HLR.fft3*0.001*HLE.acceleration)*0.0005*HLE.moveSpeed;
 //
-//     // HL.cameraCompanion.rotation.x = Math.sin(HLE.advance*0.00062)*Math.PI/64;
-//     // HL.cameraCompanion.rotation.y = -Math.cos(HLE.advance*0.0005)*Math.PI/12;
-//     // HL.cameraCompanion.rotation.z = Math.sin(HLE.advance*0.0004)*Math.PI/64;
+//     // HL.cameraCompanion.rotation.x = Math.sin(HLE.acceleration*0.00062)*Math.PI/64;
+//     // HL.cameraCompanion.rotation.y = -Math.cos(HLE.acceleration*0.0005)*Math.PI/12;
+//     // HL.cameraCompanion.rotation.z = Math.sin(HLE.acceleration*0.0004)*Math.PI/64;
 // }
 
 HLS.randomizeLand = function(){

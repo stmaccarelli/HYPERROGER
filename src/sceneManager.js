@@ -141,7 +141,7 @@ HLS.startScene = function(sceneId) {
     HLH.destroyAllModels();
 
     HL.materials.land.uniforms.buildFreq.value =
-      HLE.advance = HLE.reactiveMoveSpeed = HLE.moveSpeed = 0;
+      HLE.acceleration = HLE.reactiveMoveSpeed = HLE.moveSpeed = 0;
 
 
 
@@ -183,11 +183,14 @@ HLS.scenes.standard = function() {
   if(HLR.fft1>0.97)
     HL.materials.land.uniforms.buildFreq.value += Math.max(0, (HLR.fft1 - 0.97)) * 1.6 * (Math.random()*2-1);
 
-  // // compute move speed
-  HLE.reactiveMoveSpeed = 1 + ( HLR.fft2 + HLR.fft3 * 3 + HLR.fft1) * 0.3 * HLE.BASE_MOVE_SPEED + HLE.BASE_MOVE_SPEED*0.5;
+  // if mobile, compute automated movement compute move speed
+  HLE.reactiveMoveSpeed = HLE.BASE_MOVE_SPEED*0.5 + ( HLR.smoothFFT1 + HLR.smoothFFT2 + HLR.smoothFFT3 * 20) * 0.5 * HLE.BASE_MOVE_SPEED ;
   // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.25;
-  HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isMobile || isVR) ? 0.3 : 1 );
-  HLE.moveSpeed *= 0.96;
+  HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isMobile || isVR) ? 0.3 : 1 ) + HLE.acceleration;
+  // HLE.moveSpeed *= 0.96;
+
+
+
 
   // compute noiseFrequency (used in land for rainbow etc)
   HLR.tempNoiseFreq = 7 - (HLR.fft3) * 3;
@@ -233,30 +236,30 @@ HLS.scenes.standard = function() {
 }
 
 
-HLS.scenesAddons.intro = function(){
-  // cameraCompanion move
-  HL.cameraCompanion.rotation.y = ( Math.sin(frameCount*.0013)*0.252) ;
-  HL.cameraCompanion.rotation.x = ( Math.cos(frameCount*.00125)*0.35) ;
-}
+// HLS.scenesAddons.intro = function(){
+//   // cameraCompanion move
+//   HL.cameraCompanion.rotation.y = ( Math.sin(frameCount*.0013)*0.252) ;
+//   HL.cameraCompanion.rotation.x = ( Math.cos(frameCount*.00125)*0.35) ;
+// }
 
-HLS.initScenes.firefly = function() {
-    HLS.logoChange('cube');
-    HL.cameraCompanion.visible = true;
-}
+// HLS.initScenes.firefly = function() {
+//     HLS.logoChange('cube');
+//     HL.cameraCompanion.visible = true;
+// }
 
-HLS.scenes.firefly = function() {
-    // HLS.raf = window.requestAnimationFrame(HLS.scenes.static);
-    if(isVR) HLS.raf = HL.VREffect.requestAnimationFrame(HLS.scenes.firefly);
-    else HLS.raf = window.requestAnimationFrame(HLS.scenes.firefly);
-    // compute move speed
-    HLE.reactiveMoveSpeed = 1 + HLR.fft1 * HLE.BASE_MOVE_SPEED;
-    HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.015;
-
-    // cameraCompanion move
-    HL.cameraCompanion.rotation.y = ( (frameCount*.0055)*0.252);
-    HL.cameraCompanion.rotation.x = ( (frameCount*.005)*0.25);
-
-}
+// HLS.scenes.firefly = function() {
+//     // HLS.raf = window.requestAnimationFrame(HLS.scenes.static);
+//     if(isVR) HLS.raf = HL.VREffect.requestAnimationFrame(HLS.scenes.firefly);
+//     else HLS.raf = window.requestAnimationFrame(HLS.scenes.firefly);
+//     // compute move speed
+//     HLE.reactiveMoveSpeed = 1 + HLR.fft1 * HLE.BASE_MOVE_SPEED;
+//     HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.015;
+//
+//     // cameraCompanion move
+//     HL.cameraCompanion.rotation.y = ( (frameCount*.0055)*0.252);
+//     HL.cameraCompanion.rotation.x = ( (frameCount*.005)*0.25);
+//
+// }
 
 // scene addons are executed after standard scene
 
@@ -279,7 +282,7 @@ HLS.scenesAddons.interactiveRogerWater = function() {
       HLS.randomizeLand();
       HLH.startModel(HL.models['whale'],
         THREE.Math.randInt(-1000, 1000),
-        THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 2.5, null, 10
+        THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 1.5, null, 10
       ); //TODO
       randomDebounce1=false;
     }
@@ -288,8 +291,9 @@ HLS.scenesAddons.interactiveRogerWater = function() {
   }
 
   if(HLR.fft3>0.3){
+    HLH.shootGroup(['space', 1, 40,true,false, HLE.WORLD_HEIGHT / 3 ] );
     if(randomDebounce2){
-      HLH.shootGroup(['space', 1, 40,true,false, HLE.WORLD_HEIGHT / 3 ] );
+      HLH.shootGroup(['space', 1, 30,true,false, HLE.WORLD_HEIGHT / 3 ] );
       // shootGroup = function(group, scale, speed,rotation,floating, midpoint)
       randomDebounce2 = false;
     }
