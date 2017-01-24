@@ -94,7 +94,7 @@ var HLRemote = function(){
       }
 
       if (k.keyCode == 53) //5
-          HLH.shootGroup(HLS.modelsParams);
+      HLH.shootGroup(['space', 10, 0,true,false, HLE.WORLD_HEIGHT / 3 ] );
 
       if (k.keyCode == 54) //6
           HLS.logoChange('intro');

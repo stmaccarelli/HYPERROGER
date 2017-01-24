@@ -179,11 +179,11 @@ HLS.scenes.standard = function() {
 
   // HLS.raf = window.requestAnimationFrame(HLS.scenes.standard);
 
-  // advance buildFreq
-  if(HLR.fft1>0.97)
-    HL.materials.land.uniforms.buildFreq.value += Math.max(0, (HLR.fft1 - 0.97)) * 1.6 * (Math.random()*2-1);
+  // shake buildFreq
+  // if(HLR.fft1>0.97)
+  //   HL.materials.land.uniforms.buildFreq.value += Math.max(0, (HLR.fft1 - 0.97)) * 1.6 * (Math.random()*2-1);
 
-  // if mobile, compute automated movement compute move speed
+  // compute auto movement  moveSpeed
   HLE.reactiveMoveSpeed = HLE.BASE_MOVE_SPEED*0.5 + ( HLR.smoothFFT1 + HLR.smoothFFT2 + HLR.smoothFFT3 * 20) * 0.5 * HLE.BASE_MOVE_SPEED ;
   // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.25;
   HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isMobile || isVR) ? 0.3 : 1 );

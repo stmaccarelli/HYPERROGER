@@ -289,27 +289,22 @@ var HLH = function() {
 	}
 
 
-	// var rv = new THREE.Euler( 0, 0, 0, 'YXZ' );
-  // // var seaMotion = new THREE.Vector2(0,0);
-	//
-  // function landGLSL(){
-	//
-  //   rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
-  //   // HLE.moveSpeed *= Math.cos(rv.x);
-  //   //HLE.acceleration += HLE.moveSpeed; // advance is a master advance rate for the entire environment
-  //   HL.cameraGroup.position.y = THREE.Math.clamp(HL.cameraGroup.position.y + rv.x * 10*HLE.acceleration, HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT*4);
-	//
-  //   rv.x = Math.sin(rv.y);
-  //   rv.z = Math.cos(rv.y);
-	//
-  //   HLE.landMotion.x += rv.x*(0 + HLE.moveSpeed);
-  //   HLE.landMotion.z += rv.z*(0 + HLE.moveSpeed);
 
-
+	var rv = new THREE.Euler( 0, 0, 0, 'YXZ' );
 
 	function moveModel(model){
-		if(model.position.z >= -HLE.WORLD_WIDTH){
-			model.position.z += model.speed + HLE.moveSpeed;
+
+		rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
+
+		rv.x = Math.sin(rv.y);
+		rv.z = Math.cos(rv.y);
+
+		if(
+			(model.position.x >= -HLE.WORLD_WIDTH) &&
+			(model.position.z >= -HLE.WORLD_WIDTH)
+		){
+			model.position.z += rv.z*(model.speed + HLE.moveSpeed);
+			model.position.x += rv.x*(model.speed + HLE.moveSpeed);
 
 			// if(! model.isParticle && model.position.y!=0)
 			// 	model.position.y = -model.size.y + (model.targetY+model.size.y)
@@ -324,7 +319,6 @@ var HLH = function() {
 				model.rotation.x = Math.cos(frameCount*0.003)*0.3 * Math.sin(frameCount*0.003);
 				model.rotation.y = Math.sin(frameCount*0.003)*0.3 * Math.cos(frameCount*0.003);;
 				model.rotation.z = Math.cos(frameCount*0.003)*0.3;
-
 			}
 
 			// shake cameraGroup when objects approach
@@ -342,8 +336,10 @@ var HLH = function() {
 		HL.camera.rotation.y*=0.98;
 		HL.camera.rotation.z*=0.98;
 
-		if(model.position.z>=HLE.WORLD_WIDTH){
-			//resetModel(model);
+		if(
+			(model.position.x >= HLE.WORLD_WIDTH) ||
+			(model.position.z >= HLE.WORLD_WIDTH)
+		){			//resetModel(model);
 			HL.scene.remove(model);
 			model.material.dispose();
 			model.geometry.dispose();
