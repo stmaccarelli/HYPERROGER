@@ -242,7 +242,7 @@ var HLH = function() {
 		HL.dynamicModelsClones['m'+dynModelsCounter] = model.clone();
 
 
-		var z = -HLE.WORLD_WIDTH;
+		var z = -HLE.WORLD_WIDTH/2;
 		// y === true means we want models attached to landscape
 		if(y === true){
 
@@ -298,13 +298,14 @@ var HLH = function() {
 
 		rv.x = Math.sin(rv.y);
 		rv.z = Math.cos(rv.y);
-
+		
+// TODO: testare logica movimento bidirezionale
 		if(
-			(model.position.x >= -HLE.WORLD_WIDTH) &&
-			(model.position.z >= -HLE.WORLD_WIDTH)
+			// (model.position.x >= -HLE.WORLD_WIDTH/2) &&
+			(model.position.z >= -HLE.WORLD_WIDTH/2)
 		){
-			model.position.z += rv.z*(model.speed + HLE.moveSpeed);
-			model.position.x += rv.x*(model.speed + HLE.moveSpeed);
+			model.position.x += rv.x * (model.speed + HLE.moveSpeed);
+			model.position.z += rv.z * (model.speed + HLE.moveSpeed);
 
 			// if(! model.isParticle && model.position.y!=0)
 			// 	model.position.y = -model.size.y + (model.targetY+model.size.y)
@@ -337,8 +338,9 @@ var HLH = function() {
 		HL.camera.rotation.z*=0.98;
 
 		if(
-			(model.position.x >= HLE.WORLD_WIDTH) ||
-			(model.position.z >= HLE.WORLD_WIDTH)
+			(model.position.x >= HLE.WORLD_WIDTH/2) ||
+			(model.position.x <= -HLE.WORLD_WIDTH/2) ||
+			(model.position.z >= HLE.WORLD_WIDTH/2)
 		){			//resetModel(model);
 			HL.scene.remove(model);
 			model.material.dispose();

@@ -137,7 +137,7 @@ var HLAnim = function(){
     rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
     // HLE.moveSpeed *= Math.cos(rv.x);
     //HLE.acceleration += HLE.moveSpeed; // advance is a master advance rate for the entire environment
-   HL.cameraGroup.position.y = THREE.Math.clamp(HL.cameraGroup.position.y + rv.x * HLE.acceleration, HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT*4);
+   HL.cameraGroup.position.y = THREE.Math.clamp(HL.cameraGroup.position.y + rv.x * HLE.acceleration * 2, HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT*4);
 
     // overwrite rv variable (it was rotation vector) for memory optimization
     rv.x = Math.sin(rv.y);
