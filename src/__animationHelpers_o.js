@@ -351,14 +351,14 @@ var HLH = function() {
 		HL.dynamicModelsClones.length = 0;
 	}
 
-	shootEverything = function(){
+	startAll = function(){
 		HLH.startModel(HL.models[HL.modelsKeys[Math.floor(Math.random()*HL.modelsKeys.length)]],
 		 THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),
 		 THREE.Math.randInt(HLE.WORLD_HEIGHT*0.4,HLE.WORLD_HEIGHT*3),
 		 0, 'xyz');    // shoot all models from a group
 	}
 
-	shootGroup = function(group, scale, speed,rotation,floating, midpoint){
+	startGroup = function(group, scale, speed,rotation,floating, midpoint){
 		if(group.length)
 			var scale=(typeof group[1] === "function")?group[1]():group[1],
 			 speed=group[2],rotation=group[3],floating=group[4], midpoint = group[5] || 0,
@@ -418,8 +418,8 @@ var HLH = function() {
 		startModel: function(a,b,c,d,e,f,i) {startModel(a,b,c,d,e,f,i)},
 		moveModel: function(a,b) {moveModel(a,b)},
 		destroyAllModels:destroyAllModels,
-		shootEverything:shootEverything,
-		shootGroup:function(a,b,c,d){shootGroup(a,b,c,d)},
+		startAll:startAll,
+		startGroup:function(a,b,c,d){startGroup(a,b,c,d)},
 
 	}
 }();

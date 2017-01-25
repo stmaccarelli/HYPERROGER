@@ -72,7 +72,7 @@ var socketVisual = function(){
     socket.on('mxr_push_to_cli_key', function(d){
 
       if (Number(d.msg.a) == 53) //5
-          HLH.shootGroup(HLS.modelsParams);
+          HLH.startGroup(HLS.modelsParams);
         
       if (Number(d.msg.a) == 54) //6
           HLS.logoChange('intro');

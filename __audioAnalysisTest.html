@@ -9,11 +9,48 @@
 
     <script type="text/javascript">
 
-    window.addEventListener('load',
-      function(){
-         AA = new AAMS();
-      }
+    </script>
+
+
+    <script type="text/javascript" src="lib/three.min.js"></script>
+
+    <script type="text/javascript">
+    var actx = new AudioContext();
+    var audio = new Audio();
+    var source;
+
+
+    var loader = new THREE.FileLoader();
+    loader.setResponseType('blob');
+
+    //load a text file a output the result to the console
+    loader.load(
+        // resource URL
+        'assets/audio/rogerwater.mp3',
+
+        // Function when resource is loaded
+        function ( data ) {
+            // output the text to the console
+            // audio.src = URL.createObjectURL(data);
+            // var source = actx.createMediaElementSource(audio);
+            // source.connect(actx.destination);
+            // audio.play();
+
+            AA = new AAMS( data );
+
+        },
+
+        // Function called when download progresses
+        function ( xhr ) {
+            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+        },
+
+        // Function called when download errors
+        function ( xhr ) {
+            console.error( 'An error happened '+ xhr );
+        }
     );
+
 
     </script>
   </body>

@@ -229,18 +229,19 @@ var HLH = function() {
 	// starting rotation vector
 	var srv = new THREE.Euler( 0, 0, 0, 'YXZ' );
 
-	function startModel(model,xPositioning,y,speed,rotations, scale, isParticle, towardsCamera){
+	function startModel(model,xPosition,y,speed,rotations, scale, isParticle, towardsCamera){
+
 		scale = scale || 1;
 		isParticle = isParticle!==undefined?isParticle:false;
 		model = HL.models[model] || model;
-		towardsCamera = towardsCamera || true;
+		towardsCamera = towardsCamera === undefined ? true : towardsCamera;
 
 		if(isParticle) HLE.PARTICLE_MODELS_OUT++;
 		if(HL.dynamicModelsClones.length >= HLE.MAX_MODELS_OUT + HLE.PARTICLE_MODELS_OUT) return
 		dynModelsCounter++;
 
 		speed = speed || 0;
-		var x = xPositioning || 0;
+		var x = xPosition || 0;
 		y = y || 0;
 		rotations = rotations || 'n';
 
@@ -254,8 +255,8 @@ var HLH = function() {
 		// set X and Z position of model
 		var z = -HLE.WORLD_WIDTH/2;
 	  if(towardsCamera){
-			x = Math.sin( srv.y + (xPositioning/(HLE.WORLD_WIDTH)) ) * z;
-			z = Math.cos( srv.y + (xPositioning/(HLE.WORLD_WIDTH)) ) * z;
+			x = Math.sin( srv.y + (xPosition/(HLE.WORLD_WIDTH)) ) * z;
+			z = Math.cos( srv.y + (xPosition/(HLE.WORLD_WIDTH)) ) * z;
 			// set model rotation so it faces camera at start
 			HL.dynamicModelsClones['m'+dynModelsCounter].rotateY( srv.y );
 		}
@@ -302,9 +303,6 @@ var HLH = function() {
 		HL.dynamicModelsClones['m'+dynModelsCounter]['moving'] = true;
 		HL.dynamicModelsClones['m'+dynModelsCounter]['rotations'] = rotations;
 		HL.dynamicModelsClones['m'+dynModelsCounter]['towardsCamera'] = towardsCamera;
-
-
-
 	}
 
 
@@ -312,6 +310,7 @@ var HLH = function() {
 	var rv = new THREE.Euler( 0, 0, 0, 'YXZ' );
 
 	function moveModel(model){
+
 
 		rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
 
@@ -336,12 +335,12 @@ var HLH = function() {
 				model.position.z += model.srv.z * model.speed;
 			}
 			else {
-				model.position.z += model.speed + HLE.moveSpeed;
+				model.position.z += model.speed;// + HLE.moveSpeed;
 			}
 
-			if(model.rotations.indexOf('x')!=-1) model.rotateX(model.speed*0.0005);
-			if(model.rotations.indexOf('y')!=-1) model.rotateY(model.speed*0.0005);
-			if(model.rotations.indexOf('z')!=-1) model.rotateZ(model.speed*0.0005);
+			if(model.rotations.indexOf('x')!=-1) model.rotateX(0.1+model.speed*0.0005);
+			if(model.rotations.indexOf('y')!=-1) model.rotateY(0.1+model.speed*0.0005);
+			if(model.rotations.indexOf('z')!=-1) model.rotateZ(0.1+model.speed*0.0005);
 
 			if(model.position.y==HL.sea.position.y){
 				model.rotation.x = Math.cos(frameCount*0.003)*0.3 * Math.sin(frameCount*0.003);
@@ -354,10 +353,12 @@ var HLH = function() {
 			//normalized
 			model.dist = Math.min(model.dist/(HLE.WORLD_WIDTH),1);
 			model.dist =  Math.pow(1-model.dist,10);
+			// TODO: shake camera according to world moving / camera moving vs model moving.
 			model.dist = model.speed * model.dist * 0.0010 * Math.min(model.size.length()*0.003,1);
-			HL.camera.rotation.x +=(THREE.Math.randFloat(-1,1) * model.dist );
-			HL.camera.rotation.y +=(THREE.Math.randFloat(-1,1) * model.dist );
-			HL.camera.rotation.z +=(THREE.Math.randFloat(-1,1) * model.dist );
+
+			HL.camera.rotation.x += (THREE.Math.randFloat(-1,1) * model.dist );
+			HL.camera.rotation.y += (THREE.Math.randFloat(-1,1) * model.dist );
+			HL.camera.rotation.z += (THREE.Math.randFloat(-1,1) * model.dist );
 		}
 
 		HL.camera.rotation.x*=0.98;
@@ -396,26 +397,45 @@ var HLH = function() {
 		HL.dynamicModelsClones.length = 0;
 	}
 
-	shootEverything = function(){
+	startAll = function(){
 		HLH.startModel(HL.models[HL.modelsKeys[Math.floor(Math.random()*HL.modelsKeys.length)]],
 		 THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),
 		 THREE.Math.randInt(HLE.WORLD_HEIGHT*0.4,HLE.WORLD_HEIGHT*3),
 		 0, 'xyz');    // shoot all models from a group
 	}
 
-	shootGroup = function(group, scale, speed,rotation,floating, midpoint){
-		if(group.length)
+	function optionalParameter (value, defaultValue) {
+    return value !== undefined ? value : defaultValue;
+  };
+
+	// startModel( model, xPosition, y, speed, rotations, scale, isParticle, towardsCamera)
+
+	// TODO cambiare parametri funzioni di avvio modelli con struct
+	// startGroup = function( params ){
+	// 	params = params || {};
+
+	startGroup = function(group, scale, speed, rotations, floating, midpoint, towardsCamera){
+
+		if(group.length){
 			var scale=(typeof group[1] === "function")?group[1]():group[1],
-			 speed=group[2],rotation=group[3],floating=group[4], midpoint = group[5] || 0,
-			 group = group[0];
+			 speed=group[2], rotations=group[3], floating=group[4], midpoint = group[5] || 0,
+			 towardsCamera = group[6], group = group[0];
+		 }
 
 		// if(midpoint===undefined) midpoint=0;
 		group = (typeof group==="object")?group:HL.mGroups[group];
 
-		HLH.startModel(HL.models[ group[Math.floor(Math.random()*group.length)]],
+		// startModel( model, xPosition, y, speed, rotations, scale, isParticle, towardsCamera)
+		HLH.startModel(
+			HL.models[ group[Math.floor(Math.random()*group.length)]],
 		 THREE.Math.randInt(-HLE.WORLD_WIDTH/4,HLE.WORLD_WIDTH/4),
 		 floating?midpoint:THREE.Math.randInt(-HLE.WORLD_HEIGHT*0.01,HLE.WORLD_HEIGHT*1.1)+midpoint,
-		 speed, (rotation?'xyz':null), scale );    // shoot all models from a group
+		 speed,
+		 (rotations?'xyz':null),
+		 scale,
+		 false,
+		 towardsCamera
+			);    // shoot all models from a group
 	}
 
 
@@ -460,10 +480,10 @@ var HLH = function() {
 		// },
 		resetModel: function(a) {resetModel(a)},
 		resetAllModels: resetAllModels,
-		startModel: function(a,b,c,d,e,f,i) {startModel(a,b,c,d,e,f,i)},
+		startModel: function(a,b,c,d,e,f,g,h) {startModel(a,b,c,d,e,f,g,h)},
+		startGroup:function(a,b,c,d,e,f,g,h){startGroup(a,b,c,d,e,f,g,h)},
 		moveModel: function(a,b) {moveModel(a,b)},
 		destroyAllModels:destroyAllModels,
-		shootEverything:shootEverything,
-		shootGroup:function(a,b,c,d){shootGroup(a,b,c,d)}
+		startAll:startAll,
 	}
 }();

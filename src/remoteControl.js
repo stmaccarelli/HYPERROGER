@@ -72,6 +72,7 @@ var HLRemote = function(){
 
 
   function keyboardControls(k) {
+
       // create keys for scenes
       var keyCodeIndex = 65 // 'a' on keyboard is the first key for scenes
       for (var key in HLSP) {
@@ -81,7 +82,7 @@ var HLRemote = function(){
       }
 
       if (k.keyCode == 53) //5
-      HLH.shootGroup(['space', 1, 1,true,false, HLE.WORLD_HEIGHT / 3 ] );
+      HLH.startGroup(['space', 1, 1,true,false, HLE.WORLD_HEIGHT / 3 ] );
 
       // if (k.keyCode == 54) //6
       //     HLS.logoChange('intro');
@@ -116,6 +117,8 @@ var HLRemote = function(){
         }
 
         if(k.key==' '){
+          k.preventDefault();
+
           playPause();
         }
 
@@ -126,9 +129,10 @@ var HLRemote = function(){
             THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 4
           ); //TODO
         }
+        // startGroup = function(group, scale, speed, rotations, floating, midpoint, towardsCamera){
 
         if(k.key=='y' || k.key=='Y'){
-          HLH.shootGroup(['band', 10, 20,true,false, HLE.WORLD_HEIGHT / 3 ] );
+          HLH.startGroup(['band', 20, 0,'y',true, 0, true ] );
         }
 
         if(k.key=='p' || k.key=='P'){
@@ -207,6 +211,15 @@ var HLRemote = function(){
         (100 / itemsTotal) * itemsLoaded + '%';
     };
 
+    window.addEventListener('audioProgress', function(e){
+        document.getElementById('audioLoading').style.width =
+          (100 / e.detail.total) * e.detail.loaded + '%';
+    });
+
+    // HL.audioLoader.manager.onProgress = function( url, itemsLoaded, itemsTotal ){
+    //   document.getElementById('audioLoading').style.width =
+    //     (100 / itemsTotal) * itemsLoaded + '%';
+    // };
 
   }
 
@@ -215,7 +228,7 @@ var HLRemote = function(){
     AA.connectFile();
     // AA.filePlayPause();
     // hide intro screen
-    visible('#intro',false);
+    // visible('#intro',false);
 
     // show ending screen when audio ends
     AA.fileEventListener('ended', function(){
@@ -240,6 +253,7 @@ var HLRemote = function(){
 
   return{
     updateHLParams:function(a,b,c){return updateHLParams(a,b,c)},
-    screensInit:screensInit
+    screensInit:screensInit,
+    visible:function(a,b){return visible(a,b)},
   }
 }();

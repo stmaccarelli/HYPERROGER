@@ -13,12 +13,13 @@
       <li class="desktop">
         <a href="system.html?fpc">DESKTOP</a>
       </li>
-      <li class="desktop">
+      <!-- <li class="desktop">
         <a href="system.html?webvr">HTC VIVE</a>
-      </li>
+      </li> -->
       <li class="mobile">
         <a href="system.html">MOBILE/TABLET</a>
       </li>
+
       <li class="mobile">
         <a href="system.html?cardboard">CARDBOARD</a>
       </li>
@@ -31,8 +32,8 @@
       var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
       function display(selector, visible){
         var elements = document.querySelectorAll(selector);
-        for(var e of elements)
-          e.style.display = visible?'auto':'none';
+        for(var i =0; i<elements.length; i++)
+          elements[i].style.display = visible?'auto':'none';
       }
 
       if(isMobile)

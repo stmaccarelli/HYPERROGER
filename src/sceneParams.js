@@ -262,7 +262,7 @@ set squareness to 0 for a flat land
 //          displayText: 'CHAPTER ELEVEN, ROGER WATER<br>PROTECT WATER',
 //          speed: 10,
 //          modelsParams: [null, 0, 0, true, true, 0],
-//          // HLH.shootGroup(group, scale, speed,rotation,floating, midpoint){
+//          // HLH.startGroup(group, scale, speed,rotation,floating, midpoint){
 //
 //          tiles: 80,
 //          repeatUV: 1,

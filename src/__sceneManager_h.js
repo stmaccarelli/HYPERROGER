@@ -203,7 +203,7 @@ HLS.scenes.standard = function() {
     // HLE.landZeroPoint = - HLR.fft3 * HLE.landHeight * .5;
 
     // if (HLR.fft3 > 0.97)
-    //     HLH.shootGroup(HLS.modelsParams);
+    //     HLH.startGroup(HLS.modelsParams);
 
     // thunderbolts
     HLS.lumi = HLR.fft3;
@@ -327,7 +327,7 @@ HLS.scenesAddons.hyperocean = function() {
   if(HLR.fft1>0.975){
 
 // if (k.keyCode == 53) //5
-//     HLH.shootGroup(HLS.modelsParams);
+//     HLH.startGroup(HLS.modelsParams);
 
     if(randomLandDebounce){
       HLS.randomizeLand();
@@ -336,15 +336,15 @@ HLS.scenesAddons.hyperocean = function() {
         THREE.Math.randInt(-1000, 1000),
         THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 2.5, null, 10
       ); //TODO
-  //    HLH.shootGroup(HLS.modelsParams);
+  //    HLH.startGroup(HLS.modelsParams);
 
       randomLandDebounce=false;
     }
   } else randomLandDebounce = true;
 
   if(HLR.fft3>0.3)
-    HLH.shootGroup(['space', 1, 40,true,false, HLE.WORLD_HEIGHT / 3 ] );
-  //  shootGroup = function(group, scale, speed,rotation,floating, midpoint){
+    HLH.startGroup(['space', 1, 40,true,false, HLE.WORLD_HEIGHT / 3 ] );
+  //  startGroup = function(group, scale, speed,rotation,floating, midpoint){
 
 
   HLS.lumi = Math.min(HLR.fft3*2+HLR.fft1*0.2,1);
@@ -518,7 +518,7 @@ console.log('HLS.MIDIcontrols init');
 
     if (ev.data[2]>0 && ev.data[1]==0) //5
       if(HLS.modelsParams !== null)
-        HLH.shootGroup(HLS.modelsParams);
+        HLH.startGroup(HLS.modelsParams);
 
     if (ev.data[0]==156 && ev.data[2]>0 && ev.data[1]==1) { //9
       HLE.CENTER_PATH=!HLE.CENTER_PATH;
@@ -541,17 +541,17 @@ HLS.KeyboardControls = function(k) {
     }
     //
     if (k.keyCode == 49) //1
-        HLH.shootGroup('sea', 8, false, false);
+        HLH.startGroup('sea', 8, false, false);
     if (k.keyCode == 50) //2
-        HLH.shootGroup('weird', 0, true, true);
+        HLH.startGroup('weird', 0, true, true);
     if (k.keyCode == 51) //3
-        HLH.shootGroup('space', 50, true, false);
+        HLH.startGroup('space', 50, true, false);
     if (k.keyCode == 52) //4
         HLH.startModel(HL.models['whale'],
         THREE.Math.randInt(-1000, 1000),
         THREE.Math.randInt(-HLE.WORLD_HEIGHT * 0.01, HLE.WORLD_HEIGHT * 1.1), 2.5, null, 10); //TODO
     if (k.keyCode == 53) //5
-        HLH.shootGroup(HLS.modelsParams);
+        HLH.startGroup(HLS.modelsParams);
 
     if (k.keyCode == 54) //6
         HLS.logoChange('intro');

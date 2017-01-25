@@ -135,7 +135,7 @@ var HLAnim = function(){
   function landGLSL(){
 
     if(isFPC)
-      HL.controls.lookSpeed = 0.02 + HLE.moveSpeed * 0.001;
+      HL.controls.lookSpeed = 0.045 + HLE.moveSpeed * 0.001;
 
 
     rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');

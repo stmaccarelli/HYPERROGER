@@ -89,9 +89,10 @@ var HLC = {
 
 // HL scene library
 var HL = {
-  audioFilePath: "assets/audio/rogerwater3.mp3",
+  audio: "assets/audio/rogerwater3.mp3",
   modelsLoadingManager:null,
   texturesLoadingManager:null,
+  audioLoader:null,
 
   modelsLoaded:0,
   totalModels:0,
@@ -130,9 +131,9 @@ var HL = {
     models:null,
   },
   textures: {
-    sky1:"assets/img/skybox2/_sky_1.jpg",
+    // sky1:"assets/img/skybox2/_sky_1.jpg",
     sky2:"assets/img/skybox2/skydome3.jpg",
-    sky3:"assets/img/skybox2/sky_invert.jpg",
+    // sky3:"assets/img/skybox2/sky_invert.jpg",
     sky4:"assets/img/skybox2/skymap_photo9.jpg",
     // sky5:"assets/img/skybox2/TychoSkymapII.t4_08192x04096.jpg",
     sky5:"assets/img/skybox2/nasa2.jpg",
@@ -312,7 +313,7 @@ var HLEnvironment = function(){
         HL.materials[k].map = HL.textures[k]!==undefined?HL.textures[k]:null;
       }
       HL.materials.sky.uniforms.map1.value = HL.textures.sky2;
-      HL.materials.sky.uniforms.map2.value = HL.textures.sky3;
+      HL.materials.sky.uniforms.map2.value = HL.textures.sky4;
       HL.materials.sky.uniforms.map3.value = HL.textures.sky5;
 
       HL.materials.water.material.uniforms.normalSampler.value = HL.textures.water;
@@ -370,6 +371,36 @@ var HLEnvironment = function(){
 
     };
 
+    // audio preload
+    HL.audioLoader = new THREE.FileLoader();
+    HL.audioLoader.setResponseType('blob');
+
+    HL.audioLoader.load(
+        // resource URL
+        HL.audio,
+
+        // Function when resource is loaded
+        function ( data ) {
+            HL.audio = data;
+            console.log('Audio Loading complete!\ndispatching HLAssetLoaded event');
+            window.dispatchEvent(HLAssetLoadEvent);
+
+        },
+
+        // Function called when download progresses
+        function ( xhr ) {
+          var audioProgressEvent = new CustomEvent('audioProgress', {'detail':xhr});
+          window.dispatchEvent( audioProgressEvent );
+          //  console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+        },
+
+        // Function called when download errors
+        function ( xhr ) {
+            console.error( 'Audio: An error happened '+ xhr );
+        }
+    );
+
+
 
     //console.time('HL environment');
 
@@ -387,7 +418,7 @@ var HLEnvironment = function(){
     window.addEventListener('HLAssetLoaded',assetLoadListener);
   }
 
-  var assetTotal = 2, assetLoaded=0;
+  var assetTotal = 3, assetLoaded=0;
 
   function assetLoadListener(){
     if(++assetLoaded == assetTotal){
@@ -549,7 +580,7 @@ var HLEnvironment = function(){
     }
 
 
-    // EFFECT AND CONTROLS
+    // EFFECTS
     if(isCardboard){
       HL.camera.fov = 50;//70;
       HL.camera.focus = HLE.WORLD_WIDTH*0.5;
@@ -564,6 +595,7 @@ var HLEnvironment = function(){
       HL.VREffect.setSize(window.innerWidth, window.innerHeight);
     }
 
+    // CONTROLS
     if(isVR){
       HL.controls = new THREE.VRControls( HL.cameraGroup );
     }
@@ -581,12 +613,6 @@ var HLEnvironment = function(){
       HL.controls.verticalMin = Math.PI/4;
       HL.controls.verticalMax = Math.PI/1.5;
 
-    }
-    else if(isNoiseCam){
-      HL.controls = new THREE.NoiseCameraMove(HL.cameraGroup);
-    }
-    else if(isOrbit){
-      HL.controls = new THREE.OrbitControls(HL.cameraGroup);
     }
 
     //console.timeEnd('environment');

@@ -184,7 +184,7 @@ HLS.scenes.standard = function() {
   //   HL.materials.land.uniforms.buildFreq.value += Math.max(0, (HLR.fft1 - 0.97)) * 1.6 * (Math.random()*2-1);
 
   // compute auto movement  moveSpeed
-  HLE.reactiveMoveSpeed = HLE.BASE_MOVE_SPEED*0.5 + ( HLR.smoothFFT1 + HLR.smoothFFT2 + HLR.smoothFFT3 * 20) * 0.5 * HLE.BASE_MOVE_SPEED ;
+  HLE.reactiveMoveSpeed = HLE.BASE_MOVE_SPEED*0.15 + ( HLR.smoothFFT1 + HLR.smoothFFT2 + HLR.smoothFFT3 * 20) * 0.3 * HLE.BASE_MOVE_SPEED ;
   // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.25;
   HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isMobile || isVR) ? 0.3 : 1 );
   HLE.moveSpeed += HLE.MAX_MOVE_SPEED * HLE.acceleration;
@@ -282,7 +282,7 @@ HLS.scenesAddons.interactiveRogerWater = function() {
       HLS.randomizeLand();
       HLH.startModel(HL.models['whale'],
         THREE.Math.randInt(-1000, 1000),
-        THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 1.5, null, 10
+        THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, null, 20, false, false
       ); //TODO
       randomDebounce1=false;
     }
@@ -291,12 +291,12 @@ HLS.scenesAddons.interactiveRogerWater = function() {
   }
 
   if(HLR.fft3>0.3){
-    HLH.shootGroup(['space', 1, 40,true,false, HLE.WORLD_HEIGHT / 3 ] );
-    if(randomDebounce2){
-      HLH.shootGroup(['space', 1, 30,true,false, HLE.WORLD_HEIGHT / 3 ] );
-      // shootGroup = function(group, scale, speed,rotation,floating, midpoint)
-      randomDebounce2 = false;
-    }
+    // HLH.startGroup(['space', 1, 40, true, false, HLE.WORLD_HEIGHT / 3, false ] );
+    // if(randomDebounce2){
+    //   HLH.startGroup(['space', 1, 30,true,false, HLE.WORLD_HEIGHT / 3, false ] );
+    //   // startGroup = function(group, scale, speed,rotation,floating, midpoint)
+    //   randomDebounce2 = false;
+    // }
   } else {
     randomDebounce2 = true;
   }

@@ -12,21 +12,70 @@
 
 	<div class="screens" id="intro">
 		<p style="font-size:50px; ">INIT DIV</p>
-   loading progress then auto hide and play audio
-	 <div style="position:relative;">
+		loading progress then enable "START BUTTON", that hides screen and plays audio.
+
+	<pre style="font-size:30px;">
+
+	COMMANDS:
+		H, Y, P, E, R = launch objects
+		mouse = move
+		mouse button click / hold = accelerate
+		spacebar = pause
+	</pre>
+
+		 <div style="position:relative;height:100px;">
 		 <div class="loadingbars" id="texturesLoading"></div>
 		 <div class="loadingbars" id="modelsLoading"></div>
+		 <div class="loadingbars" id="audioLoading"></div>
 	 </div>
+
+	 <button type="button" name="startButton" id="startButton" style="width:100px;height:40px;font-size:30px;">START</button>
+	 <script type="text/javascript">
+	 var startButton = document.getElementById('startButton');
+	 var screenIntro = document.getElementById('intro');
+		startButton.disabled=true;
+	 	window.addEventListener('HLEload', function(){
+			startButton.disabled = false;
+		});
+		startButton.onclick = (function(){
+			screenIntro.style.display = 'none';
+			AA.connectFile();
+			AA.filePlayPause();
+		 });
+
+	 </script>
 </div>
 
 	<div class="screens" id="paused">
 		<p style="font-size:50px; ">PAUSED DIV</p>
-		resume, back to home
+		resume,
+		<a href="javascript:window.history.back();">back to home</a>
+
+		<pre style="font-size:30px;">
+
+		COMMANDS:
+			H, Y, P, E, R = launch objects
+			mouse = move
+			mouse button click / hold = accelerate
+			spacebar = pause
+		</pre>
+
 	</div>
 	<div class="screens" id="ended">
 		<p style="font-size:50px; ">ENDING DIV</p>
 		choose play again or mic
+
+		<script type="text/javascript">
+		var screenEnded = document.getElementById('ended');
+		</script>
+
+
+		<a href="#" onclick="AA.audioFile.currentTime=0; AA.filePlayPause(); screenEnded.style.display = 'none'; ">PLAY AGAIN</a>
+		<!-- <a href="#" onclick="try{ AA.connectMic(); screenEnded.style.display = 'none'; } catch(e){console.error(e);}; ">ENABLE MIC</a> -->
+
 	</div>
+
+
 	<div class="" id="progress"></div>
 
 
@@ -40,7 +89,7 @@
 	<script src="lib/dev/dat.gui.min.js"></script>
 	<script src="src/DEV_GUI.js"></script>
 	<!-- AUDIO ANALYSIS -->
-	<script src="lib/audioAnalyzerMultiSource.js"></script>
+	<script src="lib/AudioAnalyzerMultiSource.js"></script>
 
 	<!-- THREE.JS EFFECTS AND CONTROLS-->
 	<script src="lib/effects/webVR.js"></script>

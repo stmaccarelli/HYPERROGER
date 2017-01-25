@@ -14,7 +14,7 @@ canvas{
 }
 
 div{
-	cursor: pointer;
+	/*cursor: pointer;*/
 }
 
 div#progress{
@@ -60,4 +60,8 @@ div#progress{
 #modelsLoading{
 	top:8px;
 	background-color: #00f;
+}
+#audioLoading{
+	top:16px;
+	background-color: #f00;
 }
