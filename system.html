@@ -9,21 +9,29 @@
 	<link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body style="height:100%">
-<div id="loadingDiv" style="position:absolute;bottom:0;left:0;width:100%;min-height:100%;z-index:99; background: transparent;">
- <p style="font-size:50px; ">LOADING 8MB</p>
-	expected time: 10sec on a 4G network
+
+	<div class="screens" id="intro">
+		<p style="font-size:50px; ">INIT DIV</p>
+   loading progress then auto hide and play audio
+	 <div style="position:relative;">
+		 <div class="loadingbars" id="texturesLoading"></div>
+		 <div class="loadingbars" id="modelsLoading"></div>
+	 </div>
 </div>
 
-<div class="screens" id="init">INIT DIV <br> loading progress then auto hide and play audio
-</div>
-<div class="screens" id="paused">PAUSED DIV <br> resume, back to home
-</div>
-<div class="screens" id="ended">ENDED DIV <br> choose play again or mic
-</div>
-<div class="" id="progress"></div>
+	<div class="screens" id="paused">
+		<p style="font-size:50px; ">PAUSED DIV</p>
+		resume, back to home
+	</div>
+	<div class="screens" id="ended">
+		<p style="font-size:50px; ">ENDING DIV</p>
+		choose play again or mic
+	</div>
+	<div class="" id="progress"></div>
+
 
 	<!--  THREE.JS -->
-	<script src="lib/three.js"></script>
+	<script src="lib/three.min.js"></script>
 
 	<!-- UTILS  -->
   <script src="lib/NoSleep.min.js"></script>

@@ -1,3 +1,7 @@
+*{
+	outline: none;
+	margin:0;padding:0;
+}
 body {
 	margin: 0;
 	background-color: #000;
@@ -18,18 +22,42 @@ div#progress{
 	top:0;left:0;margin:0;padding:0;
 	z-index:1000;
 	height:4px;
+	width:1%;
 	background-color: #fff;
 }
 
 .screens{
+	position:absolute;
 	z-index:999;
 	width:100%;
 	height:100%;
 	display:none;
 	opacity:0;
-	position:absolute;
 	top:0;left:0;
 	margin:0; padding:0;
 
+	color: #fff;
 	background-color: rgba(0, 0, 0, 0.7);
+}
+
+.screens#intro{
+	display:block;
+	opacity:1;
+}
+
+.loadingbars{
+	position:absolute;
+	left:0;margin:0;padding:0;
+	z-index:1001;
+	height:8px;
+	width:1%;
+}
+
+#texturesLoading{
+	top:0;
+	background-color: #0f0;
+}
+#modelsLoading{
+	top:8px;
+	background-color: #00f;
 }

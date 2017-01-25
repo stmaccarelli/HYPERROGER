@@ -69,10 +69,10 @@
     // console.log('mouse var enabled');
 
     function onResized() {
+      HL.renderer.setSize( window.innerWidth, window.innerHeight );
 
       HL.camera.aspect = window.innerWidth / window.innerHeight;
       HL.camera.updateProjectionMatrix();
-      HL.renderer.setSize( window.innerWidth, window.innerHeight );
       if(isCardboard)
         HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
 
@@ -111,6 +111,8 @@
     frameCount++;
     millis = (frameCount/60);
     delta = HL.clock.getDelta();
+
+    // if (frameCount>10) return;
 
     // TODO: improve detection. take account of browser cpu time, models shooting time, etc
     //CPU GPU POWER DETECTION BY CLOCK
@@ -211,9 +213,10 @@
 
   function loadRoutine(){
     mainInit();
-
     // init HyperLand Environment
     HLEnvironment.init();
+    // init remoteControl screens manager
+    HLRemote.screensInit();
 
     // run is called when it's all loaded
     window.addEventListener('HLEload', function(){
@@ -223,7 +226,7 @@
         // if(!noSocket) socketVisual.init();
 
         //remove loadingDiv
-        document.body.removeChild(loadingDiv);
+        // document.body.removeChild(loadingDiv);
 
 
         //let's rock
@@ -282,7 +285,7 @@
   // else  window.addEventListener('click',randomizeLand);
 
 
-  var loadingDiv = document.getElementById('loadingDiv');
+  // var loadingDiv = document.getElementById('loadingDiv');
   //
   // if (typeof console.log != 'undefined'){
   //   console.olog = console.log;

@@ -326,7 +326,8 @@ var tilen = Math.round(Math.random()*24);
  // HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
 
 var landPat = Math.random();
-HL.land.material.uniforms.map.value = HL.textures[( landPat>.5?'land':'pattern' )+
+// HL.land.material.uniforms.map.value = HL.textures[( landPat>.5?'land':'pattern' )+
+HL.land.material.uniforms.map.value = HL.textures['land'+
   ( 1+Math.round( Math.random()*4 ) )];// null;//HL.textures[Math.round(Math.random()*10)];
 HL.land.material.uniforms.map2.value = HL.textures[( landPat>.5?'land'+( 1+Math.round( Math.random()*4 ) ):null )];// null;//HL.textures[Math.round(Math.random()*10)];
 
@@ -343,7 +344,7 @@ HL.land.material.uniforms.map2.value = HL.textures[( landPat>.5?'land'+( 1+Math.
 
 
  // HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
- HLC.land.setRGB( Math.random(), Math.random(), Math.random() );
+ HLC.land.setRGB( Math.random()*0.6, Math.random()*0.6, Math.random()*0.6 );
  HLC.horizon.setRGB( Math.random()*0.6, Math.random()*0.6, Math.random()*0.6 );
  HLC.tempHorizon.set(HLC.horizon);
 

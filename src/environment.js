@@ -424,7 +424,7 @@ var HLEnvironment = function(){
     if(HLE.FOG && !isWire){
       HL.scene.fog = new THREE.Fog(
         HLC.horizon,
-        HLE.WORLD_WIDTH * 0.3,
+        HLE.WORLD_WIDTH * 0.1,
         HLE.WORLD_WIDTH * 0.475
       );
       // HL.scene.fog = new THREE.FogExp2();
@@ -574,7 +574,7 @@ var HLEnvironment = function(){
       HL.controls = new THREE.FirstPersonControls(HL.cameraGroup, HL.renderer.domElement);
       HL.controls.invertY = true;
       HL.controls.movementSpeed = 0;
-      HL.controls.lookSpeed = 0.1045;
+      HL.controls.lookSpeed = 0.045;
       HL.controls.dragToLook = false;
 
       HL.controls.constrainVertical = true;
@@ -717,8 +717,7 @@ var HLEnvironment = function(){
       repeatUV: new THREE.Vector2(1,1),
       centerPath : HLE.CENTER_PATH,
       side:THREE.DoubleSide,
-      heightMap: HL.textures.land,
-
+      shading:THREE.FlatShading
    });
    HL.materials.land.uniforms.worldColor.value = HLC.horizon;
    HL.materials.land.uniforms.skyColor.value = HLC.horizon;
