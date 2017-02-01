@@ -338,9 +338,9 @@ var HLH = function() {
 				model.position.z += model.speed;// + HLE.moveSpeed;
 			}
 
-			if(model.rotations.indexOf('x')!=-1) model.rotateX(0.1+model.speed*0.0005);
-			if(model.rotations.indexOf('y')!=-1) model.rotateY(0.1+model.speed*0.0005);
-			if(model.rotations.indexOf('z')!=-1) model.rotateZ(0.1+model.speed*0.0005);
+			if(model.rotations.indexOf('x')!=-1) model.rotateX(model.speed*0.0005);
+			if(model.rotations.indexOf('y')!=-1) model.rotateY(model.speed*0.0005);
+			if(model.rotations.indexOf('z')!=-1) model.rotateZ(model.speed*0.0005);
 
 			if(model.position.y==HL.sea.position.y){
 				model.rotation.x = Math.cos(frameCount*0.003)*0.3 * Math.sin(frameCount*0.003);
@@ -354,7 +354,7 @@ var HLH = function() {
 			model.dist = Math.min(model.dist/(HLE.WORLD_WIDTH),1);
 			model.dist =  Math.pow(1-model.dist,10);
 			// TODO: shake camera according to world moving / camera moving vs model moving.
-			model.dist = model.speed * model.dist * 0.0010 * Math.min(model.size.length()*0.003,1);
+			model.dist = model.speed * model.dist * 0.0010 * Math.min(model.size.length()*0.0003,0.001);
 
 			HL.camera.rotation.x += (THREE.Math.randFloat(-1,1) * model.dist );
 			HL.camera.rotation.y += (THREE.Math.randFloat(-1,1) * model.dist );

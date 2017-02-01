@@ -186,7 +186,7 @@ HLS.scenes.standard = function() {
   // compute auto movement  moveSpeed
   HLE.reactiveMoveSpeed = HLE.BASE_MOVE_SPEED*0.15 + ( HLR.smoothFFT1 + HLR.smoothFFT2 + HLR.smoothFFT3 * 20) * 0.3 * HLE.BASE_MOVE_SPEED ;
   // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.25;
-  HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isMobile || isVR) ? 0.3 : 1 );
+  HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isCardboard || isVR) ? 0.4 : 1 );
   HLE.moveSpeed += HLE.MAX_MOVE_SPEED * HLE.acceleration;
 
 
@@ -210,7 +210,7 @@ HLS.scenes.standard = function() {
 
 
   // thunderbolts
-  HLS.lumi = HLR.fft3;
+  HLS.lumi = HLR.fft3*5;
   HLC.horizon.setRGB(
       HLC.tempHorizon.r + HLS.lumi,
       HLC.tempHorizon.g + HLS.lumi,
@@ -277,7 +277,7 @@ var randomDebounce1 = true, randomDebounce2 = true;
 
 HLS.scenesAddons.interactiveRogerWater = function() {
 
-  if(HLR.fft1>0.975){
+  if(HLR.fft1>0.99){
     if(randomDebounce1){
       HLS.randomizeLand();
       HLH.startModel(HL.models['whale'],
@@ -291,17 +291,17 @@ HLS.scenesAddons.interactiveRogerWater = function() {
   }
 
   if(HLR.fft3>0.3){
-    // HLH.startGroup(['space', 1, 40, true, false, HLE.WORLD_HEIGHT / 3, false ] );
-    // if(randomDebounce2){
-    //   HLH.startGroup(['space', 1, 30,true,false, HLE.WORLD_HEIGHT / 3, false ] );
-    //   // startGroup = function(group, scale, speed,rotation,floating, midpoint)
-    //   randomDebounce2 = false;
-    // }
+    HLH.startGroup(['space', 1, 40, true, false, HLE.WORLD_HEIGHT / 3, false ] );
+    if(randomDebounce2){
+      HLH.startGroup(['space', 1, 30,true,false, HLE.WORLD_HEIGHT / 3, false ] );
+      // startGroup = function(group, scale, speed,rotation,floating, midpoint)
+      randomDebounce2 = false;
+    }
   } else {
     randomDebounce2 = true;
   }
 
-  HLS.lumi = Math.min(HLR.fft3*2+HLR.fft1*0.2,1);
+  HLS.lumi = Math.min(HLR.fft3+HLR.fft1*0.2,1);
   HLC.horizon.setRGB(
       HLC.tempHorizon.r + HLS.lumi,
       HLC.tempHorizon.g + HLS.lumi,
@@ -314,28 +314,28 @@ HLS.scenesAddons.interactiveRogerWater = function() {
 
 HLS.randomizeLand = function(){
 
-var tilen = Math.round(Math.random()*24);
+var tilen = Math.round(Math.random()*8);
+
 
  // HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tilen,tilen);
  // HL.land.geometry.rotateX(-Math.PI / 2);
  // HL.land.material.uniforms.worldTiles.value = tilen;
- HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen , tilen  );
+ HL.land.material.uniforms.repeatUV.value = new THREE.Vector2( Math.random()*8 , Math.random()*8  );
 
  HL.land.material.uniforms.bFactor.value = Math.random()*1.25;
  HL.land.material.uniforms.cFactor.value = Math.random()*.70;
- // HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
+ HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
 
 var landPat = Math.random();
 // HL.land.material.uniforms.map.value = HL.textures[( landPat>.5?'land':'pattern' )+
-HL.land.material.uniforms.map.value = HL.textures['land'+
-  ( 1+Math.round( Math.random()*4 ) )];// null;//HL.textures[Math.round(Math.random()*10)];
+HL.land.material.uniforms.map.value = HL.textures[ landPat>.5?'land'+ ( 1+Math.round( Math.random()*4 ) ): 'white' ];// null;//HL.textures[Math.round(Math.random()*10)];
 HL.land.material.uniforms.map2.value = HL.textures[( landPat>.5?'land'+( 1+Math.round( Math.random()*4 ) ):null )];// null;//HL.textures[Math.round(Math.random()*10)];
 
  // HL.land.material.uniforms.map.value = HL.textures['land'+(1+Math.round(Math.random()*4))];
  // HL.land.material.uniforms.map2.value = HL.textures['land'+(1+Math.round(Math.random()*4))];
 
  HL.land.material.uniforms.natural.value = 0.5 + Math.random()*0.5;
- HL.land.material.uniforms.rainbow.value = Math.random();
+ HL.land.material.uniforms.rainbow.value = Math.random()*0.5;
  HL.land.material.uniforms.squareness.value = Math.random()*0.05;
 
  // HL.sky.material.map = HL.textures['sky'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
@@ -344,9 +344,15 @@ HL.land.material.uniforms.map2.value = HL.textures[( landPat>.5?'land'+( 1+Math.
 
 
  // HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
- HLC.land.setRGB( Math.random()*0.6, Math.random()*0.6, Math.random()*0.6 );
+ //HLC.land.setRGB( Math.random()*0.6, Math.random()*0.6, Math.random()*0.6 );
  HLC.horizon.setRGB( Math.random()*0.6, Math.random()*0.6, Math.random()*0.6 );
  HLC.tempHorizon.set(HLC.horizon);
+
+ HLC.land.setHSL( Math.random(), 0.6, 0.9 );
+
+ HL.sea.material.uniforms.color.value.setRGB( Math.random(), Math.random(), Math.random() );
+ // HLC.sea.setRGB( Math.random(), Math.random(), Math.random() );
+
 
 };
 

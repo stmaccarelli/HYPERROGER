@@ -1,6 +1,5 @@
 
   // global vars
-  var isMobile = !!('ontouchstart' in window); //true for android or ios, false for MS surface
   var isCardboard = window.location.href.indexOf('?cardboard')>-1;
   var isVR = window.location.href.indexOf('?webvr')>-1;
   var isDebug = window.location.href.indexOf('?debug')>-1;
@@ -14,8 +13,31 @@
   var mappingCorrectAspect = window.location.href.indexOf('?mappedB')>-1;
   var staticAudio = window.location.href.indexOf('?staticaudio')>-1;
 
+  function getMobileOperatingSystem() {
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
+        // Windows Phone must come first because its UA also contains "Android"
+      if (/windows phone/i.test(userAgent)) {
+          return "Windows Phone";
+      }
 
+      if (/android/i.test(userAgent)) {
+          return "Android";
+      }
+
+      // iOS detection from: http://stackoverflow.com/a/9039885/177710
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+          return "iOS";
+      }
+
+      return "unknown";
+  }
+
+  var mobileOS = getMobileOperatingSystem();
+  var isMobile = false;
+  if( mobileOS.indexOf("unknown") == -1 ){
+    isMobile = true;
+  }
 
   var noSocket = window.location.href.indexOf('?nosocket')>-1;
   var partSocket = window.location.href.indexOf('?partsocket')>-1;
@@ -97,15 +119,16 @@
 
     // AUDIO ANALYSIS
     // if((noSocket || partSocket) && !isMobile && !staticAudio) { AA = AudioAnalyzer(); AA.initGetUserMedia();}
+
     AA = new AAMS( HL.audio );
 
   }
 
 
 
-  function run() {
-    if(isVR) HL.VREffect.requestAnimationFrame(run);
-    else window.requestAnimationFrame(run);
+  function mainLoop() {
+    if(isVR) HLMain.rafID = HL.VREffect.requestAnimationFrame(mainLoop);
+    else HLMain.rafID = window.requestAnimationFrame(mainLoop);
 
     // Environment and animation
     frameCount++;
@@ -130,7 +153,12 @@
     // so we should not call it here.
 
     // if(staticAudio){
-      HLRemote.updateHLParams(AA.getFreq(2), AA.getFreq(0), AA.getFreq(200));//), AA.getFreq(64), AA.getFreq(200));
+
+    if(isMobile && mobileOS.indexOf('Android')==-1 )
+      HLRemote.updateHLParams(0.5,0.4,0.3);// .2+Math.random()*.4, .2+Math.random()*.4, .2+Math.random()*.4 );//), AA.getFreq(64), AA.getFreq(200));
+    else
+     HLRemote.updateHLParams( AA.getFreq(2), AA.getFreq(0), AA.getFreq(200) );//), AA.getFreq(64), AA.getFreq(200));
+
     // }
     // else if( (noSocket || partSocket) && !isMobile)
     //   HLRemote.updateHLParams(AA.getFreq(2/*2*/)*0.975, AA.getFreq(0), AA.getFreq(200/*400*/));//), AA.getFreq(64), AA.getFreq(200));
@@ -218,7 +246,7 @@
     // init remoteControl screens manager
     HLRemote.screensInit();
 
-    // run is called when it's all loaded
+    // mainLoop is called when it's all loaded
     window.addEventListener('HLEload', function(){
         console.log("event HLEload received");
         // DEV
@@ -230,7 +258,7 @@
 
 
         //let's rock
-        run();
+        HLMain.play();
       }
     );
 
@@ -244,78 +272,23 @@
   window.addEventListener('load',loadRoutine,false);
 
 
+  HLMain = {};
+  HLMain.rafID = null;
 
+  // PAUSE ANALYSIS
+  HLMain.pause = function(){
+    HL.clock.stop();
+    window.cancelAnimationFrame(HLMain.rafID);
+    HLMain.rafID = null;
+  }
 
-
-
-//
-//
-//
-//
-// // TODO: REMOVE! JUST FOR DEV PURPOSES
-//   function randomizeLand(){
-//
-//   var tilen = Math.round(Math.random()*HLE.WORLD_TILES);
-//
-//    HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tilen,tilen);
-//    HL.land.geometry.rotateX(-Math.PI / 2);
-//    HL.land.material.uniforms.worldTiles.value = tilen;
-//    HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(tilen * Math.random(), tilen * Math.random() );
-//
-//    HL.land.material.uniforms.bFactor.value = Math.random();
-//    HL.land.material.uniforms.cFactor.value = Math.random()*0.3;
-//    HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
-//    HL.land.material.uniforms.map.value = HL.textures[(Math.random()>.5?'land':'pattern')+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];
-//    HL.land.material.uniforms.natural.value = Math.random();
-//    HL.land.material.uniforms.rainbow.value = Math.random();
-//    HL.land.material.uniforms.squareness.value = Math.random()*0.25;
-//
-//
-//    HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
-//     HLC.horizon.setRGB(Math.random()/2,Math.random()/2,Math.random()/2);
-//
-//   };
-
-
-
-
-
-  //TODO remove, just DEV features
-  //if(isMobile)  window.addEventListener('touchstart',randomizeLand);
-  // else  window.addEventListener('click',randomizeLand);
-
-
-  // var loadingDiv = document.getElementById('loadingDiv');
-  //
-  // if (typeof console.log != 'undefined'){
-  //   console.olog = console.log;
-  //   console.oTimeEnd = console.timeEnd;
-  //   }
-  // else{
-  //     console.olog = function() {};
-  //   }
-  //
-  // console.log = function(message) {
-  //     console.olog(message);
-  //     loadingDiv.innerHTML += ('<p>' + message + '</p>');
-  // };
-  //
-  // console.timeEnd = function(message) {
-  //     console.oTimeEnd(message);
-  //     loadingDiv.innerHTML += ('<p>' + message +'</p>');
-  // };
-  // console.error = console.debug = console.info = console.log
-
-
-
-
-
-
-
-
-
-
-
+  // start analysis
+  HLMain.play = function(){
+    if(HLMain.rafID===null) {
+      HL.clock.start();
+     mainLoop();
+    }
+  }
 
 
 

@@ -74,15 +74,15 @@ var HLC = {
   land: new THREE.Color(0x116611),
   sea: new THREE.Color(0x001112),
 
-  underHorizon: new THREE.Color(.0, .02, .02),
-  underLand: new THREE.Color(.1, .9, .9),
-  underSea: new THREE.Color(.1, .9, .9),
+  // underHorizon: new THREE.Color(.0, .02, .02),
+  // underLand: new THREE.Color(.1, .9, .9),
+  // underSea: new THREE.Color(.1, .9, .9),
 
   flora: new THREE.Color(1,1,0),
   fauna: new THREE.Color(1,0,0),
   clouds: new THREE.Color(1,1,1),
 
-  gWhite: new THREE.Color(0xffffff),
+  // gWhite: new THREE.Color(0xffffff),
   UI: new THREE.Color(0xff0011)
 }
 
@@ -94,10 +94,10 @@ var HL = {
   texturesLoadingManager:null,
   audioLoader:null,
 
-  modelsLoaded:0,
-  totalModels:0,
-  texturesLoaded:0,
-  totalTextures:0,
+  // modelsLoaded:0,
+  // totalModels:0,
+  // texturesLoaded:0,
+  // totalTextures:0,
 
   scene:null,
   renderer:null,
@@ -131,13 +131,9 @@ var HL = {
     models:null,
   },
   textures: {
-    // sky1:"assets/img/skybox2/_sky_1.jpg",
-    sky2:"assets/img/skybox2/skydome3.jpg",
-    // sky3:"assets/img/skybox2/sky_invert.jpg",
-    sky4:"assets/img/skybox2/skymap_photo9.jpg",
-    // sky5:"assets/img/skybox2/TychoSkymapII.t4_08192x04096.jpg",
-    sky5:"assets/img/skybox2/nasa2.jpg",
-    // sky5:"assets/img/skybox2/sky_stars_2.jpg",
+    sky1:"assets/img/skybox2/10b.jpg",
+    sky2:"assets/img/skybox2/11b.jpg",
+    sky3:"assets/img/skybox2/12b.jpg",
 
     land:"assets/img/white2x2.gif",
     sea:"assets/img/white2x2.gif",
@@ -165,6 +161,10 @@ var HL = {
     land3:"assets/img/land/land_tex_3.jpg",
     land4:"assets/img/land/land_tex_4.jpg",
     land5:"assets/img/land/land_tex_5.jpg",
+
+    tomat:"assets/img/land/land_tex_1.jpg",
+    ottino:"assets/img/land/land_tex_1.jpg",
+
 
     white:"assets/img/white2x2.gif",
   },
@@ -307,14 +307,14 @@ var HLEnvironment = function(){
 
     HL.texturesLoadingManager.onLoad = function ( ) {
 
-    	console.log( 'Loading complete!');
+    	console.log( 'Textures loading complete!');
       // assign textures to materials
       for(var k in HL.models){
         HL.materials[k].map = HL.textures[k]!==undefined?HL.textures[k]:null;
       }
-      HL.materials.sky.uniforms.map1.value = HL.textures.sky2;
-      HL.materials.sky.uniforms.map2.value = HL.textures.sky4;
-      HL.materials.sky.uniforms.map3.value = HL.textures.sky5;
+      HL.materials.sky.uniforms.map1.value = HL.textures.sky1;
+      HL.materials.sky.uniforms.map2.value = HL.textures.sky2;
+      HL.materials.sky.uniforms.map3.value = HL.textures.sky3;
 
       HL.materials.water.material.uniforms.normalSampler.value = HL.textures.water;
 
@@ -375,15 +375,16 @@ var HLEnvironment = function(){
     HL.audioLoader = new THREE.FileLoader();
     HL.audioLoader.setResponseType('blob');
 
+    HL.preloadDebounce = true;
     HL.audioLoader.load(
         // resource URL
         HL.audio,
 
         // Function when resource is loaded
         function ( data ) {
-            HL.audio = data;
-            console.log('Audio Loading complete!\ndispatching HLAssetLoaded event');
-            window.dispatchEvent(HLAssetLoadEvent);
+            // HL.audio = data;
+            // console.log('Audio Loading complete!\ndispatching HLAssetLoaded event');
+            // window.dispatchEvent(HLAssetLoadEvent);
 
         },
 
@@ -391,6 +392,13 @@ var HLEnvironment = function(){
         function ( xhr ) {
           var audioProgressEvent = new CustomEvent('audioProgress', {'detail':xhr});
           window.dispatchEvent( audioProgressEvent );
+
+         //  attempt launching system when audio is 50% buffered
+          if( xhr.loaded = xhr.total * 0.5 && HL.preloadDebounce){
+            console.log('Audio Loading 50%\nattempti to dispatch HLAssetLoaded event');
+            window.dispatchEvent(HLAssetLoadEvent);
+            HL.preloadDebounce = null;
+          }
           //  console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
         },
 
@@ -400,6 +408,31 @@ var HLEnvironment = function(){
         }
     );
 
+    // var a = new Audio( HL.audio );
+    // a.preload = "auto";
+    // audioPreload = function(){
+    //   a.load();
+    //   document.getElementById('preloadButton').removeEventListener('click',audioPreload);
+    // };
+    // document.getElementById('preloadButton').addEventListener('click',audioPreload);
+    // document.getElementById('preloadButton').click();
+    //
+    // a.addEventListener('progress', function(e){
+    //   console.log('progress');
+    //   var audioProgressEvent = new CustomEvent('audioProgress', {'detail':e});
+    //   window.dispatchEvent( audioProgressEvent );
+    // });
+    //
+    // a.addEventListener('canplaythrough', function(){
+    //   var fxhr = {}
+    //   fxhr.loaded = 100;
+    //   fxhr.total = 100;
+    //   var audioProgressEvent = new CustomEvent('audioProgress', {'detail':fxhr});
+    //   window.dispatchEvent( audioProgressEvent );
+    //
+    //   console.log('Audio Loading complete!\ndispatching HLAssetLoaded event');
+    //   window.dispatchEvent(HLAssetLoadEvent);
+    // });
 
 
     //console.time('HL environment');
@@ -455,7 +488,7 @@ var HLEnvironment = function(){
     if(HLE.FOG && !isWire){
       HL.scene.fog = new THREE.Fog(
         HLC.horizon,
-        HLE.WORLD_WIDTH * 0.1,
+        HLE.WORLD_WIDTH * 0.35,
         HLE.WORLD_WIDTH * 0.475
       );
       // HL.scene.fog = new THREE.FogExp2();
@@ -471,7 +504,7 @@ var HLEnvironment = function(){
     }
     else
       HL.camera = new THREE.PerspectiveCamera(
-        50,
+        40,
         (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE),
         0.5,
         3000000
@@ -807,18 +840,18 @@ var HLEnvironment = function(){
   		// Create the water effect
   		HL.materials.water = new THREE.Water(HL.renderer, HL.camera, HL.scene, {
   			textureWidth: isCardboard?200:512 ,
-  			textureHeight: isCardboard?200:512,
+  			textureHeight: isCardboard?200:512 ,
   			// waterNormals: HL.textures.water,
-        noiseScale: .4,
-        distortionScale: 170,
+        noiseScale: .5,
+        distortionScale: 130,
   			// sunDirection: HL.lights.sun.position.normalize(),
-        sunDirection: new THREE.Vector3(0,100, -1000).normalize(),
+        sunDirection: new THREE.Vector3(0,10, 1000).normalize(),
   		  color: HLC.sea,
-        opacity: 0.85,
+        opacity: 0.90,
   			// betaVersion: 1,
         fog: true,
         side: THREE.DoubleSide,
-        blur:false,
+        blur: true,
         wireframe:isWire,
         wireframeLinewidth:2,
   		});

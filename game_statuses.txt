@@ -1,0 +1,32 @@
+GAME STATUSES
+-1 TITLE (index.html)
+  game title, credits, external links
+  checks for browser compatibility.
+  if browser does not comply basic specs, show a text and a link to chrome eventually.
+
+0 LOADING
+  shows game instructions and loading bars ( animated in remoteControl.js )
+  activate START button as soon as assets load ( currently animated in system.html, but needs to move in remoteControl.js )
+    START puts game in status 1
+
+1 GAME RUNNING
+  rendering ON, updates ON, audio analysis ON (in main.js)
+  listens for game controls ( including PAUSE and SCREENSHOT )
+
+2 PAUSE
+  show pause screen
+  pause playing audio (ONLY IF audio source = FILE)
+  pause analyzing audio (ONLY IF audio source = FILE)
+  pause rendering / updates in main.js (controllers, etc maybe analyzer too)
+
+  can be activated    ONLY IF GAME_STATUS = 1
+  can be deactivated  ONLY IF GAME_STATUS = 2
+  it means whilt game is in PAUSE status, system just listens for UNPAUSE and SCREENSHOT keys
+
+3 AUDIO ENDED
+  show end screen
+  restart game
+    put audio back to start
+    put game in status 1
+  activate mic (AA.connectMic())
+    only if AA.gumSupported==true

@@ -40,7 +40,28 @@ div#progress{
 	background-color: rgba(0, 0, 0, 0.7);
 }
 
-.screens#intro{
+#mobileControls{
+	position:absolute;
+	z-index:998;
+	width:100%;
+	height:100%;
+	top:0;left:0;
+	margin:0; padding:0;
+
+	color: #fff;
+	background-color: transparent;
+}
+
+.mobileControlButton{
+	width: 15vh;
+	height: 15vh;
+	margin: 2vh;
+	padding:0;
+	background-color: white;
+	color: black;
+}
+
+.screens#loading{
 	display:block;
 	opacity:1;
 }

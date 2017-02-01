@@ -10,7 +10,19 @@
 </head>
 <body style="height:100%">
 
-	<div class="screens" id="intro">
+	<div id="mobileControls" class="mobile">
+		<div class="mobileControlButton" id="mX">X</div>
+		<div class="mobileControlButton" id="mP">P</div>
+		<div class="mobileControlButton" id="mS">S</div>
+		<!-- <div class="mobileControlButton" id="buttonP">P</div>
+		<div class="mobileControlButton" id="buttonE">E</div>
+		<div class="mobileControlButton" id="buttonR">R</div> -->
+
+		<div class="mobileControlButton" id="buttonAccel">ACCEL</div>
+
+	</div>
+
+	<div class="screens" id="loading">
 		<p style="font-size:50px; ">INIT DIV</p>
 		loading progress then enable "START BUTTON", that hides screen and plays audio.
 
@@ -29,27 +41,16 @@
 		 <div class="loadingbars" id="audioLoading"></div>
 	 </div>
 
-	 <button type="button" name="startButton" id="startButton" style="width:100px;height:40px;font-size:30px;">START</button>
-	 <script type="text/javascript">
-	 var startButton = document.getElementById('startButton');
-	 var screenIntro = document.getElementById('intro');
-		startButton.disabled=true;
-	 	window.addEventListener('HLEload', function(){
-			startButton.disabled = false;
-		});
-		startButton.onclick = (function(){
-			screenIntro.style.display = 'none';
-			AA.connectFile();
-			AA.filePlayPause();
-		 });
+	 <button type="button" name="preloadButton" id="preloadButton" style="display:none;">START</button>
 
-	 </script>
+	 <button type="button" disabled name="startButton" id="startButton" style="width:100px;height:40px;font-size:30px;">START</button>
 </div>
 
 	<div class="screens" id="paused">
 		<p style="font-size:50px; ">PAUSED DIV</p>
 		resume,
 		<a href="javascript:window.history.back();">back to home</a>
+		<div class="mobile mobileControlButton" id="mP2">RESUME</div>
 
 		<pre style="font-size:30px;">
 
@@ -127,7 +128,47 @@
 
 	<!-- <audio id="rogerwater" src="assets/audio/rogerwater2.mp3" controls></audio> -->
 
+	<script type="text/javascript">
+		/*
+			HIDE UNNEEDED OPTIONS
+		*/
+		function getMobileOperatingSystem() {
+			var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
+					// Windows Phone must come first because its UA also contains "Android"
+				if (/windows phone/i.test(userAgent)) {
+						return "Windows Phone";
+				}
+
+				if (/android/i.test(userAgent)) {
+						return "Android";
+				}
+
+				// iOS detection from: http://stackoverflow.com/a/9039885/177710
+				if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+						return "iOS";
+				}
+
+				return "unknown";
+		}
+
+		var mobileOS = getMobileOperatingSystem();
+		var isMobile = false;
+		if( mobileOS.indexOf("unknown") == -1 ){
+			isMobile = true;
+		}
+
+		function display(selector, visible){
+			var elements = document.querySelectorAll(selector);
+			for(var i =0; i<elements.length; i++)
+				elements[i].style.display = visible?'auto':'none';
+		}
+
+		if(isMobile)
+			display('.desktop', false);
+		else
+			display('.mobile', false);
+	</script>
 
 	<script>
 	  // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
