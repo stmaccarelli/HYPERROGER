@@ -354,7 +354,7 @@ var HLH = function() {
 			model.dist = Math.min(model.dist/(HLE.WORLD_WIDTH),1);
 			model.dist =  Math.pow(1-model.dist,10);
 			// TODO: shake camera according to world moving / camera moving vs model moving.
-			model.dist = model.speed * model.dist * 0.0010 * Math.min(model.size.length()*0.0003,0.001);
+			model.dist = model.speed * model.dist * 0.05 * Math.min( model.size.length()*0.0003,0.001);
 
 			HL.camera.rotation.x += (THREE.Math.randFloat(-1,1) * model.dist );
 			HL.camera.rotation.y += (THREE.Math.randFloat(-1,1) * model.dist );

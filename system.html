@@ -1,96 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<title>ROGER WATER</title>
 	<meta charset="utf-8">
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="mobile-web-app-capable" content="yes">
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	<link href="css/style.css" rel="stylesheet" type="text/css">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>ROGER WATER, A JOURNEY INTO HYPERLAND</title>
+
+	<!-- For IE 10 and below -->
+	<link rel="icon" href="assets/social/generator/favicon.ico" type="image/x-icon" />
+	<link rel="apple-touch-icon" sizes="57x57" href="assets/social/generator/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="assets/social/generator/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="assets/social/generator/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="assets/social/generator/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="assets/social/generator/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="assets/social/generator/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="assets/social/generator/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="assets/social/generator/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="assets/social/generator/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="assets/social/generator/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="assets/social/generator/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="assets/social/generator/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="assets/social/generator/favicon-16x16.png">
+	<link rel="manifest" href="assets/social/generator/manifest.json">
+	<meta name="msapplication-TileColor" content="#000000">
+	<meta name="msapplication-TileImage" content="assets/social/generator/ms-icon-144x144.png">
+	<meta name="theme-color" content="#000000">
+
+
+	<!-- <meta property="fb:app_id" content="206117059857234">
+	<meta property="og:url" content="https://rogerwater.hyland.xyz/index.html">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="ROGER WATER, A JOURNEY INTO HYPERLAND">
+	<meta property="og:image" content="https://rogerwater.hyland.xyz/assets/social/fb-preview-cover.jpg">
+	<meta property="og:description" content="Web-based VR experience set in the generative worlds of HYPERLAND, an infinite flyover on surreal audioreactive landscapes.">
+	<meta property="og:site_name" content="ROGER WATER">
+	<meta property="og:locale" content="en_US">
+	<meta property="article:author" content="Stefano Maccarelli"> -->
+
+	<!-- Facebook: https://developers.facebook.com/docs/sharing/webmasters#markup -->
+	<!-- Open Graph: http://ogp.me/ -->
+
+
+	<!-- Disable automatic detection and formatting of possible phone numbers -->
+	<meta name="format-detection" content="telephone=no">
+
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600" rel="stylesheet">
+	<link href="assets/css/normalize.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/style.css" rel="stylesheet" type="text/css">
+
 </head>
+
 <body style="height:100%">
 
 	<div id="mobileControls" class="mobile">
-		<div class="mobileControlButton" id="mX">X</div>
-		<div class="mobileControlButton" id="mP">P</div>
-		<div class="mobileControlButton" id="mS">S</div>
-		<!-- <div class="mobileControlButton" id="buttonP">P</div>
-		<div class="mobileControlButton" id="buttonE">E</div>
-		<div class="mobileControlButton" id="buttonR">R</div> -->
 
-		<div class="mobileControlButton" id="buttonAccel">ACCEL</div>
+		<div class="leftControls valign landscape">
+			<div>
+				<div class="mobileControlButton" id="mX">X</div>
+				<div class="mobileControlButton" id="mS">S</div>
+			</div>
+		</div>
+
+		<div class="rightControls valign landscape">
+			<div>
+				<div class="mobileControlButton" id="buttonAccel">A</div>
+				<div class="mobileControlButton" id="mP">P</div>
+			</div>
+		</div>
+
+		<div class="portrait">
+			ORIENT YOUR DEVICE IN LANDSCAPE FOR CONTROLS
+		</div>
 
 	</div>
 
 	<div class="screens" id="loading">
-		<p style="font-size:50px; ">INIT DIV</p>
-		loading progress then enable "START BUTTON", that hides screen and plays audio.
+		<div class="container">
+			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+			<div class="subcontainer">
 
-	<pre style="font-size:30px;">
+				<div style="position:relative;height:100px;">
+					<div class="loadingbars" id="audioLoading"></div>
+					<div class="loadingbars" id="texturesLoading"></div>
+					<div class="loadingbars" id="modelsLoading"></div>
+				</div>
 
-	COMMANDS:
-		H, Y, P, E, R = launch objects
-		mouse = move
-		mouse button click / hold = accelerate
-		spacebar = pause
-	</pre>
+				<img class="desktop" src="assets/frontend/controls-desktop.svg" alt="ROGER WATER, DESKTOP CONTROLS" style="width:75%; margin:0 auto;">
 
-		 <div style="position:relative;height:100px;">
-		 <div class="loadingbars" id="texturesLoading"></div>
-		 <div class="loadingbars" id="modelsLoading"></div>
-		 <div class="loadingbars" id="audioLoading"></div>
-	 </div>
+				<button type="button" name="preloadButton" id="preloadButton" style="display:none;">START</button>
+				<button type="button" disabled name="startButton" id="startButton" style="width:100px;height:40px;font-size:30px;">START</button>
 
-	 <button type="button" name="preloadButton" id="preloadButton" style="display:none;">START</button>
+			</div>
+		</div>
+	</div>
 
-	 <button type="button" disabled name="startButton" id="startButton" style="width:100px;height:40px;font-size:30px;">START</button>
-</div>
 
 	<div class="screens" id="paused">
-		<p style="font-size:50px; ">PAUSED DIV</p>
-		resume,
-		<a href="javascript:window.history.back();">back to home</a>
-		<div class="mobile mobileControlButton" id="mP2">RESUME</div>
+		<div class="container">
+			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+			<div class="subcontainer">
+				<h2>JOURNEY PAUSED</h2>
+				<a href="javascript:window.history.back();">BACK HOME</a>
+				<div class="mobile mobileControlButton resume" id="mP2">RESUME</div>
 
-		<pre style="font-size:30px;">
+				<img class="desktop" src="assets/frontend/controls-desktop.svg" alt="ROGER WATER, DESKTOP CONTROLS" style="width:75%; margin:0 auto;">
 
-		COMMANDS:
-			H, Y, P, E, R = launch objects
-			mouse = move
-			mouse button click / hold = accelerate
-			spacebar = pause
-		</pre>
-
+			</div>
+		</div>
 	</div>
+
 	<div class="screens" id="ended">
-		<p style="font-size:50px; ">ENDING DIV</p>
-		choose play again or mic
+		<div class="container">
+			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+			<div class="subcontainer">
+				<h2>THIS IS THE END.<br>NOW YOU CAN
+					<a href="#" onclick="AA.audioFile.currentTime=0; AA.filePlayPause(); HLRemote.updateStatus(1);">RESTART THE EXPERIENCE</a>
+					OR <a href="#">ENABLE YOUR MIC</a>
+					FOR A ENDLESS TRIP.</h2>
 
-		<script type="text/javascript">
-		var screenEnded = document.getElementById('ended');
-		</script>
-
-
-		<a href="#" onclick="AA.audioFile.currentTime=0; AA.filePlayPause(); screenEnded.style.display = 'none'; ">PLAY AGAIN</a>
-		<!-- <a href="#" onclick="try{ AA.connectMic(); screenEnded.style.display = 'none'; } catch(e){console.error(e);}; ">ENABLE MIC</a> -->
-
+			</div>
+		</div>
 	</div>
 
+	<div class="" id="audioProgressBar"></div>
 
-	<div class="" id="progress"></div>
 
+	<!-- <div class="portrait">
+		<div class="container">
+			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+			<div class="subcontainer">
+				<h2>PLEASE ORIENT YOUR SCREEN IN LANDSCAPE MODE</h2>
+				<a href="javascript:window.history.back();">OR BACK HOME</a>
+			</div>
+	</div> -->
+
+	</main>
 
 	<!--  THREE.JS -->
 	<script src="lib/three.min.js"></script>
 
 	<!-- UTILS  -->
-  <script src="lib/NoSleep.min.js"></script>
-  <script src="lib/NoScroll.js"></script>
+	<script src="lib/NoSleep.min.js"></script>
+	<script src="lib/NoScroll.js"></script>
 	<!-- DAT GUI + helper -->
 	<script src="lib/dev/dat.gui.min.js"></script>
 	<script src="src/DEV_GUI.js"></script>
 	<!-- AUDIO ANALYSIS -->
 	<script src="lib/AudioAnalyzerMultiSource.js"></script>
+	<script src="assets/audio/kicks.js"></script>
 
 	<!-- THREE.JS EFFECTS AND CONTROLS-->
 	<script src="lib/effects/webVR.js"></script>
@@ -118,9 +182,9 @@
 	<script src="src/main.js"></script>
 
 	<script src="src/sceneParams.js"></script>
-  <script src="src/environment.js"></script>
+	<script src="src/environment.js"></script>
 	<script src="src/animationHelpers.js"></script>
-  <script src="src/animation.js"></script>
+	<script src="src/animation.js"></script>
 	<script src="src/remoteControl.js"></script>
 	<script src="src/hud.js"></script>
 	<script src="src/sceneManager.js"></script>
@@ -130,55 +194,74 @@
 
 	<script type="text/javascript">
 		/*
-			HIDE UNNEEDED OPTIONS
-		*/
+							HIDE UNNEEDED OPTIONS
+						*/
 		function getMobileOperatingSystem() {
 			var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-					// Windows Phone must come first because its UA also contains "Android"
-				if (/windows phone/i.test(userAgent)) {
-						return "Windows Phone";
-				}
+			// Windows Phone must come first because its UA also contains "Android"
+			if (/windows phone/i.test(userAgent)) {
+				return "Windows Phone";
+			}
 
-				if (/android/i.test(userAgent)) {
-						return "Android";
-				}
+			if (/android/i.test(userAgent)) {
+				return "Android";
+			}
 
-				// iOS detection from: http://stackoverflow.com/a/9039885/177710
-				if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-						return "iOS";
-				}
+			// iOS detection from: http://stackoverflow.com/a/9039885/177710
+			if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+				return "iOS";
+			}
 
-				return "unknown";
+			return "unknown";
 		}
 
 		var mobileOS = getMobileOperatingSystem();
 		var isMobile = false;
-		if( mobileOS.indexOf("unknown") == -1 ){
+		if (mobileOS.indexOf("unknown") == -1) {
 			isMobile = true;
 		}
 
-		function display(selector, visible){
+		function display(selector, visible) {
 			var elements = document.querySelectorAll(selector);
-			for(var i =0; i<elements.length; i++)
-				elements[i].style.display = visible?'auto':'none';
+			for (var i = 0; i < elements.length; i++)
+				elements[i].style.display = visible ? 'inherit' : 'none';
 		}
 
-		if(isMobile)
+		if(isCardboard){
 			display('.desktop', false);
-		else
 			display('.mobile', false);
+			display('.cardboard', true);
+		}
+		else if(isMobile){
+			display('.desktop', false);
+			display('.mobile', true);
+			display('.cardboard', false);
+		}
+		else{
+			display('.desktop', true);
+			display('.mobile', false);
+			display('.cardboard', false);
+		}
+
+
+			// DISABLE SPACEBAR SCROLL
+			window.addEventListener('keydown', function(e) {
+				if(e.keyCode == 32 && e.target == document.body) {
+					e.preventDefault();
+				}
+			});
 	</script>
 
 	<script>
-	  // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  // })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+		// (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		// (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		// m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		// })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 		//
-	  // ga('create', 'UA-88767926-1', 'auto');
-	  // ga('send', 'pageview');
-
+		// ga('create', 'UA-88767926-1', 'auto');
+		// ga('send', 'pageview');
 	</script>
 </body>
+
 </html>

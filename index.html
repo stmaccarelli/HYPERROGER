@@ -2,28 +2,91 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>ROGER WATER, A JOURNEY INTO HYPERLAND</title>
+
+    <!-- For IE 10 and below -->
+    <link rel="icon" href="assets/social/generator/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/social/generator/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/social/generator/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/social/generator/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/social/generator/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/social/generator/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/social/generator/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/social/generator/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/social/generator/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/social/generator/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="assets/social/generator/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/social/generator/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/social/generator/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/social/generator/favicon-16x16.png">
+    <link rel="manifest" href="assets/social/generator/manifest.json">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="assets/social/generator/ms-icon-144x144.png">
+    <meta name="theme-color" content="#000000">
+
+
+    <!-- <meta property="fb:app_id" content="206117059857234">
+    <meta property="og:url" content="https://rogerwater.hyland.xyz/index.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ROGER WATER, A JOURNEY INTO HYPERLAND">
+    <meta property="og:image" content="https://rogerwater.hyland.xyz/assets/social/fb-preview-cover.jpg">
+    <meta property="og:description" content="Web-based VR experience set in the generative worlds of HYPERLAND, an infinite flyover on surreal audioreactive landscapes.">
+    <meta property="og:site_name" content="ROGER WATER">
+    <meta property="og:locale" content="en_US">
+    <meta property="article:author" content="Stefano Maccarelli"> -->
+
+    <!-- Facebook: https://developers.facebook.com/docs/sharing/webmasters#markup -->
+    <!-- Open Graph: http://ogp.me/ -->
+
+
+    <!-- Disable automatic detection and formatting of possible phone numbers -->
+    <meta name="format-detection" content="telephone=no">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600" rel="stylesheet">
+    <link href="assets/css/normalize.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+
   </head>
+
   <body>
     <script src="lib/Detector.js"></script>
-    <h1>ROGER WATER</h1>
-    <h2>A REAL TIME AUDIOREACTIVE VIRTUAL REALITY EXPERIENCE</h2>
 
-    <ul class="action">
-      <li class="desktop">
-        <a href="system.html?fpc">DESKTOP</a>
-      </li>
-      <!-- <li class="desktop">
-        <a href="system.html?webvr">HTC VIVE</a>
-      </li> -->
-      <li class="mobile">
-        <a href="system.html">MOBILE/TABLET</a>
-      </li>
+    <main class="container">
 
-      <li class="mobile">
-        <a href="system.html?cardboard">CARDBOARD</a>
-      </li>
-    </ul>
+      <div class="valign">
+          <img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" width="100%">
+
+          <div class="action">
+            <div class="desktop">
+              <a href="system.html?fpc">DESKTOP</a>
+            </div>
+
+            <div class="mobile">
+              <a href="system.html">MOBILE/TABLET</a>
+            </div>
+
+            <div class="mobile">
+              <a href="system.html?cardboard">CARDBOARD</a>
+            </div>
+        </div>
+      </div>
+
+      <div class="bottom">
+        <div class="logos">
+          <a href="http://www.niagaraniagara.com"     class="logo left valign"   ><img src="assets/frontend/logo-niagara.svg" alt="NIAGARA"></a>
+          <a href="http://www.stefano-maccarelli.com" class="logo center valign"   ><img src="assets/frontend/logo-stefanomaccarelli.svg" alt="STEFANO MACCARELLI"></a>
+          <a href="http://www.monotremerecords.com"   class="logo right valign"  ><img src="assets/frontend/logo-monotreme.svg" alt="MONOTREME RECORDS"></a>
+        </div>
+      </div>
+    </main>
 
     <script type="text/javascript">
       /*
@@ -58,13 +121,26 @@
       function display(selector, visible){
         var elements = document.querySelectorAll(selector);
         for(var i =0; i<elements.length; i++)
-          elements[i].style.display = visible?'auto':'none';
+          elements[i].style.display = visible?'inherit':'none';
       }
 
-      if(isMobile)
+      if(isMobile){
         display('.desktop', false);
-      else
+        display('.mobile', true);
+      }
+      else{
         display('.mobile', false);
+        display('.desktop', true);
+      }
+
+
+
+      // DISABLE SPACEBAR SCROLL
+      window.addEventListener('keydown', function(e) {
+        if(e.keyCode == 32 && e.target == document.body) {
+          e.preventDefault();
+        }
+      });
     </script>
 
     <script type="text/javascript">

@@ -13,7 +13,7 @@ var HLE = {
   SEA_TILES:16,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:.5,
+  PIXEL_RATIO_SCALE:0.75, //.5,
 
   SCREEN_WIDTH_SCALE:1,
   SCREEN_HEIGHT_SCALE:isMobile?1:1,
@@ -90,6 +90,7 @@ var HLC = {
 // HL scene library
 var HL = {
   audio: "assets/audio/rogerwater3.mp3",
+  // audioKick: "assets/audio/_kick/Niagara_Roger_Water_Kick_LOW.mp3", // "assets/audio/rogerwater3.mp3",
   modelsLoadingManager:null,
   texturesLoadingManager:null,
   audioLoader:null,
@@ -131,9 +132,9 @@ var HL = {
     models:null,
   },
   textures: {
-    sky1:"assets/img/skybox2/10b.jpg",
-    sky2:"assets/img/skybox2/11b.jpg",
-    sky3:"assets/img/skybox2/12b.jpg",
+    sky1:"assets/img/skybox2/sd1c.jpg",
+    sky2:"assets/img/skybox2/sd2c.jpg",
+    sky3:"assets/img/skybox2/nasa2c.gif",
 
     land:"assets/img/white2x2.gif",
     sea:"assets/img/white2x2.gif",
@@ -150,17 +151,23 @@ var HL = {
     heartbomb:"assets/3dm/heartbomb/heartbomb_full_l.png",
     // mercury:"assets/3dm/mercury/mercury.png",
 
-    pattern1:"assets/img/patterns/pattern-1.png",
-    pattern2:"assets/img/patterns/pattern-2.png",
-    pattern3:"assets/img/patterns/pattern-3.png",
-    pattern4:"assets/img/patterns/pattern-4.png",
-    pattern5:"assets/img/patterns/pattern-5.png",
+    // pattern1:"assets/img/patterns/pattern-1.png",
+    // pattern2:"assets/img/patterns/pattern-2.png",
+    // pattern3:"assets/img/patterns/pattern-3.png",
+    // pattern4:"assets/img/patterns/pattern-4.png",
+    // pattern5:"assets/img/patterns/pattern-5.png",
 
-    land1:"assets/img/land/land_tex_1.jpg",
-    land2:"assets/img/land/land_tex_2.jpg",
-    land3:"assets/img/land/land_tex_3.jpg",
-    land4:"assets/img/land/land_tex_4.jpg",
-    land5:"assets/img/land/land_tex_5.jpg",
+    pattern1:"assets/img/patterns/niagara.gif",
+    pattern2:"assets/img/patterns/st.gif",
+
+    land1:"assets/img/land/2/1b.jpg",//land_tex_1.jpg",
+    land2:"assets/img/land/2/2.jpg",//land_tex_2.jpg",
+    land3:"assets/img/land/2/3.jpg",//land_tex_3.jpg",
+    land4:"assets/img/land/2/4.jpg",//land_tex_4.jpg",
+    land5:"assets/img/land/land_tex_2.jpg",//land_tex_5.jpg",
+
+    landSand:"assets/img/land/HITW/HITW-TS2-sandy-ground.jpg",
+    // landSand:"assets/img/land/2/6.jpg",
 
     tomat:"assets/img/land/land_tex_1.jpg",
     ottino:"assets/img/land/land_tex_1.jpg",
@@ -194,7 +201,7 @@ var HL = {
   },
   modelsKeys:null,
   mGroups:{
-    space:['aurora','airbus', 'helicopter', 'heartbomb'],
+    space:['aurora','airbus', 'helicopter'],
     sea:['whale'],
     ducks:['ducky'],
     stones:['stone1','stone2','stone3'],
@@ -328,7 +335,7 @@ var HLEnvironment = function(){
     HL.texturesLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
       HL.texturesLoaded = itemsLoaded;
       HL.totalTextures = itemsTotal;
-      // TODO: updateProgressBar();
+
     	console.log( 'Completed loading texture: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
     };
 
@@ -360,7 +367,7 @@ var HLEnvironment = function(){
     HL.modelsLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
       HL.modelsLoaded = itemsLoaded;
       HL.totalModels = itemsTotal;
-     // TODO:   updateProgressBar();
+
       console.log( 'Completed loading model: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
 
     };
@@ -383,8 +390,8 @@ var HLEnvironment = function(){
         // Function when resource is loaded
         function ( data ) {
             // HL.audio = data;
-            // console.log('Audio Loading complete!\ndispatching HLAssetLoaded event');
-            // window.dispatchEvent(HLAssetLoadEvent);
+            console.log('Audio Loading complete!\ndispatching HLAssetLoaded event');
+            window.dispatchEvent(HLAssetLoadEvent);
 
         },
 
@@ -394,7 +401,7 @@ var HLEnvironment = function(){
           window.dispatchEvent( audioProgressEvent );
 
          //  attempt launching system when audio is 50% buffered
-          if( xhr.loaded = xhr.total * 0.5 && HL.preloadDebounce){
+          if( xhr.total - xhr.loaded > xhr.total * 0.5 && HL.preloadDebounce){
             console.log('Audio Loading 50%\nattempti to dispatch HLAssetLoaded event');
             window.dispatchEvent(HLAssetLoadEvent);
             HL.preloadDebounce = null;
@@ -438,10 +445,12 @@ var HLEnvironment = function(){
     //console.time('HL environment');
 
     initEnvironment();
+    initLights();
+
     initGeometries();
     initDynamicTextures();
     initMaterials();
-    initLights();
+    initMeshes();
 
     loadTextures();
     initModels();
@@ -502,13 +511,16 @@ var HLEnvironment = function(){
     if(isCardboard){
     HL.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, HLE.WORLD_WIDTH*100);
     }
-    else
+    else{
+      
       HL.camera = new THREE.PerspectiveCamera(
         40,
-        (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE),
-        0.5,
-        3000000
+        (window.innerWidth) / (window.innerHeight),
+        1.1,
+        HLE.WORLD_WIDTH * 2.1
       );
+
+    }
 
     // TODO check filmGauge and filmOffset effects
     // HL.camera.filmGauge = 1;
@@ -533,28 +545,30 @@ var HLEnvironment = function(){
 
     HL.scene.add(HL.cameraGroup);
 
-
     // RENDERER
-    // TODO: The easyest method to spedup FPS on slow mobile, is to reduce resolution
-    // we can do this by settind pixel ratio to fraction of devicePixelRatio
 
+    // CRITIC declare alpha:true to solve a bug in some chrome on osx setup
+    HL.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+		HL.renderer.setClearColor( 0x000000 );
 
-    HL.renderer = new THREE.WebGLRenderer({antialias: true});
-
-    HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE, true);
-
-    if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
-
-      HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
-
-    } else {
-
-      HL.renderer.setPixelRatio(window.devicePixelRatio);
-
-    }
-
+    HL.renderer.setPixelRatio( window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
+		HL.renderer.setSize( window.innerWidth, window.innerHeight );
 
     document.body.appendChild(HL.renderer.domElement);
+
+    // HL.renderer.setSize(window.innerWidth, window.innerHeight, true);
+
+    // if(HLE.PIXEL_RATIO_SCALE && HLE.PIXEL_RATIO_SCALE<1 && HLE.PIXEL_RATIO_SCALE>0){
+    //
+    //   HL.renderer.setPixelRatio(window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
+    //
+    // } else {
+    //
+    //   HL.renderer.setPixelRatio(window.devicePixelRatio);
+    //
+    // }
+
+
 
 
     if(isMapped){
@@ -771,7 +785,7 @@ var HLEnvironment = function(){
       wireframe:isWire,
       // wireframeLinewidth:2,
       //map:isWire?null:HL.textures.land,
-      map:isWire?null:true,
+      map:isWire?null:new THREE.Texture(),
       fog:true,
       repeatUV: new THREE.Vector2(1,1),
       centerPath : HLE.CENTER_PATH,
@@ -804,17 +818,17 @@ var HLEnvironment = function(){
         wireframe: isWire,
         wireframeLinewidth: 2,
          transparent:false,
-         opacity:0.80,
+         opacity:0.9,
          alphaTest: 0.5,
          //map:isWire?null:HL.textures.sea
       });
       HL.materials.sea.color = HLC.sea; // set by reference
 
-      if(!isWire && HL.textures.sea!=null){
-          HL.textures.sea.wrapS = THREE.RepeatWrapping;
-          HL.textures.sea.wrapT = THREE.RepeatWrapping;
-          HL.textures.sea.repeat.set( HLE.WORLD_TILES*4, 1);
-      }
+      // if(!isWire && HL.textures.sea!=null){
+      //     HL.textures.sea.wrapS = THREE.RepeatWrapping;
+      //     HL.textures.sea.wrapT = THREE.RepeatWrapping;
+      //     HL.textures.sea.repeat.set( HLE.WORLD_TILES*4, 1);
+      // }
     }
 
     if(HLE.MIRROR) {
@@ -843,9 +857,8 @@ var HLEnvironment = function(){
   			textureHeight: isCardboard?200:512 ,
   			// waterNormals: HL.textures.water,
         noiseScale: .5,
-        distortionScale: 130,
-  			// sunDirection: HL.lights.sun.position.normalize(),
-        sunDirection: new THREE.Vector3(0,10, 1000).normalize(),
+        distortionScale: 100,
+  			sunDirection: HL.lights.sun.position.normalize(),
   		  color: HLC.sea,
         opacity: 0.90,
   			// betaVersion: 1,
@@ -911,7 +924,7 @@ var HLEnvironment = function(){
     for(var k in HL.models){
       HL.materials[k] = new THREE.MeshLambertMaterial({
         color: 0x000000,
-        map:isWire?null:true,//(HL.textures[k]!==undefined?HL.textures[k]:null),
+        map:isWire?null:new THREE.Texture(),//(HL.textures[k]!==undefined?HL.textures[k]:null),
         fog:true,
         wireframe:isWire,
         wireframeLinewidth:2,
@@ -930,14 +943,14 @@ var HLEnvironment = function(){
 
   }
 
-  var loadableModelsCounter=0, modelsLoaded=0;
-
-  function modelLoaded(){
-    if(modelsLoaded==loadableModelsCounter) {
-      //console.timeEnd('models');
-      initMeshes();
-    }
-  }
+  // var loadableModelsCounter=0, modelsLoaded=0;
+  //
+  // function modelLoaded(){
+  //   if(modelsLoaded==loadableModelsCounter) {
+  //     //console.timeEnd('models');
+  //     initMeshes();
+  //   }
+  // }
 
 
 
@@ -948,7 +961,7 @@ var HLEnvironment = function(){
     // load a resource
     for (var key in HL.models){
       if(HL.models[key]!==null){
-        loadableModelsCounter++;
+        // loadableModelsCounter++;
         // console.log("loading model :"+ key );
         // console.log("loadableModelsCounter:"+ (loadableModelsCounter) );
         modelPath = HL.models[key][0];
@@ -973,9 +986,9 @@ var HLEnvironment = function(){
               HL.scene.add( HL.models[nK] );
               HLH.resetModel(HL.models[nK] );
 
-              modelsLoaded++;
-              // console.log("model "+nK+" loaded, "+modelsLoaded+"/"+loadableModelsCounter);
-              modelLoaded();
+              // modelsLoaded++;
+              // // console.log("model "+nK+" loaded, "+modelsLoaded+"/"+loadableModelsCounter);
+              // modelLoaded();
             }
           })(key, modelScale)
           // (function(key){ return function(e){console.log(key+" "+e.loaded+ " on "+e.total)}})(key),
@@ -1007,7 +1020,7 @@ var HLEnvironment = function(){
 
      HL.lights.sun = new THREE.DirectionalLight( 0xffffff, .5);
      HL.lights.sun.color = HLC.horizon;
-     HL.lights.sun.position.set(0,1,0);
+     HL.lights.sun.position.set(0,1999,100);
      //  HL.lights.sun.castShadows = false;
      HL.scene.add( HL.lights.sun );
 
@@ -1060,7 +1073,9 @@ var HLEnvironment = function(){
       HL.sea = new THREE.Mesh(HL.geometries.sea, HL.materials.sea);
     }
     HL.sea.name = "sea";
+
     HL.scene.add(HL.sea);
+
     // HL.sea.receiveShadows = true;
 
 
@@ -1082,7 +1097,7 @@ var HLEnvironment = function(){
     //console.timeEnd('meshes');
 
 
-    initLights();
+    // initLights();
   }
   return{init:init}
 }();

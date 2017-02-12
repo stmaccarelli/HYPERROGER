@@ -1,5 +1,0 @@
-- intro page
-  - select mobile / computer / tablet /cardboard / HTC
-  - intro page does a benchmark test for initializing Environment
-
-- audio analysis semi offline

@@ -91,25 +91,21 @@
     // console.log('mouse var enabled');
 
     function onResized() {
-      HL.renderer.setSize( window.innerWidth, window.innerHeight );
 
       HL.camera.aspect = window.innerWidth / window.innerHeight;
       HL.camera.updateProjectionMatrix();
-      if(isCardboard)
-        HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
 
-      //
-      // HL.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-      // if(HLE.WATER)
-      //   HL.materials.water.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-      //
-      // if(HLE.MIRROR)
-      //   HL.materials.mirror.renderer.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-      //
-      // if(isCardboard) HL.stereoEffect.setSize(window.innerWidth * HLE.SCREEN_WIDTH_SCALE, window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-      //
-      // HL.camera.aspect = (window.innerWidth * HLE.SCREEN_WIDTH_SCALE) / (window.innerHeight * HLE.SCREEN_HEIGHT_SCALE);
-      // HL.camera.updateProjectionMatrix();
+      HL.renderer.setSize(window.innerWidth, window.innerHeight);
+
+      if(isCardboard)
+        HL.stereoEffect.setSize(window.innerWidth, window.innerHeight);
+
+      if(HLE.WATER)
+        HL.materials.water.renderer.setSize(window.innerWidth, window.innerHeight);
+
+      if(HLE.MIRROR)
+        HL.materials.mirror.renderer.setSize(window.innerWidth, window.innerHeight);
+
 
 
     }
@@ -121,10 +117,12 @@
     // if((noSocket || partSocket) && !isMobile && !staticAudio) { AA = AudioAnalyzer(); AA.initGetUserMedia();}
 
     AA = new AAMS( HL.audio );
+    // AAK = new AAMS( HL.audioKick, {mute:true} );
 
   }
 
 
+  var performanceLow = 0, performanceHigh = 0;
 
   function mainLoop() {
     if(isVR) HLMain.rafID = HL.VREffect.requestAnimationFrame(mainLoop);
@@ -137,16 +135,6 @@
 
     // if (frameCount>10) return;
 
-    // TODO: improve detection. take account of browser cpu time, models shooting time, etc
-    //CPU GPU POWER DETECTION BY CLOCK
-    // if(delta>0.05){
-    //   HLE.WORLD_TILES = Math.round(HLE.WORLD_TILES*0.75);
-    //   HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_TILES,HLE.WORLD_TILES);
-    //   HL.land.geometry.rotateX(-Math.PI / 2);
-    //   HL.land.material.uniforms.worldTiles.value = HLE.WORLD_TILES;
-    //   HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(1,HLE.WORLD_TILES*1);
-    //   console.log(delta+ " reducing tiles: " + HLE.WORLD_TILES);
-    // };
 
     // remote control / audioreactive
     // if we are on SOCKET MODE this function will be called by a socket.on() event
@@ -155,9 +143,10 @@
     // if(staticAudio){
 
     if(isMobile && mobileOS.indexOf('Android')==-1 )
-      HLRemote.updateHLParams(0.5,0.4,0.3);// .2+Math.random()*.4, .2+Math.random()*.4, .2+Math.random()*.4 );//), AA.getFreq(64), AA.getFreq(200));
+      HLRemote.updateHLParams(0.5,0.04,0.03,0.001);// .2+Math.random()*.4, .2+Math.random()*.4, .2+Math.random()*.4 );//), AA.getFreq(64), AA.getFreq(200));
     else
-     HLRemote.updateHLParams( AA.getFreq(2), AA.getFreq(0), AA.getFreq(200) );//), AA.getFreq(64), AA.getFreq(200));
+      HLRemote.updateHLParams( AA.getFreq(2), AA.getFreq(0), AA.getFreq(200), AA.getFreq(255) );//), AA.getFreq(64), AA.getFreq(200));
+    // HLRemote.updateHLParams( AA.getFreq(2), AA.getFreq(0), AA.getFreq(200) );//), AA.getFreq(64), AA.getFreq(200));
 
     // }
     // else if( (noSocket || partSocket) && !isMobile)
@@ -192,7 +181,7 @@
 
     // Rendering
     // HL.renderer.autoClear = false;
-     HL.renderer.clear();
+    //  HL.renderer.clear();
 
     if(HLE.WATER)
       HL.materials.water.render();
@@ -235,6 +224,39 @@
       }
 
     }
+
+
+    // TODO: improve detection. take account of browser cpu time, models shooting time, etc
+    //CPU GPU POWER DETECTION BY CLOCK
+    if(frameCount>1){
+      if(delta>0.033 && delta<1){
+        if(++performanceLow == 30){
+          var tiles = Math.round(HL.land.geometry.parameters.widthSegments * 0.75 );
+          HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tiles, tiles);
+          HL.land.geometry.rotateX(-Math.PI / 2);
+          HL.land.material.uniforms.worldTiles.value = tiles;
+          //HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(1,HLE.WORLD_TILES*1);
+          console.log(delta+ " reducing tiles: " + tiles);
+          performanceLow=0;
+        }
+      }
+      else if(delta<0.015){
+        if(++performanceHigh == 60){
+          var tiles = Math.round(HL.land.geometry.parameters.widthSegments * 1.25 );
+          HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tiles, tiles);
+          HL.land.geometry.rotateX(-Math.PI / 2);
+          HL.land.material.uniforms.worldTiles.value = tiles;
+          //HL.land.material.uniforms.repeatUV.value = new THREE.Vector2(1,HLE.WORLD_TILES*1);
+          console.log(delta+ " growing tiles: " + tiles);
+          performanceHigh = 0;
+        }
+      }
+      else{
+        performanceHigh--;
+        performanceLow--;
+      }
+    }
+
 
     delta = null;
   }
@@ -282,7 +304,7 @@
     HLMain.rafID = null;
   }
 
-  // start analysis
+  // start
   HLMain.play = function(){
     if(HLMain.rafID===null) {
       HL.clock.start();

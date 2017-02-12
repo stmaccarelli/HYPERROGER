@@ -36,7 +36,7 @@ var HLAnim = function(){
   }
 
   function seaGLSL(){
-     HL.materials.water.material.uniforms.advance.value += 0.01 + HLE.moveSpeed * .01;
+     HL.materials.water.material.uniforms.advance.value += 0.01 + HLE.moveSpeed * .005;
   }
 
   function land(){
@@ -96,7 +96,7 @@ var HLAnim = function(){
   }
 
 
-  function landOrganicChange(f){
+  function landOrganicChange( ){
 
     HLC.land.r += (Math.random()-.5)*0.01;
     HLC.land.g += (Math.random()-.5)*0.01;
@@ -147,8 +147,11 @@ var HLAnim = function(){
     rv.x = Math.sin(rv.y);
     rv.z = Math.cos(rv.y);
 
-    HLE.landMotion.x += rv.x*(0 + HLE.moveSpeed);
-    HLE.landMotion.z += rv.z*(0 + HLE.moveSpeed);
+    HLE.landMotion.x += rv.x * (HLE.moveSpeed);
+    HLE.landMotion.z += rv.z * (HLE.moveSpeed);
+
+    if( isDebug && frameCount%60==0)
+      console.log("ANIMATION: LM x: "+HLE.landMotion.x+" z: "+HLE.landMotion.z);
 
     // seaMotion.x += rv.x*HLE.moveSpeed*0.01;
     // seaMotion.y += rv.x*HLE.moveSpeed*0.01;
@@ -161,11 +164,11 @@ var HLAnim = function(){
 
     HL.materials.land.uniforms.noiseFreq.value = HLE.noiseFrequency;
     HL.materials.land.uniforms.noiseFreq2.value = HLE.noiseFrequency2;
-    HL.materials.land.uniforms.landHeight.value = HLE.landHeight;
+    HL.materials.land.uniforms.landHeight.value = HLE.WORLD_HEIGHT; //HLE.landHeight;
     HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
     // HL.materials.land.uniforms.buildFreq.value += HLE.moveSpeed * 0.001;
 
-    landOrganicChange(HLE.moveSpeed*0.005);
+    landOrganicChange( );
     // console.log( Math.sin(HL.cameraGroup.rotation.z) );
   }
 
