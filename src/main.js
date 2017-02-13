@@ -228,10 +228,13 @@
 
     // TODO: improve detection. take account of browser cpu time, models shooting time, etc
     //CPU GPU POWER DETECTION BY CLOCK
-    if(frameCount>1){
-      if(delta>0.033 && delta<1){
+    if(frameCount>2){
+      if(delta>0.03333 && delta<1){
         if(++performanceLow == 30){
-          var tiles = Math.round(HL.land.geometry.parameters.widthSegments * 0.75 );
+          HLE.PIXEL_RATIO_SCALE*=0.85;
+          HL.renderer.setPixelRatio( window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
+
+          var tiles = Math.round(HL.land.geometry.parameters.widthSegments * 0.85 );
           HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tiles, tiles);
           HL.land.geometry.rotateX(-Math.PI / 2);
           HL.land.material.uniforms.worldTiles.value = tiles;
@@ -240,9 +243,12 @@
           performanceLow=0;
         }
       }
-      else if(delta<0.015){
+      else if(delta<0.01666){
         if(++performanceHigh == 60){
-          var tiles = Math.round(HL.land.geometry.parameters.widthSegments * 1.25 );
+          HLE.PIXEL_RATIO_SCALE*=1.15;
+          HL.renderer.setPixelRatio( window.devicePixelRatio * HLE.PIXEL_RATIO_SCALE);
+
+          var tiles = Math.round(HL.land.geometry.parameters.widthSegments * 1.15 );
           HL.land.geometry = new THREE.PlaneBufferGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, tiles, tiles);
           HL.land.geometry.rotateX(-Math.PI / 2);
           HL.land.material.uniforms.worldTiles.value = tiles;

@@ -10,7 +10,8 @@
 
   window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
 
-  audioFile = new Audio( 'assets/audio/_kick/Niagara_Roger_Water_Kick_LOW.mp3' );
+  // audioFile = new Audio( 'assets/audio/_kick/Niagara_Roger_Water_Kick_LOW.mp3' );
+  var audioFile = new Audio( "assets/audio/rogerwater3.mp3");///Niagara_Roger_Water_Kick_LOW.mp3" );
 
   window.addEventListener('touchstart',function(){audioFile.play()} );
 
@@ -43,6 +44,7 @@
         recorder.connect(audioContext.destination);
         audioFile.play();
 
+        document.addEventListener('click', function(){ audioFile.play(); });
 
       // navigator.getUserMedia = navigator.getUserMedia    || navigator.webkitGetUserMedia ||
       //                          navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -114,7 +116,7 @@
     var rec = new Recording(function(data){
       if(detectClap(data)){
         console.log('clap!');
-        a.push(audioFile.currentTime);
+        // a.push(audioFile.currentTime);
         document.bgColor = 'rgb('+Math.random()*255+','+Math.random()*255+','+Math.random()*255+')';
       }
     });

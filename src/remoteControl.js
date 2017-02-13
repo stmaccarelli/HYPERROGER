@@ -94,7 +94,7 @@ var HLRemote = function() {
 			if (k.key == 'h' || k.key == 'H' || k.keyCode == 72) {
 				HLH.startModel(HL.models['heartbomb'],
 					THREE.Math.randInt(-1000, 1000),
-					THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 4
+					HL.cameraGroup.position.y, 20, 'xyz', 4
 				);
 			}
 
@@ -105,21 +105,21 @@ var HLRemote = function() {
 			if (k.key == 'p' || k.key == 'P' || k.keyCode == 80) {
 				HLH.startModel(HL.models['whale'],
 					THREE.Math.randInt(-1000, 1000),
-					THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, null, 10
+					HL.cameraGroup.position.y, 20, null, 10
 				);
 			}
 
 			if (k.key == 'e' || k.key == 'E' || k.keyCode == 69) {
 				HLH.startModel(HL.models['ducky'],
 					THREE.Math.randInt(-1000, 1000),
-					THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 100
+					HL.cameraGroup.position.y, 20, 'xyz', 100
 				);
 			}
 
 			if (k.key == 'r' || k.key == 'R' || k.keyCode == 82) {
 				HLH.startModel(HL.models['airbus'],
 					THREE.Math.randInt(-1000, 1000),
-					THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 40, null, 5
+					HL.cameraGroup.position.y, 40, null, 5
 				);
 			}
 
@@ -153,15 +153,19 @@ var HLRemote = function() {
 		window.addEventListener('keyup', keyboardControls);
 
 
-	// if(isCardboard)
-		window.addEventListener('keypress', iCadeControls);
+  if(isCardboard)
+		window.addEventListener('keypress', iCadeControls, false);
+
+
+
 
 	function iCadeControls(k){
 
-		k.preventDefault();
 
 		// start button = pause
 		if ( k.keyCode == 118 ) {
+			k.preventDefault();
+			k.stopPropagation();
 			if (HLR.GAMESTATUS == 1)
 				updateStatus(2);
 			else if (HLR.GAMESTATUS == 2)
@@ -170,21 +174,29 @@ var HLRemote = function() {
 
 		switch ( k.keyCode ) {
 			case 110: //
+				k.preventDefault();
+				k.stopPropagation();
 				HLH.startGroup(['band', 20, 0, 'y', true, 0, true]);
 				break;
 			case 102:
+				k.preventDefault();
+				k.stopPropagation();
 				HLH.startModel(HL.models['airbus'],
 					THREE.Math.randInt(-1000, 1000),
 					HL.cameraGroup.position.y, 20, 'xyz', 1
 				);
 				break;
 			case 114:
+				k.preventDefault();
+				k.stopPropagation();
 				HLH.startModel(HL.models['aurora'],
 					THREE.Math.randInt(-1000, 1000),
 					THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 1
 				);
 				break;
 			case 116:
+				k.preventDefault();
+				k.stopPropagation();
 				HLH.startModel(HL.models['helicopter'],
 					THREE.Math.randInt(-1000, 1000),
 					THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 1
@@ -211,16 +223,33 @@ var HLRemote = function() {
 		for (let i = 0; i < mButtons.length; i++) {
 			mButtons[i].addEventListener('touchstart', function(e) {
 				e.preventDefault();
+				e.stopPropagation();
 				let fakeEvent = {
 					'key': mButtons[i].id,
-					'preventDefault': function(){}
+					'preventDefault': function(){},
+					'stopPropagation': function(){}
 				}
 				keyboardControls(fakeEvent);
 				return false;
 			});
 		}
-  }
 
+	// in cardboard mode, touching screen pauses game
+	if (isCardboard) {
+			window.addEventListener('touchstart', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				let fakeEvent = {
+					'key': ' ',
+					'preventDefault': function(){},
+					'stopPropagation': function(){}
+				}
+				keyboardControls(fakeEvent);
+				return false;
+			});
+		}
+
+	}
 	// buttonAccel.addEventListener('touchend', function(e){ e.preventDefault(); scope.moveForward = false; } );
 	// buttonAccel.addEventListener('touchcancel', function(e){ e.preventDefault(); scope.moveForward = false; } );
 

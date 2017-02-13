@@ -83,7 +83,7 @@ HLS.loadParams = function(params) {
     if (params.buildFreq !== undefined)
         HL.land.material.uniforms.buildFreq.value = params.buildFreq;
     else
-        HL.land.material.uniforms.buildFreq = 0;
+        HL.land.material.uniforms.buildFreq = 1000;
     if (params.map !== undefined)
         HL.land.material.uniforms.map.value = HL.textures[params.map];
     if (params.map2 !== undefined)
@@ -118,10 +118,11 @@ HLS.loadParams = function(params) {
 HLS.startScene = function(sceneId) {
     HLS.sceneId = sceneId;
     // cancel previous animation
-    // window.cancelAnimationFrame(HLS.raf);
     if(isVR) HL.VREffect.cancelAnimationFrame(HLS.raf);
     else window.cancelAnimationFrame(HLS.raf);
 
+    //reset motion params
+    HLE.acceleration = HLE.reactiveMoveSpeed = HLE.moveSpeed = 0;
 
     if (HLSP[sceneId] !== undefined) {
 
@@ -129,7 +130,6 @@ HLS.startScene = function(sceneId) {
       //if (HLS.hud !== undefined && !noHUD) HLS.hud.display((isMobile||isVR)?'':(HLSP[sceneId].displayText || sceneId), 8, false);
 
       //load scene parameters
-
       HLS.loadParams(HLSP[sceneId]);
 
     }
@@ -141,13 +141,6 @@ HLS.startScene = function(sceneId) {
 
     //destroy all running models
     HLH.destroyAllModels();
-
-    HL.materials.land.uniforms.buildFreq.value =
-      HLE.acceleration = HLE.reactiveMoveSpeed = HLE.moveSpeed = 0;
-
-
-
-
 
     // reset camera rotations etc
     HL.cameraGroup.rotation.x = 0;
@@ -192,6 +185,8 @@ HLS.scenes.standard = function() {
 
   HLE.moveSpeed += HLE.MAX_MOVE_SPEED * HLE.acceleration;
 
+  HLE.moveSpeed = HLE.MAX_MOVE_SPEED * HLE.acceleration;
+
 
 
 
@@ -202,14 +197,7 @@ HLS.scenes.standard = function() {
 
   HLE.noiseFrequency2 += Math.min(0,(HLR.fft2 - HLR.fft3)) * .3;
 
-  // compute land heiught
-  HLR.tempLandHeight = (HLR.smoothFFT2 + HLR.smoothFFT3) *
-      HLE.WORLD_HEIGHT;
-
-  // if(HLE.CENTER_PATH) HLR.tempLandHeight*=3;
-  HLE.landHeight += (HLR.tempLandHeight - HLE.landHeight) * 0.45;
-  // HLE.landZeroPoint = - HLR.fft3 * HLE.landHeight * .5;
-
+  // HL.materials.land.uniforms.buildFreq.value += (HLR.fft2 + HLR.fft3) * 0.0001;
 
 
   // thunderbolts
@@ -281,7 +269,7 @@ var randomDebounce1 = true, randomDebounce2 = true;
 function isRegisteredKick(){
 
     for(let i=0; i<kicks.length; i++){
-      if( Math.abs( AA.audioFile.currentTime - kicks[i] ) < 0.02)
+      if( !AA.audioFile.paused && Math.abs( AA.audioFile.currentTime - kicks[i] ) < 0.0175)
         return true
     }
     return false
@@ -290,18 +278,18 @@ function isRegisteredKick(){
 HLS.scenesAddons.interactiveRogerWater = function() {
 
   // if(HLR.fft1>0.97){
-  if( isRegisteredKick() ){
-    // if(randomDebounce1){
+  if( isRegisteredKick() || ( AA.getSelectedSource()==1 && HLR.fft1>0.975 ) ){
+   if(randomDebounce1){
       HLS.randomizeLand();
       HLH.startModel(HL.models['whale'],
         THREE.Math.randInt(-1000, 1000),
         THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, null, 20, false, false
-      ); //TODO
-  //     randomDebounce1=false;
+      );
+     randomDebounce1=false;
    }
-  // } else {
-  //   randomDebounce1 = true;
-  // }
+  } else {
+    randomDebounce1 = true;
+  }
 
   if(HLR.fft3>0.3){
     HLH.startGroup(['space', 1, 40, true, false, HLE.WORLD_HEIGHT / 3, false ] );
@@ -339,7 +327,7 @@ var tilen = 2 + Math.round(Math.random()*6);
 
  HL.land.material.uniforms.bFactor.value = Math.random();
  HL.land.material.uniforms.cFactor.value = Math.random();
- // HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
+ HL.land.material.uniforms.buildFreq.value = Math.random()*100.0;
 
 var landPat = Math.random();
 // HL.land.material.uniforms.map.value = HL.textures[( landPat>.5?'land':'pattern' )+
@@ -350,7 +338,9 @@ HL.land.material.uniforms.map2.value = HL.textures[ ( landPat>.5?'land'+( 1+Math
  // HL.land.material.uniforms.map2.value = HL.textures['land'+(1+Math.round(Math.random()*4))];
 
  HL.land.material.uniforms.natural.value = 0.5 + Math.random()*0.5;
- HL.land.material.uniforms.rainbow.value = Math.random()*0.5;
+ HL.land.material.uniforms.rainbow.value = Math.random();
+ // HL.land.material.uniforms.glowing.value = Math.round(Math.random()*1.1);
+
  HL.land.material.uniforms.squareness.value = Math.random()*0.05;
 
  // HL.sky.material.map = HL.textures['sky'+(1+Math.round(Math.random()*4))];// null;//HL.textures[Math.round(Math.random()*10)];

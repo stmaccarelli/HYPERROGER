@@ -168,7 +168,7 @@ var HLAnim = function(){
     HL.materials.land.uniforms.landZeroPoint.value = HLE.landZeroPoint;
     // HL.materials.land.uniforms.buildFreq.value += HLE.moveSpeed * 0.001;
 
-    landOrganicChange( );
+    // landOrganicChange( );
     // console.log( Math.sin(HL.cameraGroup.rotation.z) );
   }
 

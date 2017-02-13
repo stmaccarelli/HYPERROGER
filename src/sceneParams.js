@@ -184,11 +184,11 @@ set squareness to 0 for a flat land
          speed: 5,
          modelsParams: ['space', 2, 40, true, false, 160],
 
-         tiles: isMobile?128:420,
+         tiles: isMobile?256:420,
          repeatUV: 8,
          bFactor: 0.901,
          cFactor: 0.9,
-         buildFreq: 1850.1,
+         buildFreq: Math.random()*1000.1,
          natural: 0.9651924010682208,
          rainbow: 0.18,
          squareness: 0.00001,

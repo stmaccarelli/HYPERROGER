@@ -13,7 +13,7 @@ var HLE = {
   SEA_TILES:16,
   SEA_TILE_SIZE:null,
 
-  PIXEL_RATIO_SCALE:0.75, //.5,
+  PIXEL_RATIO_SCALE:isMobile?0.5:0.75, //.5,
 
   SCREEN_WIDTH_SCALE:1,
   SCREEN_HEIGHT_SCALE:isMobile?1:1,
@@ -134,7 +134,7 @@ var HL = {
   textures: {
     sky1:"assets/img/skybox2/sd1c.jpg",
     sky2:"assets/img/skybox2/sd2c.jpg",
-    sky3:"assets/img/skybox2/nasa2c.gif",
+    sky3:"assets/img/skybox2/n11b.jpg",
 
     land:"assets/img/white2x2.gif",
     sea:"assets/img/white2x2.gif",
@@ -163,7 +163,7 @@ var HL = {
     land1:"assets/img/land/2/1b.jpg",//land_tex_1.jpg",
     land2:"assets/img/land/2/2.jpg",//land_tex_2.jpg",
     land3:"assets/img/land/2/3.jpg",//land_tex_3.jpg",
-    land4:"assets/img/land/2/4.jpg",//land_tex_4.jpg",
+    land4:"assets/img/land/2/4B.jpg",//land_tex_4.jpg",
     land5:"assets/img/land/land_tex_2.jpg",//land_tex_5.jpg",
 
     landSand:"assets/img/land/HITW/HITW-TS2-sandy-ground.jpg",
@@ -497,7 +497,7 @@ var HLEnvironment = function(){
     if(HLE.FOG && !isWire){
       HL.scene.fog = new THREE.Fog(
         HLC.horizon,
-        HLE.WORLD_WIDTH * 0.35,
+        HLE.WORLD_WIDTH * 0.3,
         HLE.WORLD_WIDTH * 0.475
       );
       // HL.scene.fog = new THREE.FogExp2();
@@ -512,7 +512,7 @@ var HLEnvironment = function(){
     HL.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, HLE.WORLD_WIDTH*100);
     }
     else{
-      
+
       HL.camera = new THREE.PerspectiveCamera(
         40,
         (window.innerWidth) / (window.innerHeight),
@@ -541,6 +541,7 @@ var HLEnvironment = function(){
 
     HL.cameraGroup.add(HL.camera);
     HL.cameraGroup.add(HL.cameraCompanion);
+
     HL.cameraGroup.position.y = 50;
 
     HL.scene.add(HL.cameraGroup);
