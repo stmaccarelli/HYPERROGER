@@ -18,6 +18,9 @@ var HLE = {
   SCREEN_WIDTH_SCALE:1,
   SCREEN_HEIGHT_SCALE:isMobile?1:1,
 
+  // TODO REVIEW
+  CURRENT_HOUR: Math.sin( new Date().getHours() / 23 * Math.PI ),
+  // CURRENT_HOUR: Math.sin( 0 / 23 * Math.PI ),
 
   FOG:true,
   MIRROR: false,
@@ -25,7 +28,7 @@ var HLE = {
 
   MAX_MOVE_SPEED: null,
   BASE_MOVE_SPEED: 0,
-  CENTER_PATH:false, // true if you don't want terrain in the middle of the scene
+  CENTER_PATH:true, // true if you don't want terrain in the middle of the scene
 
   reactiveMoveSpeed:0, // changes programmatically - audio
   moveSpeed:0, // stores final computed move speed
@@ -134,7 +137,7 @@ var HL = {
   textures: {
     sky1:"assets/img/skybox2/sd1c.jpg",
     sky2:"assets/img/skybox2/sd2c.jpg",
-    sky3:"assets/img/skybox2/n11b.jpg",
+    sky3:"assets/img/skybox2/nasa2.gif",
 
     land:"assets/img/white2x2.gif",
     sea:"assets/img/white2x2.gif",

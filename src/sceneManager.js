@@ -100,7 +100,10 @@ HLS.loadParams = function(params) {
         HLC.land.set(params.landRGB);
     if (params.horizonRGB !== undefined) {
         HLC.horizon.set(params.horizonRGB);
+        HLC.horizon.multiplyScalar(HLE.CURRENT_HOUR*0.9+0.1);
         HLC.tempHorizon.set(params.horizonRGB);
+        HLC.tempHorizon.multiplyScalar(HLE.CURRENT_HOUR*0.9+0.1);
+
     }
     if (params.skyMap !== undefined)
         HL.materials.sky.map = HL.textures[params.skyMap];
@@ -185,7 +188,7 @@ HLS.scenes.standard = function() {
 
   HLE.moveSpeed += HLE.MAX_MOVE_SPEED * HLE.acceleration;
 
-  HLE.moveSpeed = HLE.MAX_MOVE_SPEED * HLE.acceleration;
+  // HLE.moveSpeed = HLE.MAX_MOVE_SPEED * HLE.acceleration;
 
 
 
@@ -350,7 +353,9 @@ HL.land.material.uniforms.map2.value = HL.textures[ ( landPat>.5?'land'+( 1+Math
 
  // HLC.land.setRGB(0.5+Math.random()*0.5, 0.5+Math.random()*0.5, 0.5+Math.random()*0.5);
  //HLC.land.setRGB( Math.random()*0.6, Math.random()*0.6, Math.random()*0.6 );
- HLC.horizon.setRGB( 1.5 * Math.random()*0.6, 1.5 * Math.random()*0.6, 1.5 * Math.random()*0.6 ) ;
+ HLC.horizon.setRGB( 1.5 * Math.random()*0.6, 1.5 * Math.random()*0.6, 1.5 * Math.random()*0.6 );
+ HLC.horizon.multiplyScalar(HLE.CURRENT_HOUR*0.9+0.1);
+
  HLC.tempHorizon.set(HLC.horizon);
 
  HLC.land.setHSL( Math.random(), 0.6, 0.9 );

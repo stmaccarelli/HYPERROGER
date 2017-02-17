@@ -40,7 +40,8 @@ var HLR = {
 	tempNoiseFreq2: 0,
 
 	// global game status
-	GAMESTATUS: 0
+	GAMESTATUS: 0,
+	PREVGAMESTATUS: null
 }
 
 
@@ -73,7 +74,7 @@ var HLRemote = function() {
 	}
 
 
-
+	var prevStatus
 	function keyboardControls(k) {
 
 		// pause key available in game status 1 or 2 (running or paused)
@@ -81,14 +82,15 @@ var HLRemote = function() {
 
 			k.preventDefault();
 
-			if (HLR.GAMESTATUS == 1)
-				updateStatus(2);
-			else if (HLR.GAMESTATUS == 2)
-				updateStatus(1);
+			if (HLR.GAMESTATUS > 0 && HLR.GAMESTATUS < 20){
+				updateStatus(20);
+			}
+			else if (HLR.GAMESTATUS == 20)
+				updateStatus(-1);
 
 		}
 
-		if (HLR.GAMESTATUS == 1) { // game running
+		if (HLR.GAMESTATUS > 0 && HLR.GAMESTATUS < 20) { // game running
 
 			// shoot models
 			if (k.key == 'h' || k.key == 'H' || k.keyCode == 72) {
@@ -126,7 +128,7 @@ var HLRemote = function() {
 		} // END IF GAMESTATUS == 1
 
 
-		if (HLR.GAMESTATUS == 1 || HLR.GAMESTATUS == 2) {
+		if (HLR.GAMESTATUS > 0) {
 			if (k.keyCode == 13 || k.key == 'mS') { //'Enter'
 				// HLE.acceleration = THREE.Math.clamp(HLE.acceleration+=0.009, 0, 2);
 				screenshot();
@@ -166,10 +168,10 @@ var HLRemote = function() {
 		if ( k.keyCode == 118 ) {
 			k.preventDefault();
 			k.stopPropagation();
-			if (HLR.GAMESTATUS == 1)
-				updateStatus(2);
-			else if (HLR.GAMESTATUS == 2)
-				updateStatus(1);
+			if (HLR.GAMESTATUS == 10)
+				updateStatus(20);
+			else if (HLR.GAMESTATUS == 20)
+				updateStatus(10);
 		}
 
 		switch ( k.keyCode ) {
@@ -255,7 +257,7 @@ var HLRemote = function() {
 
 
 function screenshot() {
-	console.log(screenshot);
+	//console.log(screenshot);
 	// save current renderer pixelRatio
 	var pixelRatio = HL.renderer.getPixelRatio();
 	// set high pixel ratio for bigegr image
@@ -307,32 +309,45 @@ var setVisibility = (function(selector, visible) {
 	for (var i = 0; i < elements.length; i++) {
 		elements[i].style.opacity = visible ? 1 : 0;
 		elements[i].style.display = visible ? 'block' : 'none';
-		console.log('visible: selector: ' + selector + ' visibile: ' + visible);
+		// console.log('visible: selector: ' + selector + ' visibile: ' + visible);
 	}
 });
 
 function updateStatus(gameStatus) {
+
+	//console.log("gameStatus "+ gameStatus);
 	// set status
-	HLR.GAMESTATUS = gameStatus;
-	console.log('updateStatus: ' + gameStatus);
+	if( gameStatus == 20 ) HLR.PREVGAMESTATUS = HLR.GAMESTATUS;
+
+	if( gameStatus == -1 ){
+		HLR.GAMESTATUS = HLR.PREVGAMESTATUS;
+	}
+	else {
+		HLR.GAMESTATUS = gameStatus;
+	}
+
+	//console.log('updateStatus: ' + HLR.GAMESTATUS);
 
 	// handle screens visibility
-	switch (gameStatus) {
+	switch (HLR.GAMESTATUS) {
 		case 0: // loading screen
 			setVisibility('.screens', false);
 			setVisibility('#loading', true);
 			AA.pause();
 			// AAK.pause();
 			break;
-		case 1: // game running
+		case 10: // game running
+			if(AA.getSelectedSource()!=AA.FILE) AA.connectFile();
+
 			HLMain.play();
-			setVisibility('.screens', false);
 			AA.play();
+			setVisibility('.screens', false);
 			// AAK.play();
 			break;
 		case 11: // game running in mic mode
-			AA.connectMic();
+			if(AA.getSelectedSource()!=AA.MIC) AA.connectMic();
 			HLMain.play();
+			AA.play();
 			setVisibility('.screens', false);
 			break;
 		case 12: // game running in flat mode
@@ -340,14 +355,14 @@ function updateStatus(gameStatus) {
 			HLMain.play();
 			setVisibility('.screens', false);
 			break;
-		case 2: // game paused
-			HLMain.pause();
+		case 20: // game paused
+			// HLMain.pause();
 			setVisibility('.screens', false);
 			setVisibility('#paused', true);
 			AA.pause();
 			// AAK.pause();
 			break;
-		case 3: // audio analysis ended
+		case 30: // audio analysis ended
 			setVisibility('.screens', false);
 			setVisibility('#ended', true);
 			break;
@@ -378,14 +393,11 @@ var screensInit = function() {
 
 // once HL environment and assets fully load
 window.addEventListener('HLEload', function() {
-	// connect FILE
-	AA.connectFile();
-	// AAK.connectFile();
 	// we'll wait for a START button press to gamestatus 1
 	var startButton = document.getElementById('startButton');
 	startButton.disabled = false;
 	startButton.addEventListener('click', function() {
-		updateStatus(1);
+		updateStatus(10);
 	});
 
 
@@ -395,7 +407,7 @@ window.addEventListener('HLEload', function() {
 		AA.fileRewind();
 		// AAK.fileRewind();
 		// uptade game to status 2 (ENDED)
-		updateStatus(3);
+		updateStatus(30);
 
 	});
 
@@ -412,8 +424,8 @@ window.addEventListener('HLEload', function() {
 	// analysis is rAF based, so it will pause anyway if window in background
 	function handleVisibilityChange(e) {
 
-		if (HLR.GAMESTATUS == 1)
-			updateStatus(2);
+		if (HLR.GAMESTATUS > 0 && HLR.GAMESTATUS<20)
+			updateStatus(20);
 		// else if ( HLR.GAMESTATUS == 2 && ! isMobile && e.target.visibilityState == 'visible' )
 		// 	updateStatus(1);
 	}
@@ -427,6 +439,10 @@ window.addEventListener('HLEload', function() {
 	// 		 updateStatus(2);
 	// 	 }
 	// });
+
+	// document.getElementById('enableMicButton').addEventListener('mouseup', function(){
+	// 	updateStatus(11);
+	// }, false);
 
 });
 

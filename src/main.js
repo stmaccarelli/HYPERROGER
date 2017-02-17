@@ -106,7 +106,8 @@
       if(HLE.MIRROR)
         HL.materials.mirror.renderer.setSize(window.innerWidth, window.innerHeight);
 
-
+      if(isFPC)
+        HL.controls.handleResize();
 
     }
 

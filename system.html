@@ -11,23 +11,23 @@
 	<title>ROGER WATER, A JOURNEY INTO HYPERLAND</title>
 
 	<!-- For IE 10 and below -->
-	<link rel="icon" href="assets/social/generator/favicon.ico" type="image/x-icon" />
-	<link rel="apple-touch-icon" sizes="57x57" href="assets/social/generator/apple-icon-57x57.png">
-	<link rel="apple-touch-icon" sizes="60x60" href="assets/social/generator/apple-icon-60x60.png">
-	<link rel="apple-touch-icon" sizes="72x72" href="assets/social/generator/apple-icon-72x72.png">
-	<link rel="apple-touch-icon" sizes="76x76" href="assets/social/generator/apple-icon-76x76.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="assets/social/generator/apple-icon-114x114.png">
-	<link rel="apple-touch-icon" sizes="120x120" href="assets/social/generator/apple-icon-120x120.png">
-	<link rel="apple-touch-icon" sizes="144x144" href="assets/social/generator/apple-icon-144x144.png">
-	<link rel="apple-touch-icon" sizes="152x152" href="assets/social/generator/apple-icon-152x152.png">
-	<link rel="apple-touch-icon" sizes="180x180" href="assets/social/generator/apple-icon-180x180.png">
-	<link rel="icon" type="image/png" sizes="192x192"  href="assets/social/generator/android-icon-192x192.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="assets/social/generator/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="96x96" href="assets/social/generator/favicon-96x96.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="assets/social/generator/favicon-16x16.png">
-	<link rel="manifest" href="assets/social/generator/manifest.json">
+	<link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon" />
+	<link rel="apple-touch-icon" sizes="57x57" href="assets/icons/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="assets/icons/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="assets/icons/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="assets/icons/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="assets/icons/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="assets/icons/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="assets/icons/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="assets/icons/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="assets/icons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="assets/icons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+	<link rel="manifest" href="assets/icons/manifest.json">
 	<meta name="msapplication-TileColor" content="#000000">
-	<meta name="msapplication-TileImage" content="assets/social/generator/ms-icon-144x144.png">
+	<meta name="msapplication-TileImage" content="assets/icons/ms-icon-144x144.png">
 	<meta name="theme-color" content="#000000">
 
 
@@ -35,7 +35,7 @@
 	<meta property="og:url" content="https://rogerwater.hyland.xyz/index.html">
 	<meta property="og:type" content="website">
 	<meta property="og:title" content="ROGER WATER, A JOURNEY INTO HYPERLAND">
-	<meta property="og:image" content="https://rogerwater.hyland.xyz/assets/social/fb-preview-cover.jpg">
+	<meta property="og:image" content="https://rogerwater.hyland.xyz/assets/icons/fb-preview-cover.jpg">
 	<meta property="og:description" content="Web-based VR experience set in the generative worlds of HYPERLAND, an infinite flyover on surreal audioreactive landscapes.">
 	<meta property="og:site_name" content="ROGER WATER">
 	<meta property="og:locale" content="en_US">
@@ -121,8 +121,11 @@
 			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
 			<div class="subcontainer">
 				<h2>THIS IS THE END.<br>NOW YOU CAN
-					<a href="#" onclick="AA.audioFile.currentTime=0; AA.filePlayPause(); HLRemote.updateStatus(1);">RESTART THE EXPERIENCE</a>
-					OR <a href="#">ENABLE YOUR MIC</a>
+					<a href="#" onclick="AA.audioFile.currentTime=0; AA.filePlayPause(); HLRemote.updateStatus(10);">RESTART THE EXPERIENCE</a>
+				</h2>
+
+				<h2 class="android desktop">OR <a href="#" id="enableMicButton"
+					onclick="HLRemote.updateStatus(11);">ENABLE YOUR MIC</a>
 					FOR A ENDLESS TRIP.</h2>
 
 			</div>
@@ -161,8 +164,8 @@
 	<script src="lib/effects/StereoEffect.js"></script>
 	<script src="lib/effects/VREffect.js"></script>
 
-	<script src="lib/controls/DeviceOrientationControls.js"></script>
-	<script src="lib/controls/FirstPersonControls.js"></script>
+	<script src="lib/controls/DeviceOrientationControls_roger.js"></script>
+	<script src="lib/controls/FirstPersonControls_roger.js"></script>
 	<script src="lib/controls/VRControls.js"></script>
 
 
@@ -189,8 +192,6 @@
 	<script src="src/hud.js"></script>
 	<script src="src/sceneManager.js"></script>
 
-
-	<!-- <audio id="rogerwater" src="assets/audio/rogerwater2.mp3" controls></audio> -->
 
 	<script type="text/javascript">
 		/*
@@ -242,6 +243,10 @@
 			display('.desktop', true);
 			display('.mobile', false);
 			display('.cardboard', false);
+		}
+
+		if(mobileOS=='Android'){
+			display('android', true);
 		}
 
 
