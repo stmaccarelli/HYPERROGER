@@ -184,7 +184,7 @@ HLS.scenes.standard = function() {
   // compute auto movement  moveSpeed
   HLE.reactiveMoveSpeed = HLE.BASE_MOVE_SPEED*0.15 + ( HLR.smoothFFT1 + HLR.smoothFFT2 + HLR.smoothFFT3 * 20) * 0.3 * HLE.BASE_MOVE_SPEED ;
   // HLE.moveSpeed += (HLE.reactiveMoveSpeed - HLE.moveSpeed) * 0.25;
-  HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isCardboard || isVR) ? 0.4 : 1 );
+  HLE.moveSpeed = HLE.reactiveMoveSpeed * ( (isCardboard || isVR) ? 0.75 : 1 );
 
   HLE.moveSpeed += HLE.MAX_MOVE_SPEED * HLE.acceleration;
 
