@@ -266,7 +266,7 @@ function screenshot() {
 	// render bigger image
 	HL.cameraCompanion.position.z = -400 - HL.cameraGroup.position.y*0.25;
 
-	HLS.logoChange('logo');
+	// HLS.logoChange('logo');
 	HL.renderer.render(HL.scene, HL.camera);
 	var imgData = HL.renderer.domElement.toDataURL('image/jpeg');
 	// set back working pixel ratio
@@ -404,7 +404,7 @@ window.addEventListener('HLEload', function() {
 	startButton.disabled = false;
 	startButton.addEventListener('click', function() {
 		updateStatus(10);
-	});
+	}, false);
 
 
 	// add listener for ending screen when audio ends
