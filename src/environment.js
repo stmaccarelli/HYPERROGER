@@ -183,10 +183,10 @@ var HL = {
     textbox:null,
   },
   models: {
-    whale:["assets/3dm/BL_WHALE/whale_m.obj",.5],
+    whale:["assets/3dm/BL_WHALE/whalem.obj",.5],
     ducky:["assets/3dm/ducky/ducky_m.obj",.25],
-    airbus:["assets/3dm/airbus/airbus_m.obj",2],
-    aurora:["assets/3dm/aurora/aurora_m.obj",2],
+    airbus:["assets/3dm/airbus/airbusm.obj",2],
+    aurora:["assets/3dm/aurora/auroram.obj",2],
     helicopter:["assets/3dm/lo_helicopter2.obj",2],
     heartbomb:["assets/3dm/heartbomb/heartbomb_m.obj",2],
     // mercury:["assets/3dm/mercury/mercury_c.obj",5],
