@@ -183,7 +183,7 @@ var HL = {
     textbox:null,
   },
   models: {
-    whale:["assets/3dm/BL_WHALE/whalem.jobj",.5],
+    whale:["assets/3dm/BL_WHALE/whalem.bmp",.5],
     ducky:["assets/3dm/ducky/ducky_m.obj",.25],
     airbus:["assets/3dm/airbus/airbusm.obj",2],
     aurora:["assets/3dm/aurora/auroram.obj",2],
