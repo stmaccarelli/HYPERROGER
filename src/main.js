@@ -60,10 +60,10 @@
     var noSleep = new NoSleep();
     function noSleepEnable(){
       noSleep.enable();
-      window.removeEventListener('touchstart', noSleepEnable);
-      window.removeEventListener('resize', noSleepEnable);
-      window.removeEventListener('click', noSleepEnable);
-      window.removeEventListener('orientationchange', noSleepEnable);
+      window.removeEventListener('touchstart', noSleepEnable, true);
+      window.removeEventListener('resize', noSleepEnable, true);
+      window.removeEventListener('click', noSleepEnable, true);
+      window.removeEventListener('orientationchange', noSleepEnable, true);
 
       console.log('noSleep enabled');
     }
