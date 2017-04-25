@@ -183,7 +183,7 @@ var HL = {
     textbox:null,
   },
   models: {
-    whale:["assets/3dm/BL_WHALE/whalem.obj",.5],
+    whale:["assets/3dm/BL_WHALE/whalem.jobj",.5],
     ducky:["assets/3dm/ducky/ducky_m.obj",.25],
     airbus:["assets/3dm/airbus/airbusm.obj",2],
     aurora:["assets/3dm/aurora/auroram.obj",2],
@@ -344,7 +344,8 @@ var HLEnvironment = function(){
 
     HL.texturesLoadingManager.onError = function ( url ) {
 
-    	console.log( 'There was an error loading texture ' + url );
+    	console.error( 'There was an error loading texture ' + url );
+      alert("Textures: a loading error occurred. Please reload.");
 
     };
 
@@ -378,6 +379,7 @@ var HLEnvironment = function(){
     HL.modelsLoadingManager.onError = function ( url ) {
 
       console.log( 'There was an error loading model ' + url );
+      alert("Models: a loading error occurred. Please reload.");
 
     };
 
@@ -415,6 +417,7 @@ var HLEnvironment = function(){
         // Function called when download errors
         function ( xhr ) {
             console.error( 'Audio: An error happened '+ xhr );
+            alert("Audio: a loading error occurred. Please reload.");
         }
     );
 
