@@ -192,23 +192,23 @@ var HL = {
     // mercury:["assets/3dm/mercury/mercury_c.obj",5],
     // tiger:["assets/3dm/uncletiger/uncletiger_c.obj",5],
     cube:["assets/3dm/cube.obj",2.5],
-    intro:["assets/3dm/hyperland_intro.obj",3],
-    logo:["assets/3dm/hyperland_logo.obj",5],
+    // intro:["assets/3dm/hyperland_intro.obj",3],
+    // logo:["assets/3dm/hyperland_logo.obj",2],
 
     tomat:["assets/3dm/tomat_lo.obj",10],
     ottino:["assets/3dm/ottino_lo.obj",10],
 
-    stone1:["assets/3dm/stones/stone1.obj",10],
-    stone2:["assets/3dm/stones/stone2.obj",10],
-    stone3:["assets/3dm/stones/stone3.obj",10],
+    // stone1:["assets/3dm/stones/stone1.obj",10],
+    // stone2:["assets/3dm/stones/stone2.obj",10],
+    // stone3:["assets/3dm/stones/stone3.obj",10],
   },
   modelsKeys:null,
   mGroups:{
     space:['aurora','airbus', 'helicopter'],
     sea:['whale'],
     ducks:['ducky'],
-    stones:['stone1','stone2','stone3'],
-    cube:['cube'],
+    // stones:['stone1','stone2','stone3'],
+    // cube:['cube'],
     band:['tomat','ottino']
   },
   // object containing models dynamically cloned from originals, for animation.
@@ -538,7 +538,7 @@ var HLEnvironment = function(){
       new THREE.MeshLambertMaterial( { color:HLC.UI, emissive: HLC.UI.clone().multiplyScalar(.5), transparent:true, side:THREE.DoubleSide } )
     );
 
-    HL.cameraCompanion.position.z = -600;
+    HL.cameraCompanion.position.z = -800;
 
     HL.cameraCompanion.visible = true;
 

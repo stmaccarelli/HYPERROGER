@@ -107,14 +107,14 @@ var HLRemote = function() {
 			if (k.key == 'p' || k.key == 'P' || k.keyCode == 80) {
 				HLH.startModel(HL.models['whale'],
 					THREE.Math.randInt(-1000, 1000),
-					HL.cameraGroup.position.y, 20, null, 10
+					THREE.Math.randInt( 100, 1000), 20, null, 10
 				);
 			}
-
+// model,xPosition,y,speed,rotations, scale, isParticle, towardsCamera
 			if (k.key == 'e' || k.key == 'E' || k.keyCode == 69) {
 				HLH.startModel(HL.models['ducky'],
 					THREE.Math.randInt(-1000, 1000),
-					HL.cameraGroup.position.y, 20, 'xyz', 100
+					0, 0, null, 100
 				);
 			}
 
@@ -132,15 +132,16 @@ var HLRemote = function() {
 			if (k.keyCode == 13 || k.key == 'mS') { //'Enter'
 				// HLE.acceleration = THREE.Math.clamp(HLE.acceleration+=0.009, 0, 2);
 				screenshot();
+
 			}
 		}
 
 		// DEV / EXTRA
-		if (k.key == 'm') {
+		if (k.keyCode == 77 || k.key == 'm') {
 			AA.connectMic();
 		}
 
-		if (k.key == 'f') {
+		if (k.keyCode == 70 || k.key == 'f') {
 			AA.connectFile();
 		}
 
@@ -263,11 +264,16 @@ function screenshot() {
 	// set high pixel ratio for bigegr image
 	HL.renderer.setPixelRatio(1);
 	// render bigger image
+	HL.cameraCompanion.position.z = -400 - HL.cameraGroup.position.y*0.25;
+
+	HLS.logoChange('logo');
 	HL.renderer.render(HL.scene, HL.camera);
 	var imgData = HL.renderer.domElement.toDataURL('image/jpeg');
 	// set back working pixel ratio
 	HL.renderer.setPixelRatio(pixelRatio);
 	window.open(imgData);
+	HL.cameraCompanion.visible = false;
+
 
 	// var html =`
 	// <!DOCTYPE html>
@@ -356,7 +362,7 @@ function updateStatus(gameStatus) {
 			setVisibility('.screens', false);
 			break;
 		case 20: // game paused
-			// HLMain.pause();
+			HLMain.pause();
 			setVisibility('.screens', false);
 			setVisibility('#paused', true);
 			AA.pause();

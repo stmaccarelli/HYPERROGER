@@ -10,23 +10,23 @@
     <title>ROGER WATER, A JOURNEY INTO HYPERLAND</title>
 
     <!-- For IE 10 and below -->
-    <link rel="icon" href="assets/social/generator/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" sizes="57x57" href="assets/social/generator/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="assets/social/generator/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="assets/social/generator/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="assets/social/generator/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="assets/social/generator/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="assets/social/generator/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="assets/social/generator/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="assets/social/generator/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/social/generator/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="assets/social/generator/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/social/generator/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="assets/social/generator/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/social/generator/favicon-16x16.png">
-    <link rel="manifest" href="assets/social/generator/manifest.json">
+    <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="assets/icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+    <link rel="manifest" href="assets/icons/manifest.json">
     <meta name="msapplication-TileColor" content="#000000">
-    <meta name="msapplication-TileImage" content="assets/social/generator/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="assets/icons/ms-icon-144x144.png">
     <meta name="theme-color" content="#000000">
 
 
@@ -53,6 +53,9 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600" rel="stylesheet">
     <link href="assets/css/normalize.css" rel="stylesheet" type="text/css">
     <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/iphone.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/galaxy.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/htc.css" rel="stylesheet" type="text/css">
 
   </head>
 
@@ -62,7 +65,11 @@
     <main class="container">
 
       <div class="valign">
-          <img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" width="100%">
+          <img class="title" src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" width="100%">
+
+          <!-- <div class="noWebGL">
+            <p>You need a browser which supports WebGL<br>to run this content.</p>
+          </div> -->
 
           <div class="action">
             <div class="desktop">
@@ -145,10 +152,13 @@
 
     <script type="text/javascript">
     // HIDE ALL ACTION BUTTONS IF WEBGL IS NOT SUPPORTED
-      if ( ! Detector.webgl ){
-        Detector.addGetWebGLMessage();
-        document.getElementsByClassName('action')[0].style.display = 'none';
-      }
+      document.addEventListener('DOMContentLoaded', function() {
+        if ( ! Detector.webgl ){
+          Detector.addGetWebGLMessage();
+          document.getElementsByClassName('action')[0].style.display = 'none';
+          document.getElementsByClassName('noWebGL')[0].style.display = 'block';
+        }
+      });
 
     </script>
   </body>

@@ -27,13 +27,16 @@ canvas{
 	cursor: crosshair;
 }
 
+.noWebGL{
+	display:none;
+}
 
 .mobile , .desktop{
 	display: none;
 }
 
 
-.valign{
+.valign {
   position: relative;
   top: 50%;
   -webkit-transform: perspective(1px) translateY(-50%);
@@ -68,6 +71,12 @@ canvas{
 	margin: 2em 0;
 }
 
+.subcontainer a {
+	color: #E1001A;
+	text-transform: uppercase;
+	text-decoration: none;
+}
+
 .container .bottom{
 	position:absolute;
 	bottom: 0;
@@ -77,6 +86,8 @@ canvas{
 .container .bottom .logos{
 	display:table;
 	width:100%;
+	position: absolute;
+	bottom:80px;
 }
 
 .container .bottom .logos .logo{
@@ -95,8 +106,27 @@ canvas{
 	font-size: 1rem;
 }
 
-.container .action>div{
+.container .action>div, .backhome{
 	margin: 0.5rem 0;
+}
+
+.action a, .backhome {
+	color: #E1001A;
+	text-transform: uppercase;
+	text-decoration: none;
+}
+
+.backhome {
+	font-size:3vh;
+	margin-bottom: 120px;
+}
+
+.subcontainer img {
+	margin-top:40px !important;
+}
+
+.container .action a:focus {
+	color: #aaa;
 }
 
 
@@ -162,6 +192,7 @@ div#audioProgressBar{
 	float:right;
 	width: 15vh;
 	height: auto;
+	margin-right: 2vw;
 }
 
 .mobileControlButton{
@@ -188,7 +219,7 @@ div#audioProgressBar{
 	background-color: transparent;
 	color: white;
 	font-size: 8vh;
-	line-height: 8vh;
+	line-height: calc(16vh - 11vh);
 	font-family: 'Poppins', sans-serif;
 	border: 0;
 
@@ -264,20 +295,19 @@ div#audioProgressBar{
 /* ORIENTATION */
 @media screen and (orientation: portrait) {
 
-  .portrait {
+	.portrait {
 		display: inherit;
-  }
+	}
 
 	.landscape{
 		display: none;
 	}
-
 }
 
 @media screen and (orientation: landscape) {
-  .portrait {
-    display: none;
-  }
+	.portrait {
+		display: none;
+	}
 
 	.landscape{
 		display: inherit;

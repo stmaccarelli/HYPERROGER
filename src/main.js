@@ -67,10 +67,10 @@
 
       console.log('noSleep enabled');
     }
-    window.addEventListener('touchstart', noSleepEnable);
-    window.addEventListener('click', noSleepEnable);
-    window.addEventListener('resize', noSleepEnable);
-    window.addEventListener('orientationchange', noSleepEnable);
+    window.addEventListener('touchstart', noSleepEnable, true);
+    window.addEventListener('click', noSleepEnable, true);
+    window.addEventListener('resize', noSleepEnable, true);
+    window.addEventListener('orientationchange', noSleepEnable, true);
     noSleepEnable();
 
     // init noScroll TODO do it according to broswer / os
