@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style media="screen">
+      /* Reset */
+
+      	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+      		margin: 0;
+      		padding: 0;
+      		border: 0;
+      		font-size: 100%;
+      		font: inherit;
+      		vertical-align: baseline;
+      	}
+
+      	article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+      		display: block;
+      	}
+
+      	body {
+      		line-height: 1;
+      	}
+
+      	ol, ul {
+      		list-style: none;
+      	}
+
+      	blockquote, q {
+      		quotes: none;
+      	}
+
+      	blockquote:before, blockquote:after, q:before, q:after {
+      		content: '';
+      		content: none;
+      	}
+
+      	table {
+      		border-collapse: collapse;
+      		border-spacing: 0;
+      	}
+
+      	body {
+      		-webkit-text-size-adjust: none;
+      	}
+
+      /* Box Model */
+
+      	*, *:before, *:after {
+      		-moz-box-sizing: border-box;
+      		-webkit-box-sizing: border-box;
+      		box-sizing: border-box;
+      	}
+
+      .screen{
+        display: -moz-flex;
+        display: -webkit-flex;
+        display: -ms-flex;
+        display: flex;
+
+        -moz-flex-direction: column;
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+
+        -moz-justify-content: center;
+        -webkit-justify-content: center;
+        -ms-justify-content: center;
+        justify-content: center;
+        cursor: default;
+        height: 100vh;
+        min-height: 35em;
+        overflow: hidden;
+        position: relative;
+        text-align: center;
+
+        background-color: #9f9;
+      }
+
+      @media screen and (max-width: 736px){
+
+        .screen {
+            padding: 7em 3em 5em 3em;
+            height: auto;
+            min-height: 0;
+        }
+      }
+
+      </style>
+  </head>
+  <body>
+    <section class="screen" id="loading">
+  		<div class="container">
+  			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+  			<div class="subcontainer">
+
+  				<div style="position:relative;height:100px;">
+  					<div class="loadingbars" id="audioLoading"></div>
+  					<div class="loadingbars" id="texturesLoading"></div>
+  					<div class="loadingbars" id="modelsLoading"></div>
+  				</div>
+
+  				<button type="button" name="preloadButton" id="preloadButton" style="display:none;">STARTPRELOAD</button>
+  				<button type="button" disabled name="startButton" id="startButton" style="width:100px;height:40px;font-size:30px;">START</button>
+          <br />
+
+  				<img class="desktop" src="assets/frontend/controls-desktop.svg" alt="ROGER WATER, DESKTOP CONTROLS" style="width:75%; max-width:20em; margin:0 auto;">
+
+  			</div>
+  		</div>
+  	</section>
+  </body>
+</html>
