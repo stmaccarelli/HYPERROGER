@@ -252,14 +252,7 @@ var HLH = function() {
 		// assign srv to model
 		HL.dynamicModelsClones['m'+dynModelsCounter]['srv'] = srv;
 
-		// set X and Z position of model
-		var z = -HLE.WORLD_WIDTH/2;
-	  if(towardsCamera){
-			x = Math.sin( srv.y + (xPosition/(HLE.WORLD_WIDTH)) ) * z;
-			z = Math.cos( srv.y + (xPosition/(HLE.WORLD_WIDTH)) ) * z;
-			// set model rotation so it faces camera at start
-			HL.dynamicModelsClones['m'+dynModelsCounter].rotateY( srv.y );
-		}
+
 		// y === true means we want models attached to landscape
 		if(y === true){
 
@@ -286,7 +279,7 @@ var HLH = function() {
 		if(rotations.indexOf('z')!=-1)
 			HL.dynamicModelsClones['m'+dynModelsCounter].rotateZ((Math.random()-0.5)*3);
 
-		HL.dynamicModelsClones['m'+dynModelsCounter].size = model.size;
+		HL.dynamicModelsClones['m'+dynModelsCounter].size = model.size.clone();
 		HL.dynamicModelsClones['m'+dynModelsCounter].size.multiplyScalar(scale);
 		HL.dynamicModelsClones['m'+dynModelsCounter].scale.set(.7+Math.random()*.3+scale, .7+Math.random()*.3+scale, .7+Math.random()*.3+scale);
 		HL.dynamicModelsClones['m'+dynModelsCounter]['key']='m'+dynModelsCounter;
@@ -296,6 +289,16 @@ var HLH = function() {
 			HL.dynamicModelsClones['m'+dynModelsCounter]['isparticle']=true;
 
 		HL.dynamicModelsClones.length++;
+
+
+		// set X and Z position of model
+		var z = - (HLE.WORLD_WIDTH/2 + HL.dynamicModelsClones['m'+dynModelsCounter].size.z / 1.5 );
+	  if(towardsCamera){
+			x = Math.sin( srv.y + (xPosition/(HLE.WORLD_WIDTH)) ) * z;
+			z = Math.cos( srv.y + (xPosition/(HLE.WORLD_WIDTH)) ) * z;
+			// set model rotation so it faces camera at start
+			HL.dynamicModelsClones['m'+dynModelsCounter].rotateY( srv.y );
+		}
 
 		HL.dynamicModelsClones['m'+dynModelsCounter].position.set(x,y,z);
 		HL.dynamicModelsClones['m'+dynModelsCounter]["speed"] = speed;
@@ -311,6 +314,7 @@ var HLH = function() {
 
 	function moveModel(model){
 
+		let range = HLE.WORLD_WIDTH/2 + model.size.z / 1.5;
 
 		rv.setFromQuaternion(HL.cameraGroup.quaternion,'YXZ');
 
@@ -323,8 +327,8 @@ var HLH = function() {
 
 // TODO: testare logica movimento bidirezionale
 		if(
-		  (model.position.x >= -HLE.WORLD_WIDTH/2) &&
-			(model.position.z >= -HLE.WORLD_WIDTH/2)
+		  (model.position.x >= - ( range ) ) &&
+			(model.position.z >= - ( range ) )
 		){
 			// spostamento sul mondo condizionato dalla camera move
 			model.position.x += rv.x * HLE.moveSpeed;
@@ -338,15 +342,15 @@ var HLH = function() {
 				model.position.z += model.speed;// + HLE.moveSpeed;
 			}
 
-			if(model.rotations.indexOf('x')!=-1) model.rotateX(model.speed*0.0005);
-			if(model.rotations.indexOf('y')!=-1) model.rotateY(model.speed*0.0005);
-			if(model.rotations.indexOf('z')!=-1) model.rotateZ(model.speed*0.0005);
+			if(model.rotations.indexOf('x')!=-1) model.rotateX(model.speed*0.0005+Math.random()*0.001);
+			if(model.rotations.indexOf('y')!=-1) model.rotateY(model.speed*0.0005+Math.random()*0.001);
+			if(model.rotations.indexOf('z')!=-1) model.rotateZ(model.speed*0.0005+Math.random()*0.001);
 
-			if(model.position.y==HL.sea.position.y){
-				model.rotation.x = Math.cos(frameCount*0.003)*0.3 * Math.sin(frameCount*0.003);
-				model.rotation.y = Math.sin(frameCount*0.003)*0.3 * Math.cos(frameCount*0.003);;
-				model.rotation.z = Math.cos(frameCount*0.003)*0.3;
-			}
+			// if(model.position.y==HL.sea.position.y){
+			// 	model.rotation.x = Math.cos(frameCount*0.003)*0.3 * Math.sin(frameCount*0.003)  ;
+			// 	model.rotation.y = Math.sin(frameCount*0.003)*0.3 * Math.cos(frameCount*0.003)  ;
+			// 	model.rotation.z = Math.cos(frameCount*0.003)*0.3 ;
+			// }
 
 			// shake cameraGroup when objects approach
 			model['dist'] = model.position.distanceTo(HL.camera.position);
@@ -366,10 +370,10 @@ var HLH = function() {
 		HL.camera.rotation.z*=0.98;
 
 		if(
-			(model.position.x > HLE.WORLD_WIDTH/2) ||
-			(model.position.x < -HLE.WORLD_WIDTH/2) ||
-			(model.position.z > HLE.WORLD_WIDTH/2) ||
-			(model.position.z < -HLE.WORLD_WIDTH/2)
+			(model.position.x >  ( range ) ) ||
+			(model.position.x < -( range ) ) ||
+			(model.position.z >  ( range ) ) ||
+			(model.position.z < -( range ) )
 		){			//resetModel(model);
 			HL.scene.remove(model);
 			model.material.dispose();
