@@ -50,11 +50,10 @@
 
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+
 	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600" rel="stylesheet">
 	<link href="assets/css/normalize.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/style2.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/font-awesome.min.css" rel="stylesheet">
-
+	<link href="assets/css/style.css" rel="stylesheet" type="text/css">
 
 </head>
 
@@ -64,77 +63,88 @@
 
 		<div class="leftControls valign landscape">
 			<div>
-				<div class="mobileControlButton sideButtons" id="mX" ><i class="fa fa-user-circle"></i></div>
-				<div class="mobileControlButton sideButtons" id="mS" ><i class="fa fa-camera"></i></div>
+				<div class="mobileControlButton" id="mX">X</div>
+				<div class="mobileControlButton" id="mS">S</div>
 			</div>
 		</div>
 
 		<div class="rightControls valign landscape">
 			<div>
-				<div class="mobileControlButton sideButtons" id="buttonAccel" ><i class="fa fa-arrow-circle-up"></i></div>
-				<div class="mobileControlButton sideButtons" id="mP" ><i class="fa fa-pause-circle"></i></div>
+				<div class="mobileControlButton" id="buttonAccel">A</div>
+				<div class="mobileControlButton" id="mP">P</div>
 			</div>
 		</div>
 
-		<div class="portrait" style="text-align:center;">
-			ROTATE TO LANDSCAPE FOR CONTROLS
+		<div class="portrait">
+			ORIENT YOUR DEVICE IN LANDSCAPE FOR CONTROLS
 		</div>
 
 	</div>
 
-	<section class="screens" id="loading" style="background-color:#222">
-		<div class="insideScreen">
-			<!-- <img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:80vmin; max-width:15em; margin:0 auto;"> -->
-			<img class="title" src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" width="50%">
-			<h1 id="loadingTag">LOADING</h1>
+	<div class="screens" id="loading">
+		<div class="container">
+			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+			<div class="subcontainer">
+
 				<div style="position:relative;height:100px;">
 					<div class="loadingbars" id="audioLoading"></div>
 					<div class="loadingbars" id="texturesLoading"></div>
 					<div class="loadingbars" id="modelsLoading"></div>
 				</div>
 
-				<button type="button" disabled name="startButton" id="startButton">START</button>
 				<button type="button" name="preloadButton" id="preloadButton" style="display:none;">STARTPRELOAD</button>
+				<button type="button" disabled name="startButton" id="startButton" style="width:100px;height:40px;font-size:30px;">START</button>
 
-				<div class="desktop" alt="ROGER WATER, DESKTOP CONTROLS"
-				style="width:80vmin; height: 80vmin; max-width: 15em; max-height: 15em; margin:0 auto; background: transparent url(assets/frontend/controls-desktop.svg) center center no-repeat; background-size: contain;">
-			 </div>
+				<img class="desktop" src="assets/frontend/controls-desktop.svg" alt="ROGER WATER, DESKTOP CONTROLS" style="width:75%; margin:0 auto;">
 
 			</div>
-	</section>
+		</div>
+	</div>
 
 
-	<section class="screens" id="paused">
-	  <div class="insideScreen">
-	    <img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+	<div class="screens" id="paused">
+		<div class="container">
+			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+			<div class="subcontainer">
+				<h2>JOURNEY PAUSED</h2>
+				<a class="backhome" href="javascript:window.history.back();">BACK HOME</a>
+				<div class="mobile mobileControlButton resume" id="mP2">RESUME</div>
 
-	    <h2>JOURNEY PAUSED</h2>
-			<a class="backhome desktop" href="javascript:window.history.back();">BACK HOME</a>
-			<a class="desktop" href="javascript:HLRemote.updateStatus(-1);">RESUME</a>
-	    <div class="clear"></div>
-	    <div class="mobile mobileControlButton resume button" id="mP2">RESUME</div>
+				<img class="desktop" src="assets/frontend/controls-desktop.svg" alt="ROGER WATER, DESKTOP CONTROLS" style="width:75%; margin:0 auto;">
 
-	    <div class="desktop" alt="ROGER WATER, DESKTOP CONTROLS"
-	    style="width:80vmin; height: 80vmin; max-width: 15em; max-height: 15em; margin:0 auto; background: transparent url(assets/frontend/controls-desktop.svg) center center no-repeat; background-size: contain;">
-	   </div>
+			</div>
+		</div>
+	</div>
 
-	  </div>
-	</section>
+	<div class="screens" id="ended">
+		<div class="container">
+			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+			<div class="subcontainer">
+				<h2>THIS IS THE END.<br>NOW YOU CAN
+					<a href="#" onclick="AA.audioFile.currentTime=0; AA.filePlayPause(); HLRemote.updateStatus(10);">RESTART THE EXPERIENCE</a>
+				</h2>
 
-	<section class="screens" id="ended">
-	  <div class="insideScreen">
-	    <img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
-	      <h1>THIS IS THE END.<br>NOW YOU CAN
-	        <a href="#" onclick="AA.audioFile.currentTime=0; AA.filePlayPause(); HLRemote.updateStatus(10);">RESTART THE EXPERIENCE</a>
-	        <span class="android desktop"><br>OR <a href="#" id="enableMicButton"
-	          onclick="HLRemote.updateStatus(11);">ENABLE YOUR MIC</a>
-	          FOR A ENDLESS TRIP</span>.
-	      </h1>
-	  </div>
-	</section>
+				<h2 class="android desktop">OR <a href="#" id="enableMicButton"
+					onclick="HLRemote.updateStatus(11);">ENABLE YOUR MIC</a>
+					FOR A ENDLESS TRIP.</h2>
+
+			</div>
+		</div>
+	</div>
 
 	<div class="" id="audioProgressBar"></div>
 
+
+	<!-- <div class="portrait">
+		<div class="container">
+			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+			<div class="subcontainer">
+				<h2>PLEASE ORIENT YOUR SCREEN IN LANDSCAPE MODE</h2>
+				<a href="javascript:window.history.back();">OR BACK HOME</a>
+			</div>
+	</div> -->
+
+	</main>
 
 	<!--  THREE.JS -->
 	<script src="lib/three.min.js"></script>

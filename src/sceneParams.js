@@ -178,7 +178,7 @@ set squareness to 0 for a flat land
 
 //H
      interactiveRogerWater: {
-         cameraPositionY: 400,
+         cameraPositionY: 200,
 
          displayText: 'CHAPTER EIGHT, HYPEROCEAN<br>CRAVING FOR LOVE LASTS FOR LIFE',
          speed: 5,
