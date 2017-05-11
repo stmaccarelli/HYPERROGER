@@ -74,7 +74,6 @@ var HLRemote = function() {
 	}
 
 
-	var prevStatus
 	function keyboardControls(k) {
 
 		// pause key available in game status 1 or 2 (running or paused)
@@ -94,9 +93,9 @@ var HLRemote = function() {
 
 			// shoot models
 			if (k.key == 'h' || k.key == 'H' || k.keyCode == 72) {
-				HLH.startModel(HL.models['heartbomb'],
+				HLH.startModel(HL.models['elephant'],
 					THREE.Math.randInt(-1000, 1000),
-					HL.cameraGroup.position.y, 20, 'xyz', 4
+					-20, 0, null, 10
 				);
 			}
 
@@ -105,27 +104,23 @@ var HLRemote = function() {
 			}
 
 			if (k.key == 'p' || k.key == 'P' || k.keyCode == 80) {
-				HLH.startModel(HL.models['whale'],
-					THREE.Math.randInt(-1000, 1000),
-					THREE.Math.randInt( 100, 1000), 20, null, 10
-				);
+				HLH.startGroup(['sea', 20, 1, 'xyz', true, 5, true]);
 			}
 // model,xPosition,y,speed,rotations, scale, isParticle, towardsCamera
 			if (k.key == 'e' || k.key == 'E' || k.keyCode == 69) {
-				HLH.startModel(HL.models['ducky'],
-					THREE.Math.randInt(-1000, 1000),
-					0, 0, null, 100
-				);
+				HLH.startGroup(['buildings', 1, 0, 'xyz', true, 0, true]);
 			}
 
 			if (k.key == 'r' || k.key == 'R' || k.keyCode == 82) {
-				HLH.startModel(HL.models['airbus'],
-					THREE.Math.randInt(-1000, 1000),
-					HL.cameraGroup.position.y, 40, null, 5
-				);
+				HLH.startGroup(['waste', 20, 0, 'y', true, 0, true]);
 			}
 
-		} // END IF GAMESTATUS == 1
+			//mobile shot
+			if (k.keyCode == 53 || k.key == 'mX') { // 5
+				HLH.startGroup(['space', 1, 1, true, false, HLE.WORLD_HEIGHT / 3]);
+			}
+
+		}
 
 
 		if (HLR.GAMESTATUS > 0) {
@@ -143,10 +138,6 @@ var HLRemote = function() {
 
 		if (k.keyCode == 70 || k.key == 'f') {
 			AA.connectFile();
-		}
-
-		if (k.keyCode == 53 || k.key == 'mX') { // 5
-			HLH.startGroup(['space', 1, 1, true, false, HLE.WORLD_HEIGHT / 3]);
 		}
 
 	} // END keyboardControls()
@@ -399,6 +390,9 @@ var screensInit = function() {
 
 // once HL environment and assets fully load
 window.addEventListener('HLEload', function() {
+
+	document.getElementById('loadingTag').style.opacity = 0;
+
 	// we'll wait for a START button press to gamestatus 1
 	var startButton = document.getElementById('startButton');
 	startButton.disabled = false;

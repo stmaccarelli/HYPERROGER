@@ -177,6 +177,25 @@ var HL = {
 
 
     white:"assets/img/white2x2.gif",
+    barrel: "assets/N3DM/barrel.png",
+    //building1: "assets/N3DM/building-1.png",
+    //building2: "assets/N3DM/building-2.png",
+    //building3: "assets/N3DM/building-3.png",
+    //building4: "assets/N3DM/building-4.png",
+    //building5: "assets/N3DM/building-5.png",
+    building5: "assets/img/white2x2.gif",
+    building6: "assets/img/white2x2.gif",
+
+    chainsaw: "assets/N3DM/chainsaw.png",
+    crocodile: "assets/N3DM/crocodile.png",
+    dolphin: "assets/N3DM/dolphin.png",
+    elephant: "assets/N3DM/elephant2b.jpg",
+    garbage: "assets/N3DM/garbage.png",
+    moab: "assets/N3DM/moab.png",
+    orca: "assets/N3DM/orca.png",
+    stingray: "assets/N3DM/stingray.png",
+    turtle: "assets/N3DM/turtle.png",
+    walrus: "assets/N3DM/walrus.png",
   },
   dynamicTextures:{
     stars:null,
@@ -189,27 +208,39 @@ var HL = {
     aurora:["assets/3dm/aurora/auroram.bmp",2],
     helicopter:["assets/3dm/lo_helicopter2.bmp",2],
     heartbomb:["assets/3dm/heartbomb/heartbomb_m.bmp",2],
-    // mercury:["assets/3dm/mercury/mercury_c.obj",5],
-    // tiger:["assets/3dm/uncletiger/uncletiger_c.obj",5],
     cube:["assets/3dm/cube.bmp",2.5],
-    // intro:["assets/3dm/hyperland_intro.obj",3],
-    // logo:["assets/3dm/hyperland_logo.obj",2],
-
     tomat:["assets/3dm/tomat_lo.bmp",10],
     ottino:["assets/3dm/ottino_lo.bmp",10],
+    //N3DM
+    // building1:["assets/N3DM/building-1.obj",10],
+    // building2:["assets/N3DM/building-2.obj",10],
+    // building3:["assets/N3DM/building-3.obj",10],
+    // building4:["assets/N3DM/building-4.obj",10],
+    // building5:["assets/N3DM/building-5.obj",10],
+    building6:["assets/N3DM/building-6.obj",1],
 
-    // stone1:["assets/3dm/stones/stone1.obj",10],
-    // stone2:["assets/3dm/stones/stone2.obj",10],
-    // stone3:["assets/3dm/stones/stone3.obj",10],
+    barrel:["assets/N3DM/barrel.bmp",1],
+    chainsaw:["assets/N3DM/chainsaw.obj",1],
+    garbage:["assets/N3DM/garbage.bmp",1],
+    moab:["assets/N3DM/moab.obj",1],
+    //
+    elephant:["assets/N3DM/elephant2b.obj",40],
+    //
+    crocodile:["assets/N3DM/crocodile.bmp",1],
+    dolphin:["assets/N3DM/dolphin.bmp",1],
+    orca:["assets/N3DM/orca.bmp",1],
+    stingray:["assets/N3DM/stingray.bmp",1],
+    turtle:["assets/N3DM/turtle.bmp",5],
+    walrus:["assets/N3DM/walrus.bmp",1],
   },
   modelsKeys:null,
   mGroups:{
     space:['aurora','airbus', 'helicopter'],
-    sea:['whale'],
+    sea:['whale', 'crocodile', 'dolphin', 'orca', 'stingray', 'turtle', 'walrus'],
     ducks:['ducky'],
-    // stones:['stone1','stone2','stone3'],
-    // cube:['cube'],
-    band:['tomat','ottino']
+    band:['tomat','ottino'],
+    buildings:['building5','building6'],
+    waste:['barrel', 'chainsaw', 'garbage', 'moab']
   },
   // object containing models dynamically cloned from originals, for animation.
   dynamicModelsClones:{length:0},
@@ -523,7 +554,7 @@ var HLEnvironment = function(){
         40,
         (window.innerWidth) / (window.innerHeight),
         1.1,
-        HLE.WORLD_WIDTH * 2.1
+        HLE.WORLD_WIDTH * 100
       );
 
     }
@@ -678,7 +709,9 @@ var HLEnvironment = function(){
 
   //  HL.geometries.sky = new THREE.BoxGeometry(HLE.WORLD_WIDTH, HLE.WORLD_WIDTH, HLE.WORLD_WIDTH-HLE.TILE_SIZE);
   //  HL.geometries.sky.translate(0,0, HLE.TILE_SIZE*0.5);
-    HL.geometries.sky = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*.5-50,64,64);
+
+   HL.geometries.sky = new THREE.SphereBufferGeometry(HLE.WORLD_WIDTH*.5-50,64,64);
+
     // SphereBufferGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
 
     // HL.boundaries = new THREE.Mesh(
@@ -1040,7 +1073,7 @@ var HLEnvironment = function(){
 
      HL.lights['hemisphere'] = new THREE.HemisphereLight( 0xffffff, HLC.land, .6 );
      HL.lights.hemisphere.color = HLC.horizon;
-     HL.lights.hemisphere.groundColor = HLC.land;
+     HL.lights.hemisphere.groundColor = HLC.land.multiply( HLC.horizon );
 
      HL.scene.add(HL.lights.hemisphere);
 
