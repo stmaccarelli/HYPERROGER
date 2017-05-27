@@ -1,0 +1,2 @@
+v - START BUTTON ENABLED BEFORE ALL TEXTURES AND OBJ LOADED
+- when shut phone than resume, audio starts from beginning but analysis not

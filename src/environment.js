@@ -19,6 +19,7 @@ var HLE = {
   SCREEN_HEIGHT_SCALE:isMobile?1:1,
 
   // TODO REVIEW
+  DATE: new Date(),
   CURRENT_HOUR: Math.sin( new Date().getHours() / 23 * Math.PI ),
   // CURRENT_HOUR: Math.sin( 0 / 23 * Math.PI ),
 
@@ -212,19 +213,19 @@ var HL = {
     tomat:["assets/3dm/tomat_lo.bmp",10],
     ottino:["assets/3dm/ottino_lo.bmp",10],
     //N3DM
-    // building1:["assets/N3DM/building-1.obj",10],
-    // building2:["assets/N3DM/building-2.obj",10],
-    // building3:["assets/N3DM/building-3.obj",10],
-    // building4:["assets/N3DM/building-4.obj",10],
-    // building5:["assets/N3DM/building-5.obj",10],
-    building6:["assets/N3DM/building-6.obj",1],
+    // building1:["assets/N3DM/building-1.bmp",10],
+    // building2:["assets/N3DM/building-2.bmp",10],
+    // building3:["assets/N3DM/building-3.bmp",10],
+    // building4:["assets/N3DM/building-4.bmp",10],
+    // building5:["assets/N3DM/building-5.bmp",10],
+    // building6:["assets/N3DM/building-6.bmp",.3],
 
     barrel:["assets/N3DM/barrel.bmp",1],
-    chainsaw:["assets/N3DM/chainsaw.obj",1],
+    chainsaw:["assets/N3DM/chainsaw2.bmp",1],
     garbage:["assets/N3DM/garbage.bmp",1],
-    moab:["assets/N3DM/moab.obj",1],
+    moab:["assets/N3DM/moab.bmp",1.3],
     //
-    elephant:["assets/N3DM/elephant2b.obj",40],
+    elephant:["assets/N3DM/elephant2b.bmp",40],
     //
     crocodile:["assets/N3DM/crocodile.bmp",1],
     dolphin:["assets/N3DM/dolphin.bmp",1],
@@ -236,11 +237,13 @@ var HL = {
   modelsKeys:null,
   mGroups:{
     space:['aurora','airbus', 'helicopter'],
-    sea:['whale', 'crocodile', 'dolphin', 'orca', 'stingray', 'turtle', 'walrus'],
+    sea:['whale','crocodile', 'dolphin', 'orca', 'stingray', 'turtle', 'walrus'],
+    bigfishes:['whale', 'dolphin', 'orca', 'walrus'],
     ducks:['ducky'],
     band:['tomat','ottino'],
-    buildings:['building5','building6'],
-    waste:['barrel', 'chainsaw', 'garbage', 'moab']
+    buildings:['building6'],
+    waste:['barrel', 'garbage', 'moab'],
+    civilization:['barrel', 'garbage', 'airbus', 'helicopter', 'aurora', 'ducky']
   },
   // object containing models dynamically cloned from originals, for animation.
   dynamicModelsClones:{length:0},
@@ -437,11 +440,11 @@ var HLEnvironment = function(){
           window.dispatchEvent( audioProgressEvent );
 
          //  attempt launching system when audio is 50% buffered
-          if( xhr.total - xhr.loaded > xhr.total * 0.5 && HL.preloadDebounce){
-            console.log('Audio Loading 50%\nattempti to dispatch HLAssetLoaded event');
-            window.dispatchEvent(HLAssetLoadEvent);
-            HL.preloadDebounce = null;
-          }
+          // if( xhr.total - xhr.loaded > xhr.total * 0.5 && HL.preloadDebounce){
+          //   console.log('Audio Loading 50%\nattempti to dispatch HLAssetLoaded event');
+          //   window.dispatchEvent(HLAssetLoadEvent);
+          //   HL.preloadDebounce = null;
+          // }
           //  console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
         },
 
@@ -494,7 +497,7 @@ var HLEnvironment = function(){
     // TODO: when textures and models are loaded, dispatch HLEload event and start clock.
     // try this:
 
-    window.addEventListener('HLAssetLoaded',assetLoadListener);
+    window.addEventListener('HLAssetLoaded', assetLoadListener);
   }
 
   var assetTotal = 3, assetLoaded=0;

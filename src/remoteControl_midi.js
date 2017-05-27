@@ -1,4 +1,4 @@
-// this stores all data coming from websocket / any remote source we want to connect
+ // this stores all data coming from websocket / any remote source we want to connect
 // TODO socket here
 var HLR = {
 	//audio
@@ -73,6 +73,120 @@ var HLRemote = function() {
 
 	}
 
+	function MIDIcontrols() {
+		//remidi mapping
+		const POLLICE = 36;
+		const INDICE = 37;
+		const MEDIO = 38;
+
+		// const ANULARE = 40;
+		// const MIGNOLO = 39;
+		// const PALM_MIGNOLO = 38;
+		// const PALM_INDICE = 37;
+		// const PALM_POLSO = 36;
+		//
+		// const KNOB_L = 1;
+		// const KNOB_R = 2;
+		// const KNOB_PUSH = 3;
+		//
+		// const L_BUTTON = 4;
+		// const R_BUTTON = 5;
+
+	console.log('HLS.MIDIcontrols init');
+	  navigator.requestMIDIAccess().then(
+	    onMIDIInit,
+	    onMIDISystemError );
+
+	  function onMIDISystemError(e){
+	    console.log(e);
+	  }
+
+	  function onMIDIInit( midi ) {
+	    // sys_midi = midi;
+	    for (var input of midi.inputs.values())
+	      input.onmidimessage = midiMessageReceived;
+	  }
+
+		var Yaxis = 0, nYaxis = 0;
+
+		function MIDIrotation(){
+			requestAnimationFrame(MIDIrotation);
+			HL.cameraGroup.rotation.y += Yaxis * 0.03;
+		}
+		requestAnimationFrame(MIDIrotation);
+
+	  function midiMessageReceived( ev ) {
+
+			let chan = ev.data[0]; // non è il canale, porta vari dati
+			let note = ev.data[1];
+			let velocity = ev.data[2];
+
+			// if(note!= 22 && note!= 24)
+			// 	console.log(note);
+
+			// if(note!=22 && note!=24){
+			// 	console.log(ev);
+			// } else
+			if(note == 22 ){
+					nYaxis = ( ( 1 - ev.data[2] / 127 ) - 0.5 );
+					Yaxis += (nYaxis - Yaxis) * 0.05;
+										//if( Math.abs(nVal - HL.cameraGroup.rotation.y) < .05) {
+						// HL.cameraGroup.rotation.y = nVal;
+						// HL.cameraGroup.rotation.y += Yaxis * 0.3;
+					//}
+//				HL.cameraGroup.rotateY( (0.1 - ev.data[2] / 1270) - 0.05 );
+			}
+
+// 			if(note == 22 ){
+// 				let nVal = HL.cameraGroup.rotation.x + ( ( ev.data[2] / 127 ) - 0.5 ) / 2;
+// 				HL.cameraGroup.rotation.x += ( nVal - HL.cameraGroup.rotation.x ) * 0.051;
+// //				HL.cameraGroup.rotateY( (0.1 - ev.data[2] / 1270) - 0.05 );
+// 			}
+
+			if(note == INDICE){
+				let val = ev.data[2]/127;
+				val *= val * val * val * val * val;
+				HL.camera.zoom = 1 + val * 2;
+				HL.camera.updateProjectionMatrix();
+			}
+
+			if(note == MEDIO){
+				let val = ev.data[2]/127;
+				val *= val * val * val * val * val;
+				HL.materials.land.uniforms.buildFreq.value += val * 0.1;
+			}
+
+			if(note == POLLICE){
+				let val = ev.data[2]/127;
+				val *= val * val * val * val * val;
+				HLE.acceleration = THREE.Math.clamp( val * 6, 0, 3);
+			}
+
+	    // var midiInputIndex = 144 // channel in DJ mode without hex calculations
+			//
+	    // for (var key in HLSP) {
+	    //     if (ev.data[2]>0 && ev.data[1]==103 && ev.data[0]== midiInputIndex++) {
+	    //       HLS.startScene(key);
+	    //     }
+	    // }
+			//
+			//
+	    // if (ev.data[2]>0 && ev.data[1]==0) //5
+	    //   if(HLS.modelsParams !== null)
+	    //     HLH.startGroup(HLS.modelsParams);
+			//
+	    // if (ev.data[0]==156 && ev.data[2]>0 && ev.data[1]==1) { //9
+	    //   HLE.CENTER_PATH=!HLE.CENTER_PATH;
+	    //   HL.materials.land.uniforms.withCenterPath.value = HLE.CENTER_PATH;
+	    // }
+
+	  }
+
+	}
+
+	MIDIcontrols();
+
+
 
 	function keyboardControls(k) {
 
@@ -93,47 +207,31 @@ var HLRemote = function() {
 
 			// shoot models
 			if (k.key == 'h' || k.key == 'H' || k.keyCode == 72) {
-				// HLH.startModel(HL.models['elephant'],
-				// 	THREE.Math.randInt(-1000, 1000),
-				// 	-20, 0, null, 10
-				// );
-				HLH.startGroup(['bigfishes', 20, 0, 'y', true, 0, true]);
-
+				HLH.startModel(HL.models['elephant'],
+					THREE.Math.randInt(-1000, 1000),
+					-20, 0, null, 10
+				);
 			}
 
 			if (k.key == 'y' || k.key == 'Y' || k.keyCode == 89) {
-				HLH.startGroup(['band', 20, 0, 'xyz', true, 0, true]);
+				HLH.startGroup(['band', 20, 0, 'y', true, 0, true]);
 			}
-// group, scale, speed, rotations, floating, midpoint, towardsCamera
+
 			if (k.key == 'p' || k.key == 'P' || k.keyCode == 80) {
-				HLH.startGroup(['sea', 20, 1, 'xyz', false, HLE.WORLD_HEIGHT, true]);
+				HLH.startGroup(['sea', 20, 1, 'xyz', true, 5, true]);
 			}
 // model,xPosition,y,speed,rotations, scale, isParticle, towardsCamera
 			if (k.key == 'e' || k.key == 'E' || k.keyCode == 69) {
-				HLH.startGroup(['civilization', 1, 0, null, true, 0, true]);
+				HLH.startGroup(['buildings', 1, 0, 'xyz', true, 0, true]);
 			}
 
 			if (k.key == 'r' || k.key == 'R' || k.keyCode == 82) {
 				HLH.startGroup(['waste', 20, 0, 'y', true, 0, true]);
 			}
 
-			// SECRETS
-			if (k.key == 'd' || k.key == 'D' || k.keyCode == 68) {
-				HLH.startModel(HL.models['ducky'],
-					THREE.Math.randInt(-1000, 1000),
-					-2, 0, 'xyz', 50, false, true
-				);
-			}
-			if (k.key == 'c' || k.key == 'C' || k.keyCode == 67) {
-				HLH.startModel(HL.models['chainsaw'],
-					THREE.Math.randInt(-1000, 1000),
-					-1, 0, 'xyz', 5, false, true
-				);
-			}
 			//mobile shot
 			if (k.keyCode == 53 || k.key == 'mX') { // 5
-				//HLH.startGroup(['space', 1, 1, true, false, HLE.WORLD_HEIGHT / 3]);
-				HLH.startAll();
+				HLH.startGroup(['space', 1, 1, true, false, HLE.WORLD_HEIGHT / 3]);
 			}
 
 		}
@@ -191,12 +289,15 @@ var HLRemote = function() {
 			case 102:
 				k.preventDefault();
 				k.stopPropagation();
-				HLH.startAll();
+				HLH.startModel(HL.models['airbus'],
+					THREE.Math.randInt(-1000, 1000),
+					HL.cameraGroup.position.y, 20, 'xyz', 1
+				);
 				break;
 			case 114:
 				k.preventDefault();
 				k.stopPropagation();
-				HLH.startModel(HL.models['whale'],
+				HLH.startModel(HL.models['aurora'],
 					THREE.Math.randInt(-1000, 1000),
 					THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 1
 				);
@@ -204,7 +305,7 @@ var HLRemote = function() {
 			case 116:
 				k.preventDefault();
 				k.stopPropagation();
-				HLH.startModel(HL.models['ducky'],
+				HLH.startModel(HL.models['helicopter'],
 					THREE.Math.randInt(-1000, 1000),
 					THREE.Math.randInt(HLE.WORLD_HEIGHT, HLE.WORLD_HEIGHT * 1.5), 20, 'xyz', 1
 				);
@@ -244,8 +345,8 @@ var HLRemote = function() {
 	// in cardboard mode, touching screen pauses game
 	if (isCardboard) {
 			window.addEventListener('touchstart', function(e) {
-				// e.preventDefault();
-				// e.stopPropagation();
+				e.preventDefault();
+				e.stopPropagation();
 				let fakeEvent = {
 					'key': ' ',
 					'preventDefault': function(){},
