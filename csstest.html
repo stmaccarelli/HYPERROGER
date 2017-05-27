@@ -3,112 +3,171 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-    <style media="screen">
-      /* Reset */
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-      	html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
-      		margin: 0;
-      		padding: 0;
-      		border: 0;
-      		font-size: 100%;
-      		font: inherit;
-      		vertical-align: baseline;
-      	}
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600" rel="stylesheet">
+    <link href="assets/css/normalize.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style2.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
 
-      	article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-      		display: block;
-      	}
-
-      	body {
-      		line-height: 1;
-      	}
-
-      	ol, ul {
-      		list-style: none;
-      	}
-
-      	blockquote, q {
-      		quotes: none;
-      	}
-
-      	blockquote:before, blockquote:after, q:before, q:after {
-      		content: '';
-      		content: none;
-      	}
-
-      	table {
-      		border-collapse: collapse;
-      		border-spacing: 0;
-      	}
-
-      	body {
-      		-webkit-text-size-adjust: none;
-      	}
-
-      /* Box Model */
-
-      	*, *:before, *:after {
-      		-moz-box-sizing: border-box;
-      		-webkit-box-sizing: border-box;
-      		box-sizing: border-box;
-      	}
-
-      .screen{
-        display: -moz-flex;
-        display: -webkit-flex;
-        display: -ms-flex;
-        display: flex;
-
-        -moz-flex-direction: column;
-        -webkit-flex-direction: column;
-        -ms-flex-direction: column;
-        flex-direction: column;
-
-        -moz-justify-content: center;
-        -webkit-justify-content: center;
-        -ms-justify-content: center;
-        justify-content: center;
-        cursor: default;
-        height: 100vh;
-        min-height: 35em;
-        overflow: hidden;
-        position: relative;
-        text-align: center;
-
-        background-color: #9f9;
-      }
-
-      @media screen and (max-width: 736px){
-
-        .screen {
-            padding: 7em 3em 5em 3em;
-            height: auto;
-            min-height: 0;
-        }
-      }
-
-      </style>
   </head>
   <body>
-    <section class="screen" id="loading">
-  		<div class="container">
-  			<img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
-  			<div class="subcontainer">
 
-  				<div style="position:relative;height:100px;">
-  					<div class="loadingbars" id="audioLoading"></div>
-  					<div class="loadingbars" id="texturesLoading"></div>
-  					<div class="loadingbars" id="modelsLoading"></div>
-  				</div>
+    <div id="mobileControls" class="mobile">
 
-  				<button type="button" name="preloadButton" id="preloadButton" style="display:none;">STARTPRELOAD</button>
-  				<button type="button" disabled name="startButton" id="startButton" style="width:100px;height:40px;font-size:30px;">START</button>
-          <br />
-
-  				<img class="desktop" src="assets/frontend/controls-desktop.svg" alt="ROGER WATER, DESKTOP CONTROLS" style="width:75%; max-width:20em; margin:0 auto;">
-
+  		<div class="leftControls valign landscape">
+  			<div>
+  				<div class="mobileControlButton sideButtons" id="mX" ><i class="fa fa-user-circle"></i></div>
+  				<div class="mobileControlButton sideButtons" id="mS" ><i class="fa fa-camera"></i></div>
   			</div>
   		</div>
+
+  		<div class="rightControls valign landscape">
+  			<div>
+  				<div class="mobileControlButton sideButtons" id="buttonAccel" ><i class="fa fa-arrow-circle-up"></i></div>
+  				<div class="mobileControlButton sideButtons" id="mP" ><i class="fa fa-pause-circle"></i></div>
+  			</div>
+  		</div>
+
+  		<div class="portrait" style="text-align:center;">
+  			ROTATE TO LANDSCAPE FOR CONTROLS
+  		</div>
+
+  	</div>
+
+    <section class="screen" id="intro">
+      <div class="insideScreen">
+        <img class="title" src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" width="100%">
+
+        <div class="noWebGL">
+          <p>You need a browser which supports WebGL<br>to run this content.<br> Please check <a href="http://webglreport.com">webglreport.com</a> for more infos.</p>
+        </div>
+
+        <div class="action">
+          <div class="desktop">
+            <a href="system.html?fpc">BEGIN</a>
+          </div>
+
+          <div class="mobile">
+            <a href="system.html">360</a>
+          </div>
+
+          <div class="mobile">
+            <a href="system.html?cardboard">CARDBOARD</a>
+          </div>
+        </div>
+
+        <ul class="logos">
+            <li><a href="http://www.niagaraniagara.it" ><img src="assets/frontend/logo-niagara.svg" alt="NIAGARA"></a></li>
+            <li><a href="http://www.stefano-maccarelli.com" ><img src="assets/frontend/logo-stefanomaccarelli.svg" alt="STEFANO MACCARELLI"></a></li>
+            <li><a href="http://www.monotremerecords.com" ><img src="assets/frontend/logo-monotreme.svg" alt="MONOTREME RECORDS"></a></li>
+        </ul>
+
+        <div class="clear"></div>
+        <p class="fa fa-chevron-down" aria-hidden="true" style="margin-top:3em"></p>
+      </div>
+    </section>
+
+    <section class="screen expandable" id="about" style="background-color:#f88">
+      <p class="insideScreen expandable">
+      ROGER WATER is a web-based interactive and audioreactive 360 + VR experience, created by Stefano Maccarelli for Niagara, that goes far beyond the concept of a VR or interactive music video.
+      It's a kind of explorative videogame.<br><br>
+
+      ROGER WATER is an endless flying exploration of a generative, infinite open world made of surreal Earth-like landscapes generated and animated by the music of Roger Water by Niagara and inspired by HYPERLAND, the new Niagara AV show made by Stefano Maccarelli.
+      It's a kind of parallel universe connected to ours, populated by objects from modern terrestrial civilization and terrestrial creatures that behave in unusual ways.
+<br><br>
+      The landscapes are generated, animated and populated in real time, thanks to sound analysis, as the traveler explores them.
+      Players can travel that world with a computer or a smartphone, in 360 or VR (Cardboard) mode.
+<br><br>
+      Players can fly freely in this infinite and everchanging generative open world, accelerate, fly up or down, follow creatures, or just stay and contemplate the environment.
+      They can also manually populate the world by launching objects and creatures, and Cardboard mode is compatible with bluetooth VR remote controllers.
+<br><br>
+      Experiencing ROGER WATER world from a computer or Android device gives players the chance to activate their microphone and let the world react to their voice, music, ambient sounds, etc.
+      They just need to wait for ROGER WATER music to end.
+<br><br>
+      The generative world may also react with time and location of the player, and features some secret things that players can discover by finding "special areas" or by visiting ROGER WATER world at specific hours.
+<br><br>
+      When using a smartphone or tablet, and both in 360 and VR mode, players need to physically turn and move around in order to fully explore the world; this gives them a more immersive experience.
+    </p>
+    </section>
+
+
+    <section class="screen" id="credits" style="background-color: #222">
+  		<div class="insideScreen">
+        <h1>CREDITS</h1>
+        <ul class="taLeft">
+          <li>Concept, art direction, creative coding <a href="#">Stefano Maccarelli</a></li>
+          <li>Music <a href="#">Niagara</a></li>
+          <li>Label <a href="#">Monotreme</a></li>
+          <li>Networking, system <a href="#">Aaron Syed</a></li>
+          <li>3D models:
+            <ul>
+              <li><a href="#">NOME</a></li>
+              <li><a href="#">NOME</a></li>
+              <li><a href="#">NOME</a></li>
+              <li><a href="#">NOME</a></li>
+              <li><a href="#">NOME</a></li>
+            </ul>
+          <li>Textures <a href="#">SITO</a></li>
+          <li>Framework <a href="#">Three.js</a></li>
+
+        </ul>
+  		</div>
   	</section>
+
+<br> loading <br>
+
+    <section class="screen" id="loading" style="background-color:#222">
+      <div class="insideScreen">
+        <!-- <img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:80vmin; max-width:15em; margin:0 auto;"> -->
+        <img class="title" src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" width="50%">
+        <h1>LOADING</h1>
+          <div style="position:relative;height:100px;">
+            <div class="loadingbars" id="audioLoading"></div>
+            <div class="loadingbars" id="texturesLoading"></div>
+            <div class="loadingbars" id="modelsLoading"></div>
+          </div>
+
+          <button type="button" name="preloadButton" id="preloadButton" style="display:none;">STARTPRELOAD</button>
+          <button type="button" disabled name="startButton" id="startButton" class="button">START</button>
+
+          <div class="desktop" alt="ROGER WATER, DESKTOP CONTROLS"
+          style="width:80vmin; height: 80vmin; max-width: 15em; max-height: 15em; margin:0 auto; background: transparent url(assets/frontend/controls-desktop.svg) center center no-repeat; background-size: contain;">
+         </div>
+
+        </div>
+    </section>
+
+<br> pause-desktop <br>
+
+
+<section class="screen" id="paused">
+  <div class="insideScreen">
+    <img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+
+    <h2>JOURNEY PAUSED</h2>
+    <a class="backhome desktop" href="javascript:window.history.back();">BACK HOME</a>
+    <div class="clear"></div>
+    <div class="mobile mobileControlButton resume button" id="mP2">RESUME</div>
+
+    <div class="desktop" alt="ROGER WATER, DESKTOP CONTROLS"
+    style="width:80vmin; height: 80vmin; max-width: 15em; max-height: 15em; margin:0 auto; background: transparent url(assets/frontend/controls-desktop.svg) center center no-repeat; background-size: contain;">
+   </div>
+
+  </div>
+</section>
+
+<section class="screen" id="ended">
+  <div class="insideScreen">
+    <img src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" style="width:50%; margin:0 auto;">
+      <h1>THIS IS THE END.<br>NOW YOU CAN
+        <a href="#" onclick="AA.audioFile.currentTime=0; AA.filePlayPause(); HLRemote.updateStatus(10);">RESTART THE EXPERIENCE</a>
+        <span class="android desktop"><br>OR <a href="#" id="enableMicButton"
+          onclick="HLRemote.updateStatus(11);">ENABLE YOUR MIC</a>
+          FOR A ENDLESS TRIP</span>.
+      </h1>
+  </div>
+</section>
+
   </body>
 </html>

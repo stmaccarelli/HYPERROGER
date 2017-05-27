@@ -1,0 +1,467 @@
+/**{
+	outline: none;
+	margin:0; padding:0;
+	box-sizing: border-box;
+	webkit-box-sizing: border-box;
+	moz-box-sizing: border-box;
+
+}*/
+
+ol, ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+body {
+    -webkit-text-size-adjust: none;
+}
+
+html {
+    line-height: 1;
+    font-size: 2vmax;
+}
+
+body {
+    margin: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: monospace;
+    width: 100vw;
+    height: 100vh;
+    /*overflow:hidden;*/
+    font-family: 'Poppins', sans-serif;
+}
+
+body.index{}
+
+body.system{
+	overflow: hidden;
+}
+
+canvas {
+    cursor: crosshair;
+}
+
+.clear {
+    clear: both;
+}
+
+a {
+    color: #E1001A;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+
+/*COMMON*/
+
+.screens {
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: -ms-flex;
+    display: flex;
+    -moz-flex-direction: column;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -moz-justify-content: center;
+    -webkit-justify-content: center;
+    -ms-justify-content: center;
+    justify-content: center;
+    cursor: default;
+    height: 100vh;
+    min-height: 10em;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+
+		z-index:999;
+
+		color: #fff;
+		background-color: rgba(0, 0, 0, 0.7);
+}
+
+body.system .screens{
+	display:none;
+	opacity:0;
+}
+
+.expandable{
+	height: auto !important;
+	min-height: 100vh !important;
+}
+
+.insideScreen {
+    position: absolute;
+    width: 70%;
+    max-width: 1000px;
+    max-height: 90%;
+
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.insideScreen.expandable {
+	height: auto !important;
+	max-height: none !important;
+
+	position: relative;
+	width: 80%;
+	max-width: 80%;
+	padding: 5% 10%;
+	max-height: 90%;
+
+	top: auto;
+	left: auto;
+	-webkit-transform: none;
+	-moz-transform: none;
+	-ms-transform: none;
+	-o-transform: none;
+	transform: none;
+}
+
+.taLeft {
+    text-align: left !important;
+}
+
+@media screen and (orientation: portrait) {
+    img.insideScreen {
+        max-width: 90%;
+    }
+}
+
+@media screen and (orientation: landscape) {
+    img.insideScreen {
+        max-height: 90%;
+    }
+}
+
+
+/*INDEX*/
+
+.noWebGL {
+    display: none;
+}
+
+
+/*these will be managed by JS*/
+
+.mobile, .desktop {
+    -display: none;
+}
+
+.action {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    font-size: 2em;
+}
+
+.action>div {
+    display: inline-block;
+    margin: .5em;
+}
+
+ul.logos {
+    margin-top: 3em;
+}
+
+ul.logos li {
+    display: table-cell;
+    float: left;
+    margin: 0;
+    padding: 0;
+    width: 33.33%;
+    vertical-align: middle;
+}
+
+ul.logos:last-child {
+    float: none;
+}
+
+
+
+
+
+/*.halign{
+	margin: inherit auto;
+	width:100%;
+	text-align: center;
+}*/
+
+
+/*.container{
+	width:40%;
+	height:100%;
+	margin: 0 auto;
+	padding: 1em 0;
+	font-size: 14px;
+	position:relative;
+
+	text-align: center;
+}*/
+
+
+/*.subcontainer{
+	width:100%;
+	margin: 2em 0;
+}*/
+
+
+/*.subcontainer a {
+	color: #E1001A;
+	text-transform: uppercase;
+	text-decoration: none;
+}*/
+
+
+/*.container .bottom{
+	position:absolute;
+	bottom: 0;
+	width:100%;
+}*/
+
+
+/*.container .bottom .logos{
+	display:table;
+	width:100%;
+	position: absolute;
+	bottom:80px;
+}
+
+.container .bottom .logos .logo{
+	display:table-cell;
+	width: 33.3333333%;
+	align-items: center;
+	text-align: center;
+}*/
+
+
+/*
+.subcontainer img {
+	margin-top:40px !important;
+}
+
+.container .action a:focus {
+	color: #aaa;
+}*/
+
+
+/*TYPO*/
+
+h1 {
+    font-weight: 400;
+    font-size: 2rem;
+}
+
+h2 {
+    font-weight: 300;
+    font-size: 1rem;
+}
+
+.mediumText{
+  font-size: 0.6em;
+}
+
+.center, .center *{
+  text-align: center;
+}
+
+
+/*PROGRESS BAR*/
+
+div#audioProgressBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    height: 4px;
+    width: 1%;
+    background-color: #fff;
+}
+
+
+/*SCREENS*/
+
+
+/*.screens{
+	position:absolute;
+	z-index:999;
+	width:100%;
+	height:100%;
+	display:none;
+	opacity:0;
+	top:0;left:0;
+
+	color: #fff;
+	background-color: rgba(0, 0, 0, 0.7);
+}*/
+
+.valign {
+  position: relative;
+  top: 50%;
+  -webkit-transform: perspective(1px) translateY(-50%);
+  -ms-transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(-50%);
+}
+
+#mobileControls {
+    position: absolute;
+    z-index: 998;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    background-color: transparent;
+}
+
+.leftControls {
+    float: left;
+    width: 8em;
+    height: auto;
+}
+
+.rightControls {
+    float: right;
+    width: 8em;
+    height: auto;
+    margin-right: 0;
+}
+
+.button{
+	margin: 0 0 1em;
+	display: inline-block;
+}
+
+.mobileControlButton {
+	font-size: 2em;
+	padding: .5em;
+	margin: .5em;
+
+    background-color: transparent;
+    color: white;
+    border: 1vh solid white;
+
+    text-align: center;
+}
+
+.sideButtons{
+	font.size:3em;
+	border:none;
+}
+
+#startButton {
+
+}
+
+#startButton:disabled {
+    color: grey;
+}
+
+#startButton:hover {
+    /*background-color:white;
+	color:black;*/
+}
+
+
+/*#startButton:active {
+}*/
+
+.screens#loading {
+    display: block;
+    opacity: 1;
+    z-index: 9000;
+}
+
+.loadingbars {
+    position: absolute;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    z-index: 1001;
+    height: 8px;
+    width: 1%;
+}
+
+#audioLoading {
+    top: 0;
+    background-color: #f00;
+}
+
+#texturesLoading {
+    top: 8px;
+    background-color: #0f0;
+}
+
+#modelsLoading {
+    top: 16px;
+    background-color: #00f;
+}
+
+
+/* COMMON */
+
+@media screen and (max-device-width: 414px) {
+    ul.logos li {
+        display: block;
+        width: 100%;
+        float: none;
+        clear: both;
+        text-align: center;
+        margin-bottom: 1em;
+        height: auto;
+    }
+    .action>div {
+        display: block;
+    }
+}
+
+@media screen and (min-device-width: 1280px) {
+	/*.insideScreen {
+	    max-width: 1280px;
+		}*/
+}
+
+
+/* ORIENTATION */
+
+@media screen and (orientation: portrait) {
+    .portrait {
+        display: inherit;
+    }
+    .landscape {
+        display: none;
+    }
+}
+
+@media screen and (orientation: landscape) {
+    .portrait {
+        display: none;
+    }
+    .landscape {
+        display: inherit;
+    }
+}

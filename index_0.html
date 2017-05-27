@@ -52,92 +52,58 @@
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600" rel="stylesheet">
     <link href="assets/css/normalize.css" rel="stylesheet" type="text/css">
-    <link href="assets/css/style2.css" rel="stylesheet" type="text/css">
-    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/iphone.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/galaxy.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/htc.css" rel="stylesheet" type="text/css">
 
   </head>
 
   <body class="index">
     <script src="lib/Detector.js"></script>
 
-    <section class="screens" id="intro">
-      <div class="insideScreen">
-        <img class="title" src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" width="100%">
+    <main class="container">
 
-        <div class="noWebGL">
-          <p>You need a browser which supports WebGL<br>to run this content.<br> Please check <a href="http://webglreport.com">webglreport.com</a> for more infos.</p>
+      <div class="valign">
+          <img class="title" src="assets/frontend/logo-rogerwater.svg" alt="ROGER WATER, A JOURNEY INTO HYPERLAND" width="100%">
+
+          <div class="noWebGL">
+            <p>You need a browser which supports WebGL<br>to run this content.<br> Please check <a href="http://webglreport.com">webglreport.com</a> for more infos.</p>
+          </div>
+
+          <div class="action">
+            <div class="desktop">
+              <a href="system.html?fpc">BEGIN</a>
+            </div>
+
+            <div class="mobile">
+              <a href="system.html">MOBILE/TABLET</a>
+            </div>
+
+            <div class="mobile">
+              <a href="system.html?cardboard">CARDBOARD</a>
+            </div>
         </div>
+      </div>
 
-        <div class="action">
-          <div class="desktop">
-            <a href="system.html?fpc">BEGIN</a>
-          </div>
-
-          <div class="mobile">
-            <a href="system.html">360</a>
-          </div>
-
-          <div class="mobile">
-            <a href="system.html?cardboard">CARDBOARD</a>
-          </div>
+      <div class="bottom">
+        <div class="logos">
+          <a href="http://www.niagaraniagara.it"     class="logo left valign"   ><img src="assets/frontend/logo-niagara.svg" alt="NIAGARA"></a>
+          <a href="http://www.stefano-maccarelli.com" class="logo center valign"   ><img src="assets/frontend/logo-stefanomaccarelli.svg" alt="STEFANO MACCARELLI"></a>
+          <a href="http://www.monotremerecords.com"   class="logo right valign"  ><img src="assets/frontend/logo-monotreme.svg" alt="MONOTREME RECORDS"></a>
         </div>
-
-        <ul class="logos">
-            <li><a href="http://www.niagaraniagara.it" ><img src="assets/frontend/logo-niagara.svg" alt="NIAGARA"></a></li>
-            <li><a href="http://www.stefano-maccarelli.com" ><img src="assets/frontend/logo-stefanomaccarelli.svg" alt="STEFANO MACCARELLI"></a></li>
-            <li><a href="http://www.monotremerecords.com" ><img src="assets/frontend/logo-monotreme.svg" alt="MONOTREME RECORDS"></a></li>
-        </ul>
-
-        <div class="clear"></div>
-        <p class="fa fa-chevron-down" aria-hidden="true" style="margin-top:3em"></p>
       </div>
-    </section>
 
-    <section class="screens expandable" id="about" style="background-color:#f88">
-      <p class="insideScreen mediumText">
-      ROGER WATER is a web-based interactive and audioreactive 360 + VR experience that goes far beyond the concept of a VR or interactive music video.
-      It's a kind of explorative videogame.
-      <br><br>
-
-      It's based on HYPERLAND, the VR AV show of NIAGARA. <a href="http://niagaraniagara.it" title="niagara website">Point here for more informations and booking</a>.
-      <br><br>
-      The landscapes are generated, animated and populated in real time, thanks to sound analysis, as you explore them.
-      You can travel that world with a computer or a smartphone, in 360 or VR (Cardboard) mode.
-      <br><br>
-      You can fly freely in this infinite and everchanging generative open world, accelerate, fly up or down, follow creatures, or just stay and contemplate the environment.<br>
-      You can also manually populate the world by launching objects and creatures, and Cardboard mode is compatible with bluetooth VR remote controllers.
-      <br><br>
-      Experiencing ROGER WATER world from a computer or Android device gives you the chance to activate your device's microphone and let the world react to your voice, music, ambient sounds, etc.
-      You just need to wait for ROGER WATER music to end.
-      <br><br>
-      The generative world may also react with your time and location, and features some secret things that players can discover by finding "special areas" or by visiting ROGER WATER world at specific hours.<br>
-      New features will be launched and announced on <a href="http://niagaraniagara.it" title="niagara website">Niagara</a> and <a href="http://stefano-maccarelli.com" title="Stefano Maccarelli website">Stefano Maccarelli</a> social network profiles.
-    </p>
-    </section>
-
-
-    <section class="screens" id="credits" style="background-color: #222">
-      <div class="insideScreen">
-        <h1>CREDITS</h1>
-        <ul class="taLeft mediumText center">
-          <li>Concept, art direction, creative coding <a href="http://stefano-maccarelli.com">Stefano Maccarelli</a></li>
-          <li>Concept, Music <a href="http://niagaraniagara.it">Niagara</a></li>
-          <li>Label <a href="http://">Monotreme</a></li>
-          <li>Networking, system <a href="#">Aaron Syed</a></li>
-          <li>3D models: <a href="https://free3d.com/">free3d.com</a></li>
-          <li>Framework <a href="http://threejs.org">Three.js</a></li>
-          <li><br>"Roger Water" is extracted from the album Hyperocean by Niagara.<br>
-            Released on 29th of April 2016 via Monotreme Records.<br>
-            Performed, produced and recorded by Davide Tomat and Gabriele Ottino (Niagara)<br>at nonamestudio in Berlin and in Superbudda in Turin.<br>
-            Mixed by Maurizio Borgna at nonamestudio in Berlin.<br>
-            Mastered by Francesco Donadello at Calyx Mastering Studio in Berlin.<br><br>
-Buy track / album on <a href="http://monotremerecords.limitedrun.com/categories/niagara">Monotreme store</a>.<br><br>
-Niagara is managed by <a href="http://www.kadmonia.com">Kadmonia</a>.
-</li>
-
+      <!-- <section>
+        <h2>CREDITS</h2>
+        <ul>
+          <li>EXPERIENCE DESIGN AND CODE: <a href="http://stefano-maccarelli.com">STEFANO MACCARELLI</a></li>
+          <li>ADDITIONAL CODE: <a href="http://pixelsmasher.io">AARON SYED</a></li>
+          <li>MUSIC: <a href="http://niagaraniagara.it">NIAGARA</a></li>
+          <li>MADE THANKS TO <a href="http://threejs.org">THREE.JS</a>, <a href="http://github.org">GITHUB</a>, <a href="http://stackoverflow.org">STACKOVERFLOW</a></li>
         </ul>
-      </div>
-    </section>
+      </section> -->
+    </main>
 
     <script type="text/javascript">
       /*
@@ -192,8 +158,9 @@ Niagara is managed by <a href="http://www.kadmonia.com">Kadmonia</a>.
           e.preventDefault();
         }
       });
+    </script>
 
-
+    <script type="text/javascript">
     // HIDE ALL ACTION BUTTONS IF WEBGL IS NOT SUPPORTED
       document.addEventListener('DOMContentLoaded', function() {
         if ( ! Detector.webgl ){
