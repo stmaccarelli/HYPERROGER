@@ -1,7 +1,3 @@
-Yo, ho scritto una descrizione completa; visto che serve per scriverci degli articoli non sta a noi fare una sintesi. concordi?
-
-
-
 ROGER WATER is a web-based interactive and audioreactive 360 + VR experience, created by Stefano Maccarelli for Niagara, that goes far beyond the concept of a VR or interactive music video.
 It's a kind of explorative videogame.
 
